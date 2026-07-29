@@ -100,14 +100,29 @@ function ogc_footer_icon( $type ) {
 }
 
 /**
- * Echo a minimal line-art SVG icon (stroke, currentColor) for service / trust cards.
+ * Return raw SVG markup for a named outline icon (stroke, currentColor).
  *
- * @param string $name Icon key: code, wordpress, design, strategy, shield, ai, ethics, collab, clock.
+ * @param string $name Icon key.
+ * @param int    $size Pixel size for width/height attributes. Default 24.
+ * @return string SVG markup or empty string.
  */
-function ogc_line_icon( $name ) {
-	$attrs = 'xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"';
+function ogc_get_icon_svg( $name, $size = 24 ) {
+	$size  = max( 12, (int) $size );
+	$attrs = sprintf(
+		'xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="%1$d" height="%1$d" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"',
+		$size
+	);
 
 	$icons = array(
+		/* Nav */
+		'home'     => '<svg ' . $attrs . '><path d="M3 11.5L12 4l9 7.5"/><path d="M6 10.5V20h12v-9.5"/></svg>',
+		'about'    => '<svg ' . $attrs . '><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c0-3 2.5-5 6-5s6 2 6 5"/><path d="M14.5 14.2c1.7-.4 3.5.2 4.5 1.8"/></svg>',
+		'services' => '<svg ' . $attrs . '><circle cx="12" cy="12" r="3"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.1 5.1l1.6 1.6M17.3 17.3l1.6 1.6M18.9 5.1l-1.6 1.6M6.7 17.3l-1.6 1.6"/></svg>',
+		'mission'  => '<svg ' . $attrs . '><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21"/></svg>',
+		'blog'     => '<svg ' . $attrs . '><path d="M6 4h9l3 3v13H6z"/><path d="M15 4v3h3"/><path d="M9 11h6M9 15h6M9 19h3"/></svg>',
+		'support'  => '<svg ' . $attrs . '><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 015 1c0 1.5-2.5 2-2.5 3.5"/><circle cx="12" cy="17.2" r="0.8" fill="currentColor" stroke="none"/></svg>',
+		'contact'  => '<svg ' . $attrs . '><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
+		/* Services / trust (legacy keys) */
 		'code'      => '<svg ' . $attrs . '><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
 		'wordpress' => '<svg ' . $attrs . '><circle cx="12" cy="12" r="9"/><path d="M3.5 9.5h17M3.5 14.5h17"/><path d="M12 3c-2.5 3-2.5 15 0 18M12 3c2.5 3 2.5 15 0 18"/></svg>',
 		'design'    => '<svg ' . $attrs . '><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
@@ -117,10 +132,136 @@ function ogc_line_icon( $name ) {
 		'ethics'    => '<svg ' . $attrs . '><path d="M12 3v18"/><path d="M5 8h14"/><path d="M5 8l-2.5 5.5h5L5 8z"/><path d="M19 8l-2.5 5.5h5L19 8z"/><circle cx="12" cy="8" r="1.25" fill="currentColor" stroke="none"/></svg>',
 		'collab'    => '<svg ' . $attrs . '><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c0-3 2.5-5 6-5s6 2 6 5"/><path d="M14.5 14.2c1.7-.4 3.5.2 4.5 1.8"/></svg>',
 		'clock'     => '<svg ' . $attrs . '><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+		/* About / Mission pillars */
+		'eye'       => '<svg ' . $attrs . '><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+		'heart'     => '<svg ' . $attrs . '><path d="M12 20s-7-4.4-7-9.2A3.8 3.8 0 0112 7.5a3.8 3.8 0 017 3.3C19 15.6 12 20 12 20z"/></svg>',
+		'building'  => '<svg ' . $attrs . '><path d="M4 20V8l8-4 8 4v12"/><path d="M9 20v-5h6v5"/><path d="M9 10h.01M12 10h.01M15 10h.01M9 14h.01M12 14h.01M15 14h.01"/></svg>',
 	);
 
-	if ( isset( $icons[ $name ] ) ) {
+	return isset( $icons[ $name ] ) ? $icons[ $name ] : '';
+}
+
+/**
+ * Echo a wrapped embossed icon chip (.ogc-icon).
+ *
+ * @param string $name Icon key (see ogc_get_icon_svg).
+ * @param array  $args {
+ *     Optional.
+ *     @type string $size   sm|md|lg. Default md.
+ *     @type string $shape  rounded|circle. Default rounded.
+ *     @type string $class  Extra classes on the wrapper.
+ * }
+ */
+function ogc_icon( $name, $args = array() ) {
+	$args = wp_parse_args(
+		$args,
+		array(
+			'size'  => 'md',
+			'shape' => 'rounded',
+			'class' => '',
+		)
+	);
+
+	get_template_part(
+		'template-parts/icon',
+		null,
+		array(
+			'name'  => $name,
+			'size'  => $args['size'],
+			'shape' => $args['shape'],
+			'class' => $args['class'],
+		)
+	);
+}
+
+/**
+ * Echo a minimal line-art SVG icon (legacy helper — prefer ogc_icon()).
+ *
+ * @param string $name Icon key.
+ */
+function ogc_line_icon( $name ) {
+	$svg = ogc_get_icon_svg( $name, 28 );
+	if ( $svg ) {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted static SVG markup.
-		echo $icons[ $name ];
+		echo $svg;
 	}
 }
+
+/**
+ * Map a primary-nav menu item to an icon key.
+ *
+ * @param object $item WP_Post menu item.
+ * @return string Icon key or empty.
+ */
+function ogc_nav_icon_for_item( $item ) {
+	$path = wp_parse_url( isset( $item->url ) ? $item->url : '', PHP_URL_PATH );
+	$path = is_string( $path ) ? trim( $path, '/' ) : '';
+
+	$home_path = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
+	if ( '' === $path || $path === $home_path ) {
+		return 'home';
+	}
+
+	$slug = strtolower( basename( $path ) );
+	$map  = array(
+		'about-ogc-newfinity' => 'about',
+		'about'               => 'about',
+		'services'            => 'services',
+		'our-mission'         => 'mission',
+		'mission'             => 'mission',
+		'blog'                => 'blog',
+		'support'             => 'support',
+		'help-support'        => 'support',
+		'contact'             => 'contact',
+	);
+
+	if ( isset( $map[ $slug ] ) ) {
+		return $map[ $slug ];
+	}
+
+	$title = strtolower( trim( isset( $item->title ) ? $item->title : '' ) );
+	$title_map = array(
+		'home'            => 'home',
+		'about us'        => 'about',
+		'our services'    => 'services',
+		'our mission'     => 'mission',
+		'blog & insights' => 'blog',
+		'help & support'  => 'support',
+		'contact'         => 'contact',
+	);
+
+	return isset( $title_map[ $title ] ) ? $title_map[ $title ] : '';
+}
+
+/**
+ * Prepend embossed icons to primary nav link titles.
+ *
+ * @param string   $title Menu item title.
+ * @param WP_Post  $item  Menu item.
+ * @param stdClass $args  wp_nav_menu() args.
+ * @param int      $depth Depth.
+ * @return string
+ */
+function ogc_nav_menu_item_title( $title, $item, $args, $depth ) {
+	if ( empty( $args->theme_location ) || 'primary' !== $args->theme_location ) {
+		return $title;
+	}
+
+	$icon = ogc_nav_icon_for_item( $item );
+	if ( ! $icon ) {
+		return $title;
+	}
+
+	ob_start();
+	ogc_icon(
+		$icon,
+		array(
+			'size'  => 'sm',
+			'class' => 'ogc-nav__icon',
+		)
+	);
+	$chip = ob_get_clean();
+
+	return $chip . '<span class="ogc-nav__label">' . esc_html( wp_strip_all_tags( $title ) ) . '</span>';
+}
+add_filter( 'nav_menu_item_title', 'ogc_nav_menu_item_title', 10, 4 );

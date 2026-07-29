@@ -23,9 +23,9 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready
 	/* Colors */
 	--bg-primary: #0A0A0A;
 	--bg-panel: #141414;
-	--border-accent: #F7941D;
-	--accent-gradient-start: #FF7A18;
-	--accent-gradient-end: #FFC542;
+	--border-accent: #FFD27A;
+	--accent-gradient-start: #FFD27A;
+	--accent-gradient-end: #FFEAC2;
 	--text-primary: #F5F5F5;
 	--text-secondary: #C9C9C9;
 	--text-on-accent: #1A1200;
@@ -43,10 +43,12 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready
 	--ogc-text-muted: var(--text-secondary);
 	--ogc-text-on-accent: var(--text-on-accent);
 
-	/* Links & buttons only */
-	--ogc-link-color: #FFB000;
-	--ogc-link-hover: #FFCB79;
-	--ogc-btn-hover-bg: #FF8F3154;
+	/* Links & interactive chrome */
+	--ogc-link-color: #FFD27A;
+	--ogc-link-hover: #FFEAC2;
+	--ogc-btn-hover-bg: rgba(255, 210, 122, 0.16);
+	--ogc-brand-rgb: 255, 210, 122;
+	--ogc-brand-hover-rgb: 255, 234, 194;
 
 	/* Typography — headings: Space Grotesk bold; body: Inter */
 	--font-heading: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;

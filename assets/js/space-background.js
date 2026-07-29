@@ -1,7 +1,7 @@
 /**
  * OGC NewFinity — Three.js deep-space background (r128).
  * Brand accent: #FFB000 (0xFFB000). Responsive detail tiers + reduced-motion.
- * Organic rock asteroids via multi-octave noise displacement + rim lighting.
+ * Organic rock asteroids: multi-octave noise silhouette + photo-texture surface.
  */
 (function () {
 	'use strict';
@@ -18,6 +18,24 @@
 	var reduceMotionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
 	var desktopMq = window.matchMedia('(min-width: 1025px)');
 	var tabletMq = window.matchMedia('(min-width: 600px) and (max-width: 1024px)');
+
+	/* Shared photo textures — loaded once, reused across all asteroid instances */
+	var rockTextures = [];
+	(function loadRockTextures() {
+		var base = (window.ogcSpaceBg && window.ogcSpaceBg.themeUri)
+			? window.ogcSpaceBg.themeUri + '/assets/images/asteroids/'
+			: '/wp-content/themes/ogc-newfinity/assets/images/asteroids/';
+		var loader = new THREE.TextureLoader();
+		var names = ['asteroid-01.webp', 'asteroid-02.webp', 'asteroid-03.webp'];
+		names.forEach(function (name) {
+			var t = loader.load(base + name);
+			t.wrapS = t.wrapT = THREE.RepeatWrapping;
+			if (THREE.sRGBEncoding !== undefined) {
+				t.encoding = THREE.sRGBEncoding;
+			}
+			rockTextures.push(t);
+		});
+	}());
 
 	var renderer;
 	var scene;
@@ -159,17 +177,54 @@
 	}
 
 	/**
-	 * Fresnel rim tint so silhouettes read against deep space (keeps MeshStandardMaterial).
-	 * Uses r128 varyings: `normal`, `vViewPosition`.
+	 * Triplanar rock photo projection + amber fresnel rim (MeshStandardMaterial).
+	 * Object-space position/normal — coverage independent of mesh UVs after noise displace.
 	 */
-	function applyRockFresnel(mat) {
+	function applyRockMaterial(mat, rockScale) {
 		mat.onBeforeCompile = function (shader) {
 			shader.uniforms.uRimColor = { value: new THREE.Color(BRAND) };
 			shader.uniforms.uRimPower = { value: 2.6 };
 			shader.uniforms.uRimStrength = { value: 0.42 };
+			shader.uniforms.uRockScale = { value: rockScale || 0.55 };
+
+			shader.vertexShader =
+				'varying vec3 vRockPos;\nvarying vec3 vRockNormal;\n' +
+				shader.vertexShader;
+			shader.vertexShader = shader.vertexShader.replace(
+				'#include <begin_vertex>',
+				[
+					'#include <begin_vertex>',
+					'vRockPos = position;',
+					'vRockNormal = normal;'
+				].join('\n')
+			);
+
 			shader.fragmentShader =
+				'varying vec3 vRockPos;\nvarying vec3 vRockNormal;\n' +
+				'uniform float uRockScale;\n' +
 				'uniform vec3 uRimColor;\nuniform float uRimPower;\nuniform float uRimStrength;\n' +
 				shader.fragmentShader;
+
+			/* Triplanar projection — face normals from position derivatives (flat-shade safe) */
+			shader.fragmentShader = shader.fragmentShader.replace(
+				'#include <map_fragment>',
+				[
+					'#ifdef USE_MAP',
+					'  vec3 rockN = abs( normalize( cross( dFdx( vRockPos ), dFdy( vRockPos ) ) ) );',
+					'  if ( length( rockN ) < 1e-4 ) rockN = abs( normalize( vRockNormal ) );',
+					'  rockN = pow( rockN, vec3( 2.5 ) );',
+					'  rockN /= ( rockN.x + rockN.y + rockN.z + 1e-5 );',
+					'  vec3 rockP = vRockPos * uRockScale;',
+					'  vec4 mapX = texture2D( map, rockP.zy );',
+					'  vec4 mapY = texture2D( map, rockP.xz );',
+					'  vec4 mapZ = texture2D( map, rockP.xy );',
+					'  vec4 texelColor = mapX * rockN.x + mapY * rockN.y + mapZ * rockN.z;',
+					'  texelColor = mapTexelToLinear( texelColor );',
+					'  diffuseColor *= texelColor;',
+					'#endif'
+				].join('\n')
+			);
+
 			shader.fragmentShader = shader.fragmentShader.replace(
 				'#include <output_fragment>',
 				[
@@ -198,21 +253,27 @@
 			var len = v.length() || 1;
 			v.multiplyScalar(1 / len);
 			var n = rockFbm(v.x * 1.4, v.y * 1.4, v.z * 1.4, seed);
-			// Organic radius: large bumps + fine roughness (not uniform gem facets).
 			var r = radius * (0.76 + n * 0.52);
 			pos.setXYZ(i, v.x * r, v.y * r, v.z * r);
 		}
 		geo.computeVertexNormals();
 
+		/* Pick one of the three rock photo textures at random */
+		var tex = rockTextures.length
+			? rockTextures[Math.floor(Math.random() * rockTextures.length)]
+			: null;
+
 		var mat = new THREE.MeshStandardMaterial({
-			color: 0x1a1a1c,
-			roughness: 0.92,
-			metalness: 0.16,
-			flatShading: true,
-			emissive: BRAND,
-			emissiveIntensity: 0.035
+			color:             tex ? 0xffffff : 0x1a1a1c,
+			map:               tex || null,
+			roughness:         0.92,
+			metalness:         0.16,
+			flatShading:       true,
+			emissive:          BRAND,
+			emissiveIntensity: 0.028
 		});
-		applyRockFresnel(mat);
+		/* Scale so each rock gets ~2–3 texture repeats across its diameter */
+		applyRockMaterial(mat, 0.85 / Math.max(radius, 0.4));
 
 		var mesh = new THREE.Mesh(geo, mat);
 		mesh.position.set(

@@ -153,7 +153,7 @@
 	color: var(--ogc-link-hover);
 }
 
-/* Social icons */
+/* Social icons — embossed circular chips */
 .ogc-social {
 	display: flex;
 	flex-wrap: wrap;
@@ -170,22 +170,42 @@
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
-	border: 1px solid var(--ogc-link-color);
+	border: 1px solid rgba(var(--ogc-brand-rgb), 0.5);
 	color: var(--ogc-link-color);
-	background: transparent;
+	background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.08),
+		0 2px 6px rgba(0, 0, 0, 0.4);
 	transition:
-		background 0.15s ease,
-		color 0.15s ease,
-		border-color 0.15s ease,
-		transform 0.15s ease;
+		box-shadow 0.2s ease,
+		transform 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease,
+		background 0.2s ease;
 }
 
 .ogc-social__link:hover,
 .ogc-social__link:focus-visible {
 	color: var(--ogc-link-hover);
-	border-color: var(--ogc-link-hover);
-	background: var(--ogc-btn-hover-bg);
+	border-color: rgba(var(--ogc-brand-hover-rgb), 0.9);
+	background: linear-gradient(145deg, #1f1f1f, #101010);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.1),
+		0 4px 12px rgba(0, 0, 0, 0.55),
+		0 0 10px rgba(var(--ogc-brand-hover-rgb), 0.22);
 	transform: translateY(-1px);
+}
+
+.ogc-social__link svg {
+	display: block;
+	width: 16px;
+	height: 16px;
+	filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
+}
+
+.ogc-social__link:hover svg,
+.ogc-social__link:focus-visible svg {
+	filter: drop-shadow(0 0 4px rgba(var(--ogc-brand-hover-rgb), 0.5));
 }
 
 .ogc-footer__copyright {

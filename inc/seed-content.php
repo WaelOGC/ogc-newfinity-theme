@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** Bump this to re-seed menus/pages after structural sitemap changes. */
-define( 'OGC_CONTENT_SEED_VERSION', '1.2.0' );
+define( 'OGC_CONTENT_SEED_VERSION', '1.3.0' );
 
 /**
  * Ensure a published page exists for the given slug.
@@ -41,6 +41,9 @@ function ogc_ensure_page( $title, $slug, $content ) {
 		}
 	}
 
+	// Pages whose markup lives in PHP templates — clear leftover editor placeholders.
+	$template_driven = array( 'home', 'about-ogc-newfinity', 'services', 'our-mission' );
+
 	if ( $existing instanceof WP_Post ) {
 		$update = array( 'ID' => (int) $existing->ID );
 
@@ -48,11 +51,16 @@ function ogc_ensure_page( $title, $slug, $content ) {
 			$update['post_status'] = 'publish';
 		}
 
-		// Only fill empty placeholder pages — never overwrite real content.
 		$stripped = trim( wp_strip_all_tags( $existing->post_content ) );
 		$is_wp_privacy_sample = ( false !== stripos( $existing->post_content, 'Suggested text:' ) );
+		$is_coming_soon       = ( false !== stripos( $stripped, 'coming soon' ) );
 
-		if ( '' === $stripped || $is_wp_privacy_sample ) {
+		if ( in_array( $slug, $template_driven, true ) && ( '' === $stripped || $is_coming_soon ) ) {
+			$update['post_title']   = $title;
+			$update['post_content'] = '';
+			$update['post_name']    = $slug;
+		} elseif ( '' === $stripped || $is_wp_privacy_sample ) {
+			// Only fill empty placeholder pages — never overwrite real content.
 			$update['post_title']   = $title;
 			$update['post_content'] = $content;
 			$update['post_name']    = $slug;
@@ -93,11 +101,11 @@ function ogc_seed_content() {
 	$coming_soon = '<!-- wp:paragraph --><p>Page content coming soon.</p><!-- /wp:paragraph -->';
 
 	$pages = array(
-		// Content is rendered by front-page.php — keep editor body empty (no placeholder copy).
+		// Content is rendered by dedicated templates — keep editor body empty (no placeholder copy).
 		'home'                 => array( 'Home', '' ),
-		'about-ogc-newfinity'  => array( 'About Us', $coming_soon ),
-		'services'             => array( 'Our Services', $coming_soon ),
-		'our-mission'          => array( 'Our Mission', $coming_soon ),
+		'about-ogc-newfinity'  => array( 'About Us', '' ),
+		'services'             => array( 'Our Services', '' ),
+		'our-mission'          => array( 'Our Mission', '' ),
 		'submit-idea'          => array( 'Submit Your Idea', $coming_soon ),
 		'blog'                 => array( 'Blog & Insights', $coming_soon ),
 		'support'              => array( 'Help & Support', $coming_soon ),

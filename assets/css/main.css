@@ -17,7 +17,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Shared button (.ogc-btn) — transparent outline; reuse everywhere
+   Shared button (.ogc-btn) — embossed / glossy chip; reuse everywhere
    -------------------------------------------------------------------------- */
 
 .ogc-btn {
@@ -31,23 +31,30 @@
 	line-height: 1.2;
 	cursor: pointer;
 	text-decoration: none;
-	background: transparent;
-	color: var(--ogc-link-color);
-	border: 1px solid var(--ogc-link-color);
+	color: #ffffff;
+	background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+	border: 1px solid rgba(var(--ogc-brand-rgb), 0.5);
 	border-radius: var(--ogc-radius);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.08),
+		0 2px 6px rgba(0, 0, 0, 0.4);
 	transition:
-		background 0.15s ease,
-		color 0.15s ease,
-		border-color 0.15s ease,
-		transform 0.15s ease;
+		box-shadow 0.2s ease,
+		transform 0.2s ease,
+		border-color 0.2s ease,
+		background 0.2s ease,
+		color 0.2s ease;
 }
 
 .ogc-btn:hover,
 .ogc-btn:focus-visible {
-	color: var(--ogc-link-hover);
-	border-color: var(--ogc-link-hover);
-	background: var(--ogc-btn-hover-bg);
-	transform: scale(1.04);
+	color: #ffffff;
+	border-color: rgba(var(--ogc-brand-hover-rgb), 0.9);
+	background: linear-gradient(145deg, #1f1f1f, #101010);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.1),
+		0 4px 12px rgba(0, 0, 0, 0.55);
+	transform: translateY(-1px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -63,7 +70,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Back to top (site-wide)
+   Back to top (site-wide) — circular embossed chip
    -------------------------------------------------------------------------- */
 
 .ogc-back-top {
@@ -79,11 +86,12 @@
 	padding: 0;
 	margin: 0;
 	border-radius: 50%;
-	border: 1px solid var(--ogc-link-color);
-	background: rgba(10, 10, 10, 0.35);
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
-	color: var(--ogc-link-color);
+	border: 1px solid rgba(var(--ogc-brand-rgb), 0.5);
+	background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.08),
+		0 2px 6px rgba(0, 0, 0, 0.4);
+	color: #ffffff;
 	cursor: pointer;
 	opacity: 0;
 	visibility: hidden;
@@ -93,9 +101,10 @@
 		opacity 0.2s ease,
 		visibility 0.2s ease,
 		transform 0.2s ease,
-		background 0.15s ease,
-		color 0.15s ease,
-		border-color 0.15s ease;
+		box-shadow 0.2s ease,
+		border-color 0.2s ease,
+		background 0.2s ease,
+		color 0.2s ease;
 }
 
 .ogc-back-top.is-visible {
@@ -107,16 +116,25 @@
 
 .ogc-back-top:hover,
 .ogc-back-top:focus-visible {
-	color: var(--ogc-link-hover);
-	border-color: var(--ogc-link-hover);
-	background: var(--ogc-btn-hover-bg);
-	transform: translateY(0) scale(1.04);
+	color: #ffffff;
+	border-color: rgba(var(--ogc-brand-hover-rgb), 0.9);
+	background: linear-gradient(145deg, #1f1f1f, #101010);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.1),
+		0 4px 12px rgba(0, 0, 0, 0.55);
+	transform: translateY(-1px);
+}
+
+.ogc-back-top.is-visible:hover,
+.ogc-back-top.is-visible:focus-visible {
+	transform: translateY(-1px);
 }
 
 .ogc-back-top svg {
 	display: block;
 	width: 18px;
 	height: 18px;
+	filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
 }
 
 @media (max-width: 599px) {
@@ -132,8 +150,10 @@
 	.ogc-back-top,
 	.ogc-back-top.is-visible,
 	.ogc-back-top:hover,
-	.ogc-back-top:focus-visible {
-		transition: opacity 0.15s ease, visibility 0.15s ease;
+	.ogc-back-top:focus-visible,
+	.ogc-back-top.is-visible:hover,
+	.ogc-back-top.is-visible:focus-visible {
+		transition: opacity 0.15s ease, visibility 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 		transform: none;
 	}
 }

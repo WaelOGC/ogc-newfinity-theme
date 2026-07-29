@@ -1,0 +1,92 @@
+/**
+ * OGC NewFinity — reusable embossed/glossy SVG icon chips (.ogc-icon).
+ * Tokens: style.css (:root).
+ */
+
+.ogc-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 2.5rem;
+	height: 2.5rem;
+	padding: 0;
+	border-radius: var(--ogc-radius-sm);
+	border: 1px solid rgba(var(--ogc-brand-rgb), 0.5);
+	background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.08),
+		0 2px 6px rgba(0, 0, 0, 0.4);
+	color: var(--ogc-link-color);
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.2s ease,
+		color 0.2s ease,
+		filter 0.2s ease;
+}
+
+.ogc-icon svg {
+	display: block;
+	width: 1.125rem;
+	height: 1.125rem;
+	filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
+	transition: filter 0.2s ease;
+}
+
+.ogc-icon--sm {
+	width: 1.5rem;
+	height: 1.5rem;
+	border-radius: 6px;
+}
+
+.ogc-icon--sm svg {
+	width: 0.875rem;
+	height: 0.875rem;
+}
+
+.ogc-icon--lg {
+	width: 2.75rem;
+	height: 2.75rem;
+}
+
+.ogc-icon--lg svg {
+	width: 1.35rem;
+	height: 1.35rem;
+}
+
+.ogc-icon--circle {
+	border-radius: 50%;
+}
+
+/* Interactive chip (nav, social, linked cards) */
+a:hover > .ogc-icon,
+a:focus-visible > .ogc-icon,
+.ogc-icon.is-interactive:hover,
+.ogc-nav__list a:hover .ogc-icon,
+.ogc-nav__list a:focus-visible .ogc-icon,
+.ogc-nav__list .current-menu-item > a .ogc-icon,
+.ogc-nav__list .current_page_item > a .ogc-icon,
+.ogc-social__link:hover .ogc-icon,
+.ogc-social__link:focus-visible .ogc-icon,
+.ogc-service-card:hover .ogc-icon,
+.ogc-service-card:focus-visible .ogc-icon {
+	border-color: rgba(var(--ogc-brand-hover-rgb), 0.85);
+	color: var(--ogc-link-hover);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.1),
+		0 2px 8px rgba(0, 0, 0, 0.45),
+		0 0 10px rgba(var(--ogc-brand-hover-rgb), 0.22);
+}
+
+a:hover > .ogc-icon svg,
+a:focus-visible > .ogc-icon svg,
+.ogc-nav__list a:hover .ogc-icon svg,
+.ogc-nav__list a:focus-visible .ogc-icon svg,
+.ogc-nav__list .current-menu-item > a .ogc-icon svg,
+.ogc-nav__list .current_page_item > a .ogc-icon svg,
+.ogc-social__link:hover .ogc-icon svg,
+.ogc-social__link:focus-visible .ogc-icon svg,
+.ogc-service-card:hover .ogc-icon svg,
+.ogc-service-card:focus-visible .ogc-icon svg {
+	filter: drop-shadow(0 0 4px rgba(var(--ogc-brand-hover-rgb), 0.5));
+}

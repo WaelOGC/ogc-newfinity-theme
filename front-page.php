@@ -123,9 +123,15 @@ $trust = array(
 					class="glass-card ogc-service-card"
 					href="<?php echo esc_url( $services_url . '#' . $service['slug'] ); ?>"
 				>
-					<span class="ogc-service-card__icon" aria-hidden="true">
-						<?php ogc_line_icon( $service['icon'] ); ?>
-					</span>
+					<?php
+					ogc_icon(
+						$service['icon'],
+						array(
+							'size'  => 'lg',
+							'class' => 'ogc-service-card__icon',
+						)
+					);
+					?>
 					<h3 class="ogc-service-card__title"><?php echo esc_html( $service['title'] ); ?></h3>
 					<p class="ogc-service-card__text"><?php echo esc_html( $service['text'] ); ?></p>
 				</a>
@@ -143,9 +149,15 @@ $trust = array(
 		<div class="ogc-home-trust__grid">
 			<?php foreach ( $trust as $item ) : ?>
 				<div class="glass-card ogc-trust-card">
-					<span class="ogc-trust-card__icon" aria-hidden="true">
-						<?php ogc_line_icon( $item['icon'] ); ?>
-					</span>
+					<?php
+					ogc_icon(
+						$item['icon'],
+						array(
+							'size'  => 'lg',
+							'class' => 'ogc-trust-card__icon',
+						)
+					);
+					?>
 					<h3 class="ogc-trust-card__title"><?php echo esc_html( $item['title'] ); ?></h3>
 					<p class="ogc-trust-card__text"><?php echo esc_html( $item['text'] ); ?></p>
 				</div>
