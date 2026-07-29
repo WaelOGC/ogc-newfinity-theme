@@ -1,0 +1,275 @@
+/**
+ * OGC NewFinity — homepage (front-page.php).
+ * Reuses .glass-card, .ogc-btn, .ogc-glass-grid. Tokens: style.css (:root).
+ */
+
+/* --------------------------------------------------------------------------
+   Shared section chrome
+   -------------------------------------------------------------------------- */
+
+.ogc-home {
+	display: flex;
+	flex-direction: column;
+	gap: 4.5rem;
+}
+
+.ogc-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 0 1.25rem;
+	padding: 0.35rem 0.9rem;
+	font-family: var(--ogc-font-body);
+	font-size: 0.6875rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	line-height: 1.2;
+	color: var(--ogc-text-on-accent);
+	background: linear-gradient(
+		90deg,
+		var(--ogc-accent-start),
+		var(--ogc-accent-end)
+	);
+	border-radius: var(--ogc-radius-pill);
+}
+
+.ogc-section-header {
+	margin-bottom: 2rem;
+	max-width: 52rem;
+}
+
+.ogc-section-eyebrow {
+	margin: 0 0 0.65rem;
+	font-family: var(--ogc-font-body);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--ogc-link-color);
+}
+
+.ogc-section-title {
+	margin: 0 0 0.75rem;
+	font-family: var(--ogc-font-heading);
+	font-weight: 700;
+	font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+	line-height: 1.2;
+	color: var(--ogc-text-primary);
+	text-wrap: balance;
+}
+
+.ogc-section-intro {
+	margin: 0;
+	max-width: 50rem;
+	font-family: var(--ogc-font-body);
+	font-size: 1rem;
+	line-height: 1.65;
+	color: var(--ogc-text-muted);
+	text-wrap: pretty;
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+
+.ogc-home-hero {
+	padding-top: 1.5rem;
+	max-width: 42rem;
+}
+
+.ogc-home-hero__title {
+	margin: 0 0 1.25rem;
+	font-family: var(--ogc-font-heading);
+	font-weight: 700;
+	font-size: clamp(2.25rem, 5.5vw, 3.5rem);
+	line-height: 1.12;
+	letter-spacing: -0.02em;
+	color: var(--ogc-text-primary);
+	text-wrap: balance;
+}
+
+/* Slow continuous shimmer on "future." only */
+.hero-shimmer {
+	background: linear-gradient(90deg, #ffb000 0%, #ffe8b3 50%, #ffb000 100%);
+	background-size: 200% auto;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+	animation: ogc-shimmer 4s linear infinite;
+}
+
+@keyframes ogc-shimmer {
+	0% {
+		background-position: 0% center;
+	}
+	100% {
+		background-position: 200% center;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hero-shimmer {
+		animation: none;
+		background-position: 50% center;
+	}
+}
+
+.ogc-home-hero__lead {
+	margin: 0 0 1.75rem;
+	font-family: var(--ogc-font-body);
+	font-size: 1.0625rem;
+	line-height: 1.7;
+	color: var(--ogc-text-muted);
+	text-wrap: pretty;
+}
+
+.ogc-home-hero__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.85rem;
+}
+
+/* --------------------------------------------------------------------------
+   Service cards
+   -------------------------------------------------------------------------- */
+
+a.ogc-service-card {
+	text-decoration: none;
+	color: inherit;
+	height: 100%;
+}
+
+a.ogc-service-card:hover,
+a.ogc-service-card:focus-visible {
+	color: inherit;
+}
+
+.ogc-service-card__icon,
+.ogc-trust-card__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 1rem;
+	color: var(--ogc-link-color);
+}
+
+.ogc-service-card__icon svg,
+.ogc-trust-card__icon svg {
+	display: block;
+	width: 28px;
+	height: 28px;
+}
+
+.ogc-service-card__title,
+.ogc-trust-card__title {
+	margin: 0 0 0.55rem;
+	font-family: var(--ogc-font-heading);
+	font-weight: 700;
+	font-size: 1.125rem;
+	line-height: 1.3;
+	color: var(--ogc-text-primary);
+	text-wrap: balance;
+}
+
+.ogc-service-card__text,
+.ogc-trust-card__text {
+	margin: 0;
+	font-family: var(--ogc-font-body);
+	font-size: 0.9375rem;
+	line-height: 1.6;
+	color: var(--ogc-text-muted);
+	text-wrap: pretty;
+}
+
+/* --------------------------------------------------------------------------
+   Trust / why us — 3 columns desktop, stack mobile
+   -------------------------------------------------------------------------- */
+
+.ogc-home-trust__grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+	.ogc-home-trust__grid {
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.5rem;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   CTA band
+   -------------------------------------------------------------------------- */
+
+.ogc-home-cta__inner {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1rem;
+	padding: 2rem 1.5rem;
+	text-align: left;
+}
+
+.ogc-home-cta__title {
+	margin: 0;
+	font-family: var(--ogc-font-heading);
+	font-weight: 700;
+	font-size: clamp(1.5rem, 3vw, 2rem);
+	line-height: 1.25;
+	color: var(--ogc-text-primary);
+	text-wrap: balance;
+}
+
+.ogc-home-cta__text {
+	margin: 0;
+	max-width: 38rem;
+	font-family: var(--ogc-font-body);
+	font-size: 1.0625rem;
+	line-height: 1.65;
+	color: var(--ogc-text-muted);
+	text-wrap: pretty;
+}
+
+@media (min-width: 768px) {
+	.ogc-home-cta__inner {
+		padding: 2.5rem 2.25rem;
+		align-items: center;
+		text-align: center;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   Mobile alignment (match header/footer stacking patterns)
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 599px) {
+	.ogc-home {
+		gap: 3.25rem;
+	}
+
+	.ogc-home-hero {
+		padding-top: 0.5rem;
+		text-align: left;
+	}
+
+	.ogc-home-hero__actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.ogc-home-hero__actions .ogc-btn {
+		width: 100%;
+	}
+
+	.ogc-home-cta__inner {
+		align-items: stretch;
+	}
+
+	.ogc-home-cta__inner .ogc-btn {
+		width: 100%;
+	}
+}

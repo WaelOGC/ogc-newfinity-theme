@@ -26,13 +26,44 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready
 	--border-accent: #F7941D;
 	--accent-gradient-start: #FF7A18;
 	--accent-gradient-end: #FFC542;
-	--text-primary: #FFFFFF;
+	--text-primary: #F5F5F5;
 	--text-secondary: #C9C9C9;
 	--text-on-accent: #1A1200;
 
-	/* Typography */
-	--font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+	/* Aliases used by header/footer/components */
+	--ogc-bg: var(--bg-primary);
+	--ogc-bg-panel: var(--bg-panel);
+	--ogc-border: var(--border-accent);
+	--ogc-accent-start: var(--accent-gradient-start);
+	--ogc-accent-end: var(--accent-gradient-end);
+
+	/* Body / non-interactive text (never use link orange for these) */
+	--ogc-text-primary: #F5F5F5;
+	--ogc-text: var(--ogc-text-primary);
+	--ogc-text-muted: var(--text-secondary);
+	--ogc-text-on-accent: var(--text-on-accent);
+
+	/* Links & buttons only */
+	--ogc-link-color: #FFB000;
+	--ogc-link-hover: #FFCB79;
+	--ogc-btn-hover-bg: #FF8F3154;
+
+	/* Typography — headings: Space Grotesk bold; body: Inter */
+	--font-heading: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
 	--font-body: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	--ogc-font-heading: var(--font-heading);
+	--ogc-font-display: var(--font-heading); /* alias — keeps older refs working */
+	--ogc-font-body: var(--font-body);
+
+	/* Layout / spacing */
+	--ogc-radius: 12px;
+	--ogc-radius-sm: 8px;
+	--ogc-radius-pill: 999px;
+	--ogc-container: 1200px;
+	--ogc-header-height: 72px;
+	--ogc-accent-bar-height: 5px;
+	--ogc-transition: 0.2s ease;
+	--ogc-grid-size: 72px;
 }
 
 /* Minimal base reset — fuller styles live in assets/css/main.css */
@@ -48,11 +79,24 @@ html {
 
 body {
 	margin: 0;
-	background-color: var(--bg-primary);
-	color: var(--text-primary);
-	font-family: var(--font-body);
+	background-color: var(--ogc-bg);
+	color: var(--ogc-text-primary);
+	font-family: var(--ogc-font-body);
 	line-height: 1.6;
 	-webkit-font-smoothing: antialiased;
+	position: relative;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--ogc-font-heading);
+	font-style: normal;
+	font-weight: 700;
+	color: var(--ogc-text-primary);
 }
 
 img {
@@ -62,6 +106,26 @@ img {
 }
 
 a {
-	color: inherit;
+	color: var(--ogc-link-color);
 	text-decoration: none;
+	transition: color 0.15s ease;
+}
+
+a:hover,
+a:focus-visible {
+	color: var(--ogc-link-hover);
+}
+
+ul,
+ol {
+	margin: 0;
+	padding: 0;
+}
+
+button {
+	font-family: inherit;
+}
+
+p {
+	color: var(--ogc-text-primary);
 }

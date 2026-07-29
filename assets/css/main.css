@@ -1,98 +1,72 @@
 /**
- * OGC NewFinity — main stylesheet (skeleton).
- *
- * Layout, components, and page styles will be added in later build steps.
- * Design tokens live in style.css (:root). Class prefix: .ogc-
+ * OGC NewFinity — base layout, global links, shared buttons.
+ * Header/footer chrome live in header.css / footer.css.
+ * Tokens: style.css (:root). Prefix: .ogc-
  */
 
+/* Content sits above the fixed background layer */
+.ogc-site-header,
+.ogc-main,
+.ogc-footer {
+	position: relative;
+	z-index: 1;
+}
+
+.ogc-site-header {
+	z-index: 1000;
+}
+
 /* --------------------------------------------------------------------------
-   Accent bars (docs/02 — top & bottom gradient strips)
+   Shared button (.ogc-btn) — transparent outline; reuse everywhere
    -------------------------------------------------------------------------- */
 
-.ogc-accent-bar {
-	display: block;
-	width: 100%;
-	height: 3px;
-	background: linear-gradient(
-		90deg,
-		var(--accent-gradient-start),
-		var(--accent-gradient-end)
-	);
+.ogc-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.65rem 1.15rem;
+	font-family: var(--ogc-font-body);
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.2;
+	cursor: pointer;
+	text-decoration: none;
+	background: transparent;
+	color: var(--ogc-link-color);
+	border: 1px solid var(--ogc-link-color);
+	border-radius: var(--ogc-radius);
+	transition:
+		background 0.15s ease,
+		color 0.15s ease,
+		border-color 0.15s ease,
+		transform 0.15s ease;
+}
+
+.ogc-btn:hover,
+.ogc-btn:focus-visible {
+	color: var(--ogc-link-hover);
+	border-color: var(--ogc-link-hover);
+	background: var(--ogc-btn-hover-bg);
+	transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ogc-btn:hover,
+	.ogc-btn:focus-visible {
+		transform: none;
+	}
 }
 
 /* --------------------------------------------------------------------------
-   Site header (skeleton)
-   -------------------------------------------------------------------------- */
-
-.ogc-header {
-	background-color: var(--bg-primary);
-	border-bottom: 1px solid color-mix(in srgb, var(--border-accent) 25%, transparent);
-}
-
-.ogc-header__inner {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1.5rem;
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 1rem 1.5rem;
-}
-
-.ogc-header__logo img,
-.ogc-header__logo-fallback img {
-	max-height: 48px;
-	width: auto;
-}
-
-.ogc-header__logo-text {
-	font-family: var(--font-display);
-	font-style: italic;
-	font-size: 1.25rem;
-	color: var(--text-primary);
-}
-
-.ogc-nav {
-	display: flex;
-	align-items: center;
-}
-
-.ogc-nav ul {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 1.25rem;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.ogc-nav a {
-	font-family: var(--font-body);
-	font-size: 0.875rem;
-	font-weight: 500;
-	color: var(--text-secondary);
-	transition: color 0.2s ease;
-}
-
-.ogc-nav a:hover,
-.ogc-nav .current-menu-item > a {
-	color: var(--text-primary);
-}
-
-.ogc-nav__placeholder {
-	font-size: 0.875rem;
-	color: var(--text-secondary);
-}
-
-/* --------------------------------------------------------------------------
-   Main content (skeleton)
+   Content area
    -------------------------------------------------------------------------- */
 
 .ogc-main {
 	min-height: 50vh;
-	max-width: 1200px;
+	max-width: var(--ogc-container);
 	margin: 0 auto;
-	padding: 3rem 1.5rem;
+	padding: 3rem 1.25rem;
+	flex: 1 0 auto;
 }
 
 .ogc-entry {
@@ -100,60 +74,63 @@
 }
 
 .ogc-entry__title {
-	font-family: var(--font-display);
-	font-style: italic;
-	font-weight: 400;
+	font-family: var(--ogc-font-heading);
+	font-style: normal;
+	font-weight: 700;
 	font-size: clamp(1.75rem, 4vw, 2.5rem);
-	color: var(--text-primary);
+	color: var(--ogc-text-primary);
 	margin: 0 0 1rem;
 }
 
+.ogc-entry__title a {
+	color: var(--ogc-link-color);
+}
+
+.ogc-entry__title a:hover,
+.ogc-entry__title a:focus-visible {
+	color: var(--ogc-link-hover);
+}
+
 .ogc-entry__content {
-	color: var(--text-secondary);
-	font-family: var(--font-body);
+	color: var(--ogc-text-primary);
+	font-family: var(--ogc-font-body);
+}
+
+.ogc-entry__content a {
+	color: var(--ogc-link-color);
+}
+
+.ogc-entry__content a:hover,
+.ogc-entry__content a:focus-visible {
+	color: var(--ogc-link-hover);
 }
 
 .ogc-no-posts {
-	color: var(--text-secondary);
+	color: var(--ogc-text-primary);
 }
 
-/* --------------------------------------------------------------------------
-   Site footer (skeleton)
-   -------------------------------------------------------------------------- */
-
-.ogc-footer {
-	background-color: var(--bg-primary);
-	border-top: 1px solid color-mix(in srgb, var(--border-accent) 40%, transparent);
+/* Pagination / breadcrumbs (future templates) */
+.ogc-pagination a,
+.ogc-breadcrumbs a,
+.navigation a,
+.page-links a {
+	color: var(--ogc-link-color);
 }
 
-.ogc-footer__inner {
+.ogc-pagination a:hover,
+.ogc-pagination a:focus-visible,
+.ogc-breadcrumbs a:hover,
+.ogc-breadcrumbs a:focus-visible,
+.navigation a:hover,
+.navigation a:focus-visible,
+.page-links a:hover,
+.page-links a:focus-visible {
+	color: var(--ogc-link-hover);
+}
+
+/* Sticky footer layout when page is short */
+body {
+	min-height: 100vh;
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1rem;
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 1.5rem;
-}
-
-.ogc-footer__meta,
-.ogc-footer__brand {
-	font-family: var(--font-body);
-	font-size: 0.875rem;
-	color: var(--text-secondary);
-	margin: 0;
-}
-
-.ogc-footer__brand {
-	font-family: var(--font-display);
-	font-style: italic;
-	color: var(--text-primary);
-}
-
-@media (max-width: 640px) {
-	.ogc-header__inner,
-	.ogc-footer__inner {
-		flex-direction: column;
-		align-items: flex-start;
-	}
+	flex-direction: column;
 }

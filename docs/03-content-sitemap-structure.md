@@ -1,16 +1,38 @@
 # 03 — Content & Sitemap Structure
 
 ## Pages (Primary Navigation)
-1. **Home**
-2. **About Us** (`/about-ogc-newfinity/`)
-3. **Our Services** (`/services/`)
-4. **Our Mission** (`/our-mission/`)
-5. **Submit Your Idea** (`/submit-idea/`) — lead-gen form page
-6. **Blog & Insights** (`/blog/`)
-7. **Help & Support** (`/support/`)
-8. **Contact / Get in Touch** (`/contact/`)
+1. Home
+2. About Us (/about-ogc-newfinity/)
+3. Our Services (/services/)
+4. Our Mission (/our-mission/)
+5. Submit Your Idea (/submit-idea/) — lead-gen form page
+6. Blog & Insights (/blog/)
+7. Help & Support (/support/)
+8. Contact / Get in Touch (/contact/)
 
-⚠️ No duplicate URLs. No leftover demo pages (Shop, Cart, Typography, Elements, etc. — all must be removed, these were leftovers from the old theme).
+Note: No duplicate URLs. No leftover demo pages (Shop, Cart, Typography, Elements, etc. — all must be removed, these were leftovers from the old theme).
+
+## Legal Pages (Footer — required for NL/EU agency)
+Required for a Netherlands/EU-based digital agency that takes client payments and refunds. Linked from the site footer Legal column. Full legal copy is a separate task — pages exist as placeholders until then.
+
+1. **Privacy Policy** (`/privacy-policy/`)
+2. **Terms and Conditions** (`/terms-and-conditions/`)
+3. **Cookie Policy** (`/cookie-policy/`)
+4. **Refund and Cancellation Policy** (`/refund-policy/`)
+
+### Legal page content notes (outline only — full copy later)
+
+#### Privacy Policy
+GDPR-compliant. Covers what data is collected (contact form, Submit Idea form, analytics, AI chat widget), how it is used, retention, user rights (access, rectification, erasure, portability), and contact email (`contact@ogcnewfinity.com`).
+
+#### Terms and Conditions
+General service terms, scope of work, client responsibilities, intellectual property, and limitation of liability. Must include a clear note that OGC NewFinity may deliver work directly or via a network of independent collaborators, freelancers, and/or partner agencies depending on project size and scope.
+
+#### Cookie Policy
+What cookies are used (analytics, session, AI-chat widget-related cookies if any), purpose of each category, and consent basis under GDPR/ePrivacy.
+
+#### Refund and Cancellation Policy
+Deposits are non-refundable once active work has started. Partial refunds are calculated based on hours/work already delivered — not issued automatically on dissatisfaction alone. Include timeline for refund requests and a note that work may involve third-party collaborators.
 
 ## Page-by-Page Content Notes
 
@@ -33,18 +55,18 @@
 
 ### Our Mission
 - Hero: "Our Mission"
-- Real, original copy only — NOT the leftover template placeholder text ("This is the main factor that sets us apart...") that existed on the old site. Must write genuine OGC NewFinity mission copy.
+- Real, original copy only — NOT the leftover template placeholder text that existed on the old site. Must write genuine OGC NewFinity mission copy.
 - 3 pillars: Intelligence With Purpose, Ethical by Design, Future Innovation.
 
 ### Submit Your Idea
 - Hero + short intro copy.
 - Form fields: Project Title, Category (dropdown — matches service list), Description (textarea), Submit button.
 - Side panel: 3 trust cards — Expert Review, Confidential, Fast Kickoff.
-- Footer meta: "The Hague, Netherlands · Free & Confidential"
+- Footer meta: "The Hague, Netherlands - Free & Confidential"
 
 ### Blog & Insights
 - Hero: "Blog & Insights"
-- Category cards (to be adjusted since blockchain is removed) — replace "Blockchain News" with a category relevant to the new 6-service list, e.g. AI Insights / Tech Guides / Security Updates / Marketing Tips (finalize wording later).
+- Category cards (adjusted since blockchain is removed) — categories relevant to the new 6-service list, e.g. AI Insights / Tech Guides / Security Updates / Marketing Tips (finalize wording later).
 - Standard WP blog loop below hero (latest posts).
 
 ### Help & Support
@@ -66,3 +88,6 @@
 - No broken/garbled copy.
 - No dead/irrelevant leftover links (Shop, Cart, etc.).
 - Every page has exactly one canonical URL.
+
+## Delivery Rule (added per client instruction)
+Every page must be delivered fully complete with final, real content directly by Cursor at build time — text, images, and structure. The client should NOT need to log into WordPress after theme upload to add or edit content page by page. WordPress dashboard access afterward is only for future small changes (colors, fonts, images, simple text tweaks) — not for initial content population. See also docs/08-seo-requirements.md for how real final content ties directly into SEO quality.
