@@ -51,19 +51,25 @@ $services = array(
 
 <article class="ogc-page ogc-page--services">
 
-	<section class="ogc-page-hero" aria-labelledby="ogc-services-hero-heading">
-		<p class="ogc-badge"><?php esc_html_e( 'OGC NEWFINITY', 'ogc-newfinity' ); ?></p>
-		<h1 id="ogc-services-hero-heading" class="ogc-page-hero__title">
-			<?php esc_html_e( 'Our Services', 'ogc-newfinity' ); ?>
-		</h1>
-		<p class="ogc-page-hero__lead">
-			<?php
-			esc_html_e(
-				'Six core capabilities, delivered end-to-end — from first concept to long-term support.',
-				'ogc-newfinity'
-			);
-			?>
-		</p>
+	<section class="ogc-page-hero ogc-split-hero" aria-labelledby="ogc-services-hero-heading">
+		<div class="ogc-split-hero__copy">
+			<p class="ogc-badge"><?php esc_html_e( 'OGC NEWFINITY', 'ogc-newfinity' ); ?></p>
+			<h1 id="ogc-services-hero-heading" class="ogc-page-hero__title">
+				<?php esc_html_e( 'Our', 'ogc-newfinity' ); ?>
+				<span class="hero-shimmer"><?php esc_html_e( 'Services', 'ogc-newfinity' ); ?></span>
+			</h1>
+			<p class="ogc-page-hero__lead">
+				<?php
+				esc_html_e(
+					'Six core capabilities, delivered end-to-end — from first concept to long-term support.',
+					'ogc-newfinity'
+				);
+				?>
+			</p>
+		</div>
+		<div class="ogc-split-hero__visual">
+			<?php get_template_part( 'template-parts/hero', 'orbit-atom' ); ?>
+		</div>
 	</section>
 
 	<section class="ogc-page-services" aria-labelledby="ogc-services-grid-heading">

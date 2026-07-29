@@ -136,10 +136,10 @@ function ogc_enqueue_assets() {
 		);
 	}
 
-	if ( is_page( 'about-ogc-newfinity' ) ) {
+	if ( is_page( array( 'about-ogc-newfinity', 'services' ) ) ) {
 		wp_enqueue_script(
-			'ogc-orbit-atom',
-			OGC_THEME_URI . '/assets/js/orbit-atom.js',
+			'ogc-orbit-emblem',
+			OGC_THEME_URI . '/assets/js/orbit-emblem.js',
 			array( 'ogc-three' ),
 			OGC_THEME_VERSION,
 			true

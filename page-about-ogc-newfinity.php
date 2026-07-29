@@ -68,8 +68,8 @@ $service_tags = array(
 
 <article class="ogc-page ogc-page--about">
 
-	<section class="ogc-page-hero ogc-about-hero" aria-labelledby="ogc-about-hero-heading">
-		<div class="ogc-about-hero__copy">
+	<section class="ogc-page-hero ogc-split-hero" aria-labelledby="ogc-about-hero-heading">
+		<div class="ogc-split-hero__copy">
 			<p class="ogc-badge"><?php esc_html_e( 'THE HAGUE, NETHERLANDS', 'ogc-newfinity' ); ?></p>
 			<h1 id="ogc-about-hero-heading" class="ogc-page-hero__title">
 				<?php esc_html_e( 'About OGC', 'ogc-newfinity' ); ?>
@@ -84,7 +84,7 @@ $service_tags = array(
 				?>
 			</p>
 		</div>
-		<div class="ogc-about-hero__visual">
+		<div class="ogc-split-hero__visual">
 			<?php get_template_part( 'template-parts/hero', 'orbit-atom' ); ?>
 		</div>
 	</section>
