@@ -1,0 +1,67 @@
+/*
+Theme Name: OGC NewFinity
+Theme URI: https://ogcnewfinity.com
+Author: OGC NewFinity
+Author URI: https://ogcnewfinity.com
+Description: Custom WordPress theme for OGC NewFinity — Ethical Innovation digital agency based in The Hague, Netherlands.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: ogc-newfinity
+Tags: custom-logo, custom-menu, featured-images, translation-ready
+*/
+
+/* ==========================================================================
+   Design tokens — color & typography (see docs/02-design-ui-guidelines.md)
+   Overridable later via Theme Options / Customizer (docs/04).
+   ========================================================================== */
+
+:root {
+	/* Colors */
+	--bg-primary: #0A0A0A;
+	--bg-panel: #141414;
+	--border-accent: #F7941D;
+	--accent-gradient-start: #FF7A18;
+	--accent-gradient-end: #FFC542;
+	--text-primary: #FFFFFF;
+	--text-secondary: #C9C9C9;
+	--text-on-accent: #1A1200;
+
+	/* Typography */
+	--font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+	--font-body: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Minimal base reset — fuller styles live in assets/css/main.css */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	margin: 0;
+	background-color: var(--bg-primary);
+	color: var(--text-primary);
+	font-family: var(--font-body);
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
