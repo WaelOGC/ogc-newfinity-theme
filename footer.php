@@ -115,6 +115,18 @@
 	</div>
 </footer>
 
+<button
+	type="button"
+	class="ogc-back-top"
+	id="ogc-back-top"
+	aria-label="<?php esc_attr_e( 'Back to top', 'ogc-newfinity' ); ?>"
+>
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		<path d="M12 19V5"/>
+		<path d="M5 12l7-7 7 7"/>
+	</svg>
+</button>
+
 <?php wp_footer(); ?>
 </body>
 </html>

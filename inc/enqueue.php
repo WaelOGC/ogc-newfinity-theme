@@ -87,6 +87,16 @@ function ogc_enqueue_assets() {
 		true
 	);
 
+	if ( is_front_page() ) {
+		wp_enqueue_script(
+			'ogc-brand-cube',
+			OGC_THEME_URI . '/assets/js/brand-cube.js',
+			array( 'ogc-three' ),
+			OGC_THEME_VERSION,
+			true
+		);
+	}
+
 	wp_enqueue_script(
 		'ogc-main',
 		OGC_THEME_URI . '/assets/js/main.js',

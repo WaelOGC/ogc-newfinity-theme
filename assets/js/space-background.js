@@ -1,6 +1,7 @@
 /**
  * OGC NewFinity — Three.js deep-space background (r128).
  * Brand accent: #FFB000 (0xFFB000). Responsive detail tiers + reduced-motion.
+ * Organic rock asteroids via multi-octave noise displacement + rim lighting.
  */
 (function () {
 	'use strict';
@@ -49,7 +50,7 @@
 			return {
 				particles: 280,
 				asteroids: 7,
-				detail: 1,
+				detail: 2,
 				mouseParallax: true,
 				autoRotate: false
 			};
@@ -58,7 +59,7 @@
 			return {
 				particles: 140,
 				asteroids: 4,
-				detail: 0,
+				detail: 1,
 				mouseParallax: false,
 				autoRotate: true
 			};
@@ -66,10 +67,60 @@
 		return {
 			particles: 90,
 			asteroids: 3,
-			detail: 0,
+			detail: 1,
 			mouseParallax: false,
 			autoRotate: true
 		};
+	}
+
+	/* ---- compact 3D value noise + two-octave fbm for rock displacement ---- */
+
+	function fade(t) {
+		return t * t * t * (t * (t * 6 - 15) + 10);
+	}
+
+	function lerp(a, b, t) {
+		return a + (b - a) * t;
+	}
+
+	function hash3(ix, iy, iz) {
+		var n = Math.sin(ix * 127.1 + iy * 311.7 + iz * 74.7 + 19.19) * 43758.5453123;
+		return n - Math.floor(n);
+	}
+
+	function valueNoise3(x, y, z) {
+		var x0 = Math.floor(x);
+		var y0 = Math.floor(y);
+		var z0 = Math.floor(z);
+		var fx = fade(x - x0);
+		var fy = fade(y - y0);
+		var fz = fade(z - z0);
+
+		var n000 = hash3(x0, y0, z0);
+		var n100 = hash3(x0 + 1, y0, z0);
+		var n010 = hash3(x0, y0 + 1, z0);
+		var n110 = hash3(x0 + 1, y0 + 1, z0);
+		var n001 = hash3(x0, y0, z0 + 1);
+		var n101 = hash3(x0 + 1, y0, z0 + 1);
+		var n011 = hash3(x0, y0 + 1, z0 + 1);
+		var n111 = hash3(x0 + 1, y0 + 1, z0 + 1);
+
+		var nx00 = lerp(n000, n100, fx);
+		var nx10 = lerp(n010, n110, fx);
+		var nx01 = lerp(n001, n101, fx);
+		var nx11 = lerp(n011, n111, fx);
+		var nxy0 = lerp(nx00, nx10, fy);
+		var nxy1 = lerp(nx01, nx11, fy);
+		return lerp(nxy0, nxy1, fz);
+	}
+
+	/** Large-scale bumps + fine surface roughness (two+ octaves). */
+	function rockFbm(x, y, z, seed) {
+		var s = seed || 0;
+		var large = valueNoise3(x * 1.15 + s, y * 1.15, z * 1.15);
+		var fine = valueNoise3(x * 4.2 + s * 2.1, y * 4.2 - s, z * 4.2 + 3.7);
+		var micro = valueNoise3(x * 9.5 - s, y * 9.5 + s * 0.5, z * 9.5);
+		return large * 0.62 + fine * 0.28 + micro * 0.1;
 	}
 
 	function disposeObject3D(obj) {
@@ -107,28 +158,61 @@
 		}
 	}
 
+	/**
+	 * Fresnel rim tint so silhouettes read against deep space (keeps MeshStandardMaterial).
+	 * Uses r128 varyings: `normal`, `vViewPosition`.
+	 */
+	function applyRockFresnel(mat) {
+		mat.onBeforeCompile = function (shader) {
+			shader.uniforms.uRimColor = { value: new THREE.Color(BRAND) };
+			shader.uniforms.uRimPower = { value: 2.6 };
+			shader.uniforms.uRimStrength = { value: 0.42 };
+			shader.fragmentShader =
+				'uniform vec3 uRimColor;\nuniform float uRimPower;\nuniform float uRimStrength;\n' +
+				shader.fragmentShader;
+			shader.fragmentShader = shader.fragmentShader.replace(
+				'#include <output_fragment>',
+				[
+					'{',
+					'  float rimDot = abs( dot( normalize( normal ), normalize( vViewPosition ) ) );',
+					'  float rim = pow( clamp( 1.0 - rimDot, 0.0, 1.0 ), uRimPower );',
+					'  outgoingLight += uRimColor * rim * uRimStrength;',
+					'}',
+					'#include <output_fragment>'
+				].join('\n')
+			);
+			mat.userData.shader = shader;
+		};
+		mat.needsUpdate = true;
+	}
+
 	function createAsteroid(detail) {
 		var radius = 0.55 + Math.random() * 1.35;
+		var seed = Math.random() * 40;
 		var geo = new THREE.IcosahedronGeometry(radius, detail);
 		var pos = geo.attributes.position;
 		var v = new THREE.Vector3();
 
 		for (var i = 0; i < pos.count; i++) {
 			v.fromBufferAttribute(pos, i);
-			var noise = 0.82 + Math.random() * 0.38;
-			v.multiplyScalar(noise);
-			pos.setXYZ(i, v.x, v.y, v.z);
+			var len = v.length() || 1;
+			v.multiplyScalar(1 / len);
+			var n = rockFbm(v.x * 1.4, v.y * 1.4, v.z * 1.4, seed);
+			// Organic radius: large bumps + fine roughness (not uniform gem facets).
+			var r = radius * (0.76 + n * 0.52);
+			pos.setXYZ(i, v.x * r, v.y * r, v.z * r);
 		}
 		geo.computeVertexNormals();
 
 		var mat = new THREE.MeshStandardMaterial({
-			color: 0x1c1c1e,
-			roughness: 0.88,
-			metalness: 0.22,
+			color: 0x1a1a1c,
+			roughness: 0.92,
+			metalness: 0.16,
 			flatShading: true,
 			emissive: BRAND,
-			emissiveIntensity: 0.045
+			emissiveIntensity: 0.035
 		});
+		applyRockFresnel(mat);
 
 		var mesh = new THREE.Mesh(geo, mat);
 		mesh.position.set(
@@ -175,22 +259,27 @@
 	}
 
 	function setupLights() {
-		var ambient = new THREE.AmbientLight(0x404050, 0.55);
+		var ambient = new THREE.AmbientLight(0x404050, 0.5);
 		scene.add(ambient);
 
-		var key = new THREE.DirectionalLight(BRAND, 0.65);
+		var key = new THREE.DirectionalLight(BRAND, 0.7);
 		key.position.set(8, 12, 6);
 		scene.add(key);
 
-		var fill = new THREE.DirectionalLight(0x8899aa, 0.25);
+		var fill = new THREE.DirectionalLight(0x8899aa, 0.28);
 		fill.position.set(-10, -4, -8);
 		scene.add(fill);
 
-		var glow = new THREE.PointLight(BRAND, 1.1, 48, 2);
+		// Rim / silhouette lift against deep space (amber family).
+		var rim = new THREE.DirectionalLight(BRAND, 0.38);
+		rim.position.set(-5, 3, 14);
+		scene.add(rim);
+
+		var glow = new THREE.PointLight(BRAND, 1.05, 48, 2);
 		glow.position.set(-6, 4, 10);
 		scene.add(glow);
 
-		var glow2 = new THREE.PointLight(BRAND, 0.55, 40, 2);
+		var glow2 = new THREE.PointLight(BRAND, 0.5, 40, 2);
 		glow2.position.set(12, -6, -4);
 		scene.add(glow2);
 	}
@@ -210,53 +299,6 @@
 
 		currentTier = tier;
 		canvas.dataset.ogcTier = tier;
-		applyHeroAsteroidFocus();
-	}
-
-	/**
-	 * Homepage only: reuse one existing asteroid mesh, scale it up, and pin it
-	 * to the hero's right-side viewport region (still spins via renderFrame).
-	 */
-	function applyHeroAsteroidFocus() {
-		if (!document.body.classList.contains('ogc-has-hero-asteroid') || !asteroids.length) {
-			return;
-		}
-
-		var hero = document.querySelector('[data-ogc-hero-focus], .ogc-home-hero');
-		if (!hero) {
-			return;
-		}
-
-		var mesh = asteroids[0];
-		var rect = hero.getBoundingClientRect();
-		var w = window.innerWidth;
-		var h = window.innerHeight;
-		var isMobile = w < 600;
-		var isTablet = w >= 600 && w < 1025;
-
-		// Target ~65–85% viewport width, vertically aligned with hero text block.
-		var px = w * (isMobile ? 0.82 : 0.76);
-		var py = Math.max(rect.top + rect.height * 0.42, h * 0.28);
-
-		var ndcX = (px / w) * 2 - 1;
-		var ndcY = -(py / h) * 2 + 1;
-		var world = new THREE.Vector3(ndcX, ndcY, 0.45);
-		world.unproject(camera);
-
-		var dir = world.sub(camera.position).normalize();
-		var distance = isMobile ? 10.5 : isTablet ? 11.5 : 12.2;
-		mesh.position.copy(camera.position).add(dir.multiplyScalar(distance));
-
-		var scale = isMobile ? 2.35 : isTablet ? 3.2 : 4.1;
-		mesh.scale.setScalar(scale);
-		mesh.userData.heroFocus = true;
-
-		if (mesh.material) {
-			mesh.material.emissiveIntensity = 0.12;
-			mesh.material.metalness = 0.32;
-			mesh.material.roughness = 0.78;
-			mesh.material.needsUpdate = true;
-		}
 	}
 
 	function resize() {
@@ -266,7 +308,6 @@
 		camera.updateProjectionMatrix();
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 		renderer.setSize(w, h, false);
-		applyHeroAsteroidFocus();
 	}
 
 	function updateParticles() {
@@ -320,12 +361,6 @@
 				camera.position.y = 2 + Math.cos(autoAngle * 0.7) * 0.6;
 			}
 			camera.lookAt(0, 0, 0);
-
-			// Keep the homepage hero asteroid locked to the hero's right-side screen region
-			// after camera parallax/auto-rotate updates.
-			if (asteroids.length && asteroids[0].userData.heroFocus) {
-				applyHeroAsteroidFocus();
-			}
 		}
 
 		renderer.render(scene, camera);

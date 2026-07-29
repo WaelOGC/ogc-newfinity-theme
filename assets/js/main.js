@@ -1,11 +1,13 @@
 /**
  * OGC NewFinity — front-end scripts.
- * Mobile nav toggle + header scroll state. Space background lives in space-background.js.
+ * Mobile nav, header scroll state, back-to-top.
+ * Space background / brand cube live in dedicated scripts.
  */
 (function () {
 	'use strict';
 
 	var SCROLL_THRESHOLD = 20;
+	var BACK_TOP_THRESHOLD = 300;
 
 	function initMobileNav() {
 		var toggle = document.getElementById('ogc-nav-toggle');
@@ -74,9 +76,42 @@
 		window.addEventListener('scroll', onScroll, { passive: true });
 	}
 
+	function initBackToTop() {
+		var btn = document.getElementById('ogc-back-top');
+		if (!btn) {
+			return;
+		}
+
+		var reduceMotionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+		var ticking = false;
+
+		function update() {
+			ticking = false;
+			btn.classList.toggle('is-visible', window.scrollY > BACK_TOP_THRESHOLD);
+		}
+
+		function onScroll() {
+			if (!ticking) {
+				ticking = true;
+				window.requestAnimationFrame(update);
+			}
+		}
+
+		btn.addEventListener('click', function () {
+			window.scrollTo({
+				top: 0,
+				behavior: reduceMotionMq.matches ? 'auto' : 'smooth'
+			});
+		});
+
+		update();
+		window.addEventListener('scroll', onScroll, { passive: true });
+	}
+
 	function init() {
 		initMobileNav();
 		initHeaderScroll();
+		initBackToTop();
 	}
 
 	if (document.readyState === 'loading') {

@@ -7,15 +7,6 @@
  * @package OGC_NewFinity
  */
 
-// Flag for space-background.js — scale/place one asteroid in the hero right side.
-add_filter(
-	'body_class',
-	static function ( $classes ) {
-		$classes[] = 'ogc-has-hero-asteroid';
-		return $classes;
-	}
-);
-
 get_header();
 
 $services_url = home_url( '/services/' );
@@ -81,27 +72,32 @@ $trust = array(
 
 <article class="ogc-home">
 
-	<section class="ogc-home-hero" data-ogc-hero-focus="true" aria-labelledby="ogc-home-hero-heading">
-		<p class="ogc-badge"><?php esc_html_e( 'OGC NEWFINITY', 'ogc-newfinity' ); ?></p>
-		<h1 id="ogc-home-hero-heading" class="ogc-home-hero__title">
-			<?php esc_html_e( 'Empowering ideas. Engineering the', 'ogc-newfinity' ); ?>
-			<span class="hero-shimmer"><?php esc_html_e( 'future.', 'ogc-newfinity' ); ?></span>
-		</h1>
-		<p class="ogc-home-hero__lead">
-			<?php
-			esc_html_e(
-				'OGC NewFinity is a digital agency in The Hague, Netherlands, building AI-driven software, secure web platforms, and ethical technology strategy for ambitious teams.',
-				'ogc-newfinity'
-			);
-			?>
-		</p>
-		<div class="ogc-home-hero__actions">
-			<a class="ogc-btn" href="<?php echo esc_url( $submit_url ); ?>">
-				<?php esc_html_e( 'Submit Your Idea', 'ogc-newfinity' ); ?>
-			</a>
-			<a class="ogc-btn" href="<?php echo esc_url( $services_url ); ?>">
-				<?php esc_html_e( 'Our Services', 'ogc-newfinity' ); ?>
-			</a>
+	<section class="ogc-home-hero" aria-labelledby="ogc-home-hero-heading">
+		<div class="ogc-home-hero__copy">
+			<p class="ogc-badge"><?php esc_html_e( 'OGC NEWFINITY', 'ogc-newfinity' ); ?></p>
+			<h1 id="ogc-home-hero-heading" class="ogc-home-hero__title">
+				<?php esc_html_e( 'Empowering ideas. Engineering the', 'ogc-newfinity' ); ?>
+				<span class="hero-shimmer"><?php esc_html_e( 'future.', 'ogc-newfinity' ); ?></span>
+			</h1>
+			<p class="ogc-home-hero__lead">
+				<?php
+				esc_html_e(
+					'OGC NewFinity is a digital agency in The Hague, Netherlands, building AI-driven software, secure web platforms, and ethical technology strategy for ambitious teams.',
+					'ogc-newfinity'
+				);
+				?>
+			</p>
+			<div class="ogc-home-hero__actions">
+				<a class="ogc-btn" href="<?php echo esc_url( $submit_url ); ?>">
+					<?php esc_html_e( 'Submit Your Idea', 'ogc-newfinity' ); ?>
+				</a>
+				<a class="ogc-btn" href="<?php echo esc_url( $services_url ); ?>">
+					<?php esc_html_e( 'Our Services', 'ogc-newfinity' ); ?>
+				</a>
+			</div>
+		</div>
+		<div class="ogc-home-hero__visual">
+			<?php get_template_part( 'template-parts/hero', 'brand-cube' ); ?>
 		</div>
 	</section>
 
