@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** Theme version — bump when shipping asset cache-busts. */
-define( 'OGC_THEME_VERSION', '1.8.0' );
+define( 'OGC_THEME_VERSION', '1.9.0' );
 
 /** Absolute path to the theme root. */
 define( 'OGC_THEME_DIR', get_template_directory() );

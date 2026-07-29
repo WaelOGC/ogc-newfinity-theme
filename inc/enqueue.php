@@ -136,6 +136,16 @@ function ogc_enqueue_assets() {
 		);
 	}
 
+	if ( is_page( 'about-ogc-newfinity' ) ) {
+		wp_enqueue_script(
+			'ogc-orbit-atom',
+			OGC_THEME_URI . '/assets/js/orbit-atom.js',
+			array( 'ogc-three' ),
+			OGC_THEME_VERSION,
+			true
+		);
+	}
+
 	wp_enqueue_script(
 		'ogc-main',
 		OGC_THEME_URI . '/assets/js/main.js',
