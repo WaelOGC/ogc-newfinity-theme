@@ -146,6 +146,24 @@ function ogc_enqueue_assets() {
 		);
 	}
 
+	if ( is_page( 'our-mission' ) ) {
+		wp_enqueue_script(
+			'ogc-mission-compass',
+			OGC_THEME_URI . '/assets/js/mission-compass.js',
+			array( 'ogc-three' ),
+			OGC_THEME_VERSION,
+			true
+		);
+	}
+
+	wp_enqueue_script(
+		'ogc-orphan-control',
+		OGC_THEME_URI . '/assets/js/orphan-control.js',
+		array(),
+		OGC_THEME_VERSION,
+		true
+	);
+
 	wp_enqueue_script(
 		'ogc-main',
 		OGC_THEME_URI . '/assets/js/main.js',

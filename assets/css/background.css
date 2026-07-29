@@ -1,6 +1,7 @@
 /**
  * OGC NewFinity — Three.js space background shell.
  * Canvas is driven by assets/js/space-background.js.
+ * Nebula is a subtle atmospheric texture under the WebGL scene.
  */
 
 .ogc-bg-layer {
@@ -12,18 +13,10 @@
 	background-color: var(--ogc-bg);
 }
 
-.ogc-bg-layer__canvas {
-	position: absolute;
-	inset: 0;
-	display: block;
-	width: 100%;
-	height: 100%;
-}
-
 .ogc-bg-layer__fallback {
 	position: absolute;
 	inset: 0;
-	z-index: -1;
+	z-index: 0;
 	background:
 		radial-gradient(
 			ellipse 70% 55% at 50% 40%,
@@ -33,7 +26,29 @@
 		var(--ogc-bg);
 }
 
-/* Hide CSS fallback once WebGL has painted */
+/* Subtle nebula depth — under asteroids/particles, does not compete with UI */
+.ogc-bg-layer__nebula {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background-image: url('../images/backgrounds/space-nebula-depth.webp');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	opacity: 0.1;
+	pointer-events: none;
+}
+
+.ogc-bg-layer__canvas {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+/* Hide CSS fallback once WebGL has painted (nebula stays) */
 .ogc-bg-layer.is-ready .ogc-bg-layer__fallback {
 	opacity: 0;
 }

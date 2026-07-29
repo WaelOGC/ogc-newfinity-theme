@@ -136,6 +136,10 @@ function ogc_get_icon_svg( $name, $size = 24 ) {
 		'eye'       => '<svg ' . $attrs . '><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
 		'heart'     => '<svg ' . $attrs . '><path d="M12 20s-7-4.4-7-9.2A3.8 3.8 0 0112 7.5a3.8 3.8 0 017 3.3C19 15.6 12 20 12 20z"/></svg>',
 		'building'  => '<svg ' . $attrs . '><path d="M4 20V8l8-4 8 4v12"/><path d="M9 20v-5h6v5"/><path d="M9 10h.01M12 10h.01M15 10h.01M9 14h.01M12 14h.01M15 14h.01"/></svg>',
+		/* Mission practice cards */
+		'stop'      => '<svg ' . $attrs . '><path d="M4 5h16l-6.5 7.5V19l-3 1.5v-8L4 5z"/></svg>',
+		'lock'      => '<svg ' . $attrs . '><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/><circle cx="12" cy="16" r="1.25" fill="currentColor" stroke="none"/></svg>',
+		'layers'    => '<svg ' . $attrs . '><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 16l9 5 9-5"/></svg>',
 	);
 
 	return isset( $icons[ $name ] ) ? $icons[ $name ] : '';

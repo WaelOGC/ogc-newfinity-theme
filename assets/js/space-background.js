@@ -465,10 +465,11 @@
 		renderer = new THREE.WebGLRenderer({
 			canvas: canvas,
 			antialias: getTier() === 'desktop',
-			alpha: false,
+			alpha: true,
 			powerPreference: 'high-performance'
 		});
-		renderer.setClearColor(BG, 1);
+		/* Transparent clear so the CSS nebula layer shows through empty space only */
+		renderer.setClearColor(BG, 0);
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
 		scene = new THREE.Scene();
