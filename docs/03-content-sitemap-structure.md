@@ -78,11 +78,12 @@ Deposits are non-refundable once active work has started. Partial refunds are ca
 - Amy Agent on this URL: FAQ-first context for the future plugin — see docs/09-amy-agent-plugin-scope.md.
 
 ### Contact / Get in Touch
-- Hero: "Get in Touch"
+- Hero: "Get in Touch" — lead: The Hague + 48h response; visual: hero-envelope-send.
 - Quick-tag pills for services (must reflect final 6-service list, not old AI/Blockchain/Web only).
 - Contact form + "Send a Message" button.
 - Right column: 3 short cards describing each core capability area (content must be real, proofread copy — NOT the garbled/broken text seen on the old site).
 - Location: The Hague, Netherlands.
+- Implemented via page-contact.php + inc/contact-form.php + hero-envelope-send (manual form default; admin-post mail to contact@ogcnewfinity.com).
 
 ## Content Rules (non-negotiable, based on audit of old site)
 - No placeholder/demo template text anywhere.

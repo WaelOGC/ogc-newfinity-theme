@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** Bump this to re-seed menus/pages after structural sitemap changes. */
-define( 'OGC_CONTENT_SEED_VERSION', '1.5.0' );
+define( 'OGC_CONTENT_SEED_VERSION', '1.6.0' );
 
 /**
  * Ensure a published page exists for the given slug.
@@ -42,7 +42,7 @@ function ogc_ensure_page( $title, $slug, $content ) {
 	}
 
 	// Pages whose markup lives in PHP templates — clear leftover editor placeholders.
-	$template_driven = array( 'home', 'about-ogc-newfinity', 'services', 'our-mission', 'support', 'blog' );
+	$template_driven = array( 'home', 'about-ogc-newfinity', 'services', 'our-mission', 'support', 'contact', 'blog' );
 
 	if ( $existing instanceof WP_Post ) {
 		$update = array( 'ID' => (int) $existing->ID );
@@ -109,7 +109,7 @@ function ogc_seed_content() {
 		'submit-idea'          => array( 'Submit Your Idea', $coming_soon ),
 		'blog'                 => array( 'Blog & Insights', '' ),
 		'support'              => array( 'Help & Support', '' ),
-		'contact'              => array( 'Contact', $coming_soon ),
+		'contact'              => array( 'Contact', '' ),
 		'privacy-policy'       => array( 'Privacy Policy', $placeholder ),
 		'terms-and-conditions' => array( 'Terms and Conditions', $placeholder ),
 		'cookie-policy'        => array( 'Cookie Policy', $placeholder ),
