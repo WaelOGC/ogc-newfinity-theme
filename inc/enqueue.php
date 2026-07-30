@@ -70,7 +70,7 @@ function ogc_enqueue_assets() {
 	);
 
 	$needs_home_chrome = is_front_page()
-		|| is_page( array( 'about-ogc-newfinity', 'services', 'our-mission' ) )
+		|| is_page( array( 'about-ogc-newfinity', 'services', 'our-mission', 'support' ) )
 		|| ogc_is_blog_surface();
 
 	if ( $needs_home_chrome ) {
@@ -82,11 +82,20 @@ function ogc_enqueue_assets() {
 		);
 	}
 
-	if ( is_page( array( 'about-ogc-newfinity', 'services', 'our-mission' ) ) || ogc_is_blog_surface() ) {
+	if ( is_page( array( 'about-ogc-newfinity', 'services', 'our-mission', 'support' ) ) || ogc_is_blog_surface() ) {
 		wp_enqueue_style(
 			'ogc-pages',
 			OGC_THEME_URI . '/assets/css/pages.css',
 			array( 'ogc-home', 'ogc-glass' ),
+			OGC_THEME_VERSION
+		);
+	}
+
+	if ( is_page( 'support' ) ) {
+		wp_enqueue_style(
+			'ogc-support',
+			OGC_THEME_URI . '/assets/css/support.css',
+			array( 'ogc-main', 'ogc-pages' ),
 			OGC_THEME_VERSION
 		);
 	}
@@ -142,6 +151,23 @@ function ogc_enqueue_assets() {
 			'ogc-orbit-emblem',
 			OGC_THEME_URI . '/assets/js/orbit-emblem.js',
 			array( 'ogc-three' ),
+			OGC_THEME_VERSION,
+			true
+		);
+	}
+
+	if ( is_page( 'support' ) ) {
+		wp_enqueue_script(
+			'ogc-support-network',
+			OGC_THEME_URI . '/assets/js/support-network.js',
+			array(),
+			OGC_THEME_VERSION,
+			true
+		);
+		wp_enqueue_script(
+			'ogc-faq-filter',
+			OGC_THEME_URI . '/assets/js/faq-filter.js',
+			array(),
 			OGC_THEME_VERSION,
 			true
 		);

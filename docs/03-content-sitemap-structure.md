@@ -63,6 +63,7 @@ Deposits are non-refundable once active work has started. Partial refunds are ca
 - Form fields: Project Title, Category (dropdown — matches service list), Description (textarea), Submit button.
 - Side panel: 3 trust cards — Expert Review, Confidential, Fast Kickoff.
 - Footer meta: "The Hague, Netherlands - Free & Confidential"
+- The manual form is the default theme state and will be fully replaced (not supplemented) by Amy Agent once the plugin ships — see docs/09-amy-agent-plugin-scope.md.
 
 ### Blog & Insights
 - Hero: "Blog & Insights"
@@ -70,10 +71,11 @@ Deposits are non-refundable once active work has started. Partial refunds are ca
 - Standard WP blog loop below hero (latest posts).
 
 ### Help & Support
-- Hero: "Help & Support"
-- Categories: General, Technical Support, Collaboration.
-- FAQ browsing section + guaranteed 48h response note.
-- Contact email: contact@ogcnewfinity.com
+- Hero: "Help & Support" — lead: Browse FAQs · 48h Response Guaranteed; visual: hero-orbit-atom.
+- Categories: General, Technical Support, Collaboration (3 cards + matching FAQ accordion sections).
+- Client-side FAQ search + guaranteed 48h response note.
+- Closing CTA → Get in Touch (/contact/) + contact@ogcnewfinity.com (support questions, not Submit Your Idea).
+- Amy Agent on this URL: FAQ-first context for the future plugin — see docs/09-amy-agent-plugin-scope.md.
 
 ### Contact / Get in Touch
 - Hero: "Get in Touch"

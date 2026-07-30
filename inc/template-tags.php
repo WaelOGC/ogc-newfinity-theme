@@ -288,3 +288,22 @@ function ogc_nav_menu_item_title( $title, $item, $args, $depth ) {
 	return $chip . '<span class="ogc-nav__label">' . esc_html( wp_strip_all_tags( $title ) ) . '</span>';
 }
 add_filter( 'nav_menu_item_title', 'ogc_nav_menu_item_title', 10, 4 );
+
+/**
+ * Whether the future Amy Agent plugin is active and owning Submit Your Idea UI.
+ *
+ * Theme default: false (manual form). The Amy Agent plugin may override this
+ * (e.g. via a later redefinition or filter) so it returns true. See
+ * docs/09-amy-agent-plugin-scope.md.
+ *
+ * @return bool
+ */
+function ogc_amy_agent_is_active() {
+	/**
+	 * Filter whether Amy Agent should replace the Submit Your Idea manual form.
+	 *
+	 * @param bool $active Default false in the theme.
+	 */
+	return (bool) apply_filters( 'ogc_amy_agent_is_active', false );
+}
+
