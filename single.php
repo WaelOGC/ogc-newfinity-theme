@@ -43,6 +43,24 @@ $submit_url = home_url( '/submit-idea/' );
 						<?php the_title( '<h1 class="ogc-single-cover__title">', '</h1>' ); ?>
 
 						<p class="ogc-single-cover__meta">
+							<?php
+							$author = get_post_meta( get_the_ID(), '_ogc_article_author', true );
+							if ( ! $author ) {
+								$author = get_the_author();
+							}
+							?>
+							<?php if ( $author ) : ?>
+								<span class="ogc-single-cover__author">
+									<?php
+									printf(
+										/* translators: %s: author display name */
+										esc_html__( 'By %s', 'ogc-newfinity' ),
+										esc_html( $author )
+									);
+									?>
+								</span>
+								<span class="ogc-single-cover__sep" aria-hidden="true">·</span>
+							<?php endif; ?>
 							<time datetime="<?php echo esc_attr( get_the_date( DATE_W3C ) ); ?>">
 								<?php echo esc_html( get_the_date() ); ?>
 							</time>

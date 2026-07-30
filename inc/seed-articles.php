@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** Bump to re-seed / update seeded articles. */
-define( 'OGC_ARTICLES_SEED_VERSION', '1.2.0' );
+define( 'OGC_ARTICLES_SEED_VERSION', '1.2.2' );
 
 /**
  * Convert article markdown (subset) into post HTML.
@@ -165,8 +165,13 @@ function ogc_article_inline( $text ) {
  * @return string
  */
 function ogc_article_svg_diagram_html( $lines ) {
+	// Flatten to one line so wpautop cannot inject <p>/<br> into the SVG markup.
+	$svg_flat = implode( ' ', array_map( 'trim', $lines ) );
+	$svg_flat = preg_replace( '/\s+/', ' ', $svg_flat );
+	$svg_flat = trim( (string) $svg_flat );
+
 	$out  = '<figure class="ogc-article-figure ogc-article-figure--diagram">';
-	$out .= '<div class="ogc-article-figure__diagram">' . implode( "\n", $lines ) . '</div>';
+	$out .= '<div class="ogc-article-figure__diagram">' . $svg_flat . '</div>';
 	$out .= '</figure>';
 	return $out;
 }
@@ -312,6 +317,7 @@ function ogc_seed_article_definitions() {
 			'excerpt'  => 'A technical blueprint for scalable full-stack platforms — concurrency runtimes, PostgreSQL pooling and Redis caching, Dockerized environment parity, and enterprise architecture benchmarks.',
 			'source'   => 'inc/seed-content/article-fullstack-architecture.md',
 			'seed_key' => 'article-fullstack-architecture',
+			'author'   => 'Wael Safan',
 		),
 	);
 }
@@ -371,6 +377,13 @@ function ogc_seed_blog_articles() {
 
 	ogc_ensure_blog_categories();
 
+	// Front-end init often has no unfiltered_html — without this, wp_kses strips <svg>.
+	$kses_removed = false;
+	if ( function_exists( 'kses_remove_filters' ) ) {
+		kses_remove_filters();
+		$kses_removed = true;
+	}
+
 	foreach ( ogc_seed_article_definitions() as $article ) {
 		$path = OGC_THEME_DIR . '/' . ltrim( $article['source'], '/' );
 		if ( ! is_readable( $path ) ) {
@@ -410,10 +423,18 @@ function ogc_seed_blog_articles() {
 			update_post_meta( (int) $post_id, '_ogc_seed_key', $article['seed_key'] );
 		}
 
+		if ( ! empty( $article['author'] ) ) {
+			update_post_meta( (int) $post_id, '_ogc_article_author', $article['author'] );
+		}
+
 		$term = get_term_by( 'slug', $article['category'], 'category' );
 		if ( $term && ! is_wp_error( $term ) ) {
 			wp_set_object_terms( (int) $post_id, array( (int) $term->term_id ), 'category' );
 		}
+	}
+
+	if ( $kses_removed && function_exists( 'kses_init_filters' ) ) {
+		kses_init_filters();
 	}
 
 	update_option( 'ogc_articles_seed_version', OGC_ARTICLES_SEED_VERSION );
