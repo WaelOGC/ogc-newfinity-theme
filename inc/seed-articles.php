@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** Bump to re-seed / update seeded articles. */
-define( 'OGC_ARTICLES_SEED_VERSION', '1.1.2' );
+define( 'OGC_ARTICLES_SEED_VERSION', '1.2.0' );
 
 /**
  * Convert article markdown (subset) into post HTML.
@@ -51,16 +51,22 @@ function ogc_article_markdown_to_html( $markdown ) {
 			continue;
 		}
 
-		// Fenced placeholder / code block.
-		if ( preg_match( '/^```/', $line ) ) {
-			$block = array();
+		// Fenced blocks (svg-diagram or placeholder/callout).
+		if ( preg_match( '/^```(\S*)/', $line, $fence_m ) ) {
+			$fence  = isset( $fence_m[1] ) ? $fence_m[1] : '';
+			$block  = array();
 			++$i;
 			while ( $i < $count && ! preg_match( '/^```/', $lines[ $i ] ) ) {
 				$block[] = $lines[ $i ];
 				++$i;
 			}
 			++$i; // closing fence
-			$html[] = ogc_article_placeholder_html( $block );
+
+			if ( 'svg-diagram' === $fence ) {
+				$html[] = ogc_article_svg_diagram_html( $block );
+			} else {
+				$html[] = ogc_article_placeholder_html( $block );
+			}
 			continue;
 		}
 
@@ -77,9 +83,9 @@ function ogc_article_markdown_to_html( $markdown ) {
 
 		// Headings.
 		if ( preg_match( '/^(#{2,4})\s+(.+)$/', $line, $m ) ) {
-			$level   = strlen( $m[1] );
-			$text    = ogc_article_inline( $m[2] );
-			$html[]  = sprintf( '<h%1$d>%2$s</h%1$d>', $level, $text );
+			$level  = strlen( $m[1] );
+			$text   = ogc_article_inline( $m[2] );
+			$html[] = sprintf( '<h%1$d>%2$s</h%1$d>', $level, $text );
 			++$i;
 			continue;
 		}
@@ -124,23 +130,49 @@ function ogc_article_markdown_to_html( $markdown ) {
 }
 
 /**
- * Inline markdown: bold + code.
+ * Inline markdown: links, bold, code.
  *
  * @param string $text Text.
  * @return string
  */
 function ogc_article_inline( $text ) {
+	$links = array();
+	$text  = preg_replace_callback(
+		'/\[([^\]]+)\]\(([^)]+)\)/',
+		function ( $m ) use ( &$links ) {
+			$key           = '%%OGC_LINK_' . count( $links ) . '%%';
+			$links[ $key ] = '<a href="' . esc_url( $m[2] ) . '" target="_blank" rel="noopener">' . esc_html( $m[1] ) . '</a>';
+			return $key;
+		},
+		(string) $text
+	);
+
 	$text = esc_html( $text );
 	$text = preg_replace( '/\*\*(.+?)\*\*/', '<strong>$1</strong>', $text );
 	$text = preg_replace( '/`([^`]+)`/', '<code>$1</code>', $text );
+
+	if ( ! empty( $links ) ) {
+		$text = str_replace( array_keys( $links ), array_values( $links ), $text );
+	}
+
 	return $text;
 }
 
 /**
- * Visual placeholder / callout from fenced block lines.
+ * Trusted SVG diagram fence → figure HTML (not escaped).
  *
- * Diagram placeholders become figure slots.
- * Named callouts (Best Practice, Warning, etc.) become styled aside boxes.
+ * @param array $lines SVG source lines.
+ * @return string
+ */
+function ogc_article_svg_diagram_html( $lines ) {
+	$out  = '<figure class="ogc-article-figure ogc-article-figure--diagram">';
+	$out .= '<div class="ogc-article-figure__diagram">' . implode( "\n", $lines ) . '</div>';
+	$out .= '</figure>';
+	return $out;
+}
+
+/**
+ * Visual placeholder / callout from fenced block lines.
  *
  * @param array $lines Block lines.
  * @return string
@@ -162,7 +194,6 @@ function ogc_article_placeholder_html( $lines ) {
 			continue;
 		}
 		if ( preg_match( '/^\[(.+)\]$/', $trim, $m ) ) {
-			// Only treat bare labels (e.g. [Architecture Diagram]) as the type — not flow nodes.
 			if ( '' === $type && false === strpos( $m[1], '→' ) && false === strpos( $m[1], '->' ) && strlen( $m[1] ) < 64 ) {
 				$type = $m[1];
 				continue;
@@ -241,8 +272,8 @@ function ogc_article_table_html( $lines ) {
 		if ( preg_match( '/^\|?\s*-+/', $line ) ) {
 			continue;
 		}
-		$line  = trim( $line, '|' );
-		$cells = array_map( 'trim', explode( '|', $line ) );
+		$line   = trim( $line, '|' );
+		$cells  = array_map( 'trim', explode( '|', $line ) );
 		$rows[] = $cells;
 	}
 
@@ -275,13 +306,58 @@ function ogc_article_table_html( $lines ) {
 function ogc_seed_article_definitions() {
 	return array(
 		array(
-			'title'    => 'Engineering High-Performance Full-Stack Architectures: A Blueprint for Scalable Web Platforms',
-			'slug'     => 'engineering-high-performance-full-stack-architectures',
+			'title'    => 'Building Scalable Full-Stack Architectures',
+			'slug'     => 'building-scalable-fullstack-architectures',
 			'category' => 'build-development',
 			'excerpt'  => 'A technical blueprint for scalable full-stack platforms — concurrency runtimes, PostgreSQL pooling and Redis caching, Dockerized environment parity, and enterprise architecture benchmarks.',
-			'source'   => 'docs/article-high-performance-fullstack-architectures.md',
+			'source'   => 'inc/seed-content/article-fullstack-architecture.md',
+			'seed_key' => 'article-fullstack-architecture',
 		),
 	);
+}
+
+/**
+ * Find an existing seeded post by permanent seed key (with legacy slug fallback).
+ *
+ * @param array $article Article definition.
+ * @return int Post ID or 0.
+ */
+function ogc_find_seeded_article_id( $article ) {
+	$seed_key = isset( $article['seed_key'] ) ? (string) $article['seed_key'] : '';
+	if ( $seed_key ) {
+		$query = new WP_Query(
+			array(
+				'post_type'              => 'post',
+				'post_status'            => 'any',
+				'meta_key'               => '_ogc_seed_key',
+				'meta_value'             => $seed_key,
+				'posts_per_page'         => 1,
+				'fields'                 => 'ids',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+		if ( ! empty( $query->posts[0] ) ) {
+			return (int) $query->posts[0];
+		}
+	}
+
+	// One-time migration: locate pre-seed-key posts by current or legacy slug.
+	$slugs = array_filter(
+		array(
+			isset( $article['slug'] ) ? $article['slug'] : '',
+			'engineering-high-performance-full-stack-architectures',
+		)
+	);
+	foreach ( array_unique( $slugs ) as $slug ) {
+		$existing = get_page_by_path( $slug, OBJECT, 'post' );
+		if ( $existing instanceof WP_Post ) {
+			return (int) $existing->ID;
+		}
+	}
+
+	return 0;
 }
 
 /**
@@ -306,8 +382,8 @@ function ogc_seed_blog_articles() {
 			continue;
 		}
 
-		$content = ogc_article_markdown_to_html( $markdown );
-		$existing = get_page_by_path( $article['slug'], OBJECT, 'post' );
+		$content     = ogc_article_markdown_to_html( $markdown );
+		$existing_id = ogc_find_seeded_article_id( $article );
 
 		$postarr = array(
 			'post_title'   => $article['title'],
@@ -319,8 +395,8 @@ function ogc_seed_blog_articles() {
 			'post_author'  => 1,
 		);
 
-		if ( $existing instanceof WP_Post ) {
-			$postarr['ID'] = (int) $existing->ID;
+		if ( $existing_id > 0 ) {
+			$postarr['ID'] = $existing_id;
 			$post_id       = wp_update_post( $postarr, true );
 		} else {
 			$post_id = wp_insert_post( $postarr, true );
@@ -328,6 +404,10 @@ function ogc_seed_blog_articles() {
 
 		if ( is_wp_error( $post_id ) || ! $post_id ) {
 			continue;
+		}
+
+		if ( ! empty( $article['seed_key'] ) ) {
+			update_post_meta( (int) $post_id, '_ogc_seed_key', $article['seed_key'] );
 		}
 
 		$term = get_term_by( 'slug', $article['category'], 'category' );

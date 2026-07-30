@@ -1491,6 +1491,79 @@
 	opacity: 0.8;
 }
 
+.ogc-article-figure--diagram .ogc-article-figure__diagram {
+	width: 100%;
+	overflow: hidden;
+	border-radius: 12px;
+	padding: 1rem 0.75rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.03);
+}
+
+.ogc-article-figure__diagram {
+	width: 100%;
+	overflow: hidden;
+	border-radius: 12px;
+}
+
+.ogc-article-figure__diagram svg {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
+.ogc-article-figure__diagram svg .box rect,
+.ogc-article-figure__diagram svg .node rect,
+.ogc-article-figure__diagram svg .c-blue rect,
+.ogc-article-figure__diagram svg .c-teal rect {
+	fill: rgba(255, 255, 255, 0.04);
+	stroke: rgba(255, 255, 255, 0.22);
+}
+
+.ogc-article-figure__diagram svg .c-blue rect {
+	fill: rgba(100, 181, 246, 0.12);
+	stroke: rgba(100, 181, 246, 0.55);
+}
+
+.ogc-article-figure__diagram svg .c-teal rect {
+	fill: rgba(77, 182, 172, 0.12);
+	stroke: rgba(77, 182, 172, 0.55);
+}
+
+.ogc-article-figure__diagram svg .th {
+	fill: var(--ogc-text-primary, #f5f5f5);
+	font-size: 14px;
+	font-weight: 600;
+	font-family: var(--ogc-font-heading, system-ui, sans-serif);
+}
+
+.ogc-article-figure__diagram svg .ts {
+	fill: var(--ogc-text-muted, #b0b0b0);
+	font-size: 12px;
+	font-family: var(--ogc-font-body, system-ui, sans-serif);
+}
+
+.ogc-article-figure__diagram svg .arr {
+	stroke: rgba(255, 255, 255, 0.45);
+	stroke-width: 1.5;
+	fill: none;
+}
+
+.ogc-article-figure__diagram svg marker path {
+	stroke: rgba(255, 255, 255, 0.55);
+}
+
+.ogc-single-content a {
+	color: #f0b35a;
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+.ogc-single-content a:hover,
+.ogc-single-content a:focus-visible {
+	color: #f6c37a;
+}
+
 /* Inline callouts */
 .ogc-article-callout {
 	margin: 1.5rem 0;
