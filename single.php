@@ -19,44 +19,62 @@ $submit_url = home_url( '/submit-idea/' );
 
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'ogc-page ogc-page--single-post' ); ?>>
 
-		<header class="ogc-single-header">
-			<?php if ( $category ) : ?>
-				<p class="ogc-badge ogc-single-header__badge"><?php echo esc_html( $category->name ); ?></p>
-			<?php endif; ?>
+		<div class="ogc-blog-layout">
+			<div class="ogc-blog-layout__main">
 
-			<?php the_title( '<h1 class="ogc-single-header__title">', '</h1>' ); ?>
+				<figure class="ogc-single-cover glass-card">
+					<div class="ogc-single-cover__media">
+						<?php
+						ogc_the_post_cover(
+							array(
+								'class'   => 'ogc-single-cover__img',
+								'size'    => 'large',
+								'loading' => 'eager',
+							)
+						);
+						?>
+						<span class="ogc-single-cover__scrim" aria-hidden="true"></span>
+					</div>
+					<figcaption class="ogc-single-cover__overlay">
+						<?php if ( $category ) : ?>
+							<p class="ogc-badge ogc-single-cover__badge"><?php echo esc_html( $category->name ); ?></p>
+						<?php endif; ?>
 
-			<p class="ogc-single-header__meta">
-				<time datetime="<?php echo esc_attr( get_the_date( DATE_W3C ) ); ?>">
-					<?php echo esc_html( get_the_date() ); ?>
-				</time>
-				<span class="ogc-single-header__sep" aria-hidden="true">·</span>
-				<span class="ogc-single-header__reading">
-					<?php
-					printf(
-						/* translators: %d: estimated reading time in minutes */
-						esc_html( _n( '%d min read', '%d min read', $reading_mins, 'ogc-newfinity' ) ),
-						(int) $reading_mins
-					);
-					?>
-				</span>
-			</p>
-		</header>
+						<?php the_title( '<h1 class="ogc-single-cover__title">', '</h1>' ); ?>
 
-		<figure class="ogc-single-cover glass-card">
-			<?php
-			ogc_the_post_cover(
-				array(
-					'class'   => 'ogc-single-cover__img',
-					'size'    => 'large',
-					'loading' => 'eager',
-				)
-			);
-			?>
-		</figure>
+						<p class="ogc-single-cover__meta">
+							<time datetime="<?php echo esc_attr( get_the_date( DATE_W3C ) ); ?>">
+								<?php echo esc_html( get_the_date() ); ?>
+							</time>
+							<span class="ogc-single-cover__sep" aria-hidden="true">·</span>
+							<span class="ogc-single-cover__reading">
+								<?php
+								printf(
+									/* translators: %d: estimated reading time in minutes */
+									esc_html( _n( '%d min read', '%d min read', $reading_mins, 'ogc-newfinity' ) ),
+									(int) $reading_mins
+								);
+								?>
+							</span>
+						</p>
+					</figcaption>
+				</figure>
 
-		<div class="ogc-single-content ogc-entry__content">
-			<?php the_content(); ?>
+				<?php get_template_part( 'template-parts/blog', 'engage' ); ?>
+
+				<div class="ogc-single-content ogc-entry__content">
+					<?php the_content(); ?>
+				</div>
+
+				<?php
+				if ( comments_open() || get_comments_number() ) {
+					comments_template();
+				}
+				?>
+
+			</div>
+
+			<?php get_template_part( 'template-parts/blog', 'sidebar' ); ?>
 		</div>
 
 		<?php

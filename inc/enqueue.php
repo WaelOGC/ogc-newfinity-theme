@@ -193,6 +193,28 @@ function ogc_enqueue_assets() {
 		);
 	}
 
+	if ( is_singular( 'post' ) ) {
+		wp_enqueue_script(
+			'ogc-blog-engage',
+			OGC_THEME_URI . '/assets/js/blog-engage.js',
+			array(),
+			OGC_THEME_VERSION,
+			true
+		);
+		wp_localize_script(
+			'ogc-blog-engage',
+			'ogcBlogEngage',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'ogc_blog_like' ),
+				'i18n'    => array(
+					'liked'      => __( 'Liked', 'ogc-newfinity' ),
+					'likedLabel' => __( 'Liked', 'ogc-newfinity' ),
+				),
+			)
+		);
+	}
+
 	wp_enqueue_script(
 		'ogc-main',
 		OGC_THEME_URI . '/assets/js/main.js',

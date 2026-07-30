@@ -40,49 +40,57 @@ if ( isset( $_GET['category'] ) ) { // phpcs:ignore WordPress.Security.NonceVeri
 		</p>
 	</section>
 
-	<section class="ogc-blog-listing" aria-labelledby="ogc-blog-listing-heading">
-		<h2 id="ogc-blog-listing-heading" class="screen-reader-text">
-			<?php esc_html_e( 'Articles', 'ogc-newfinity' ); ?>
-		</h2>
+	<div class="ogc-blog-layout">
+		<div class="ogc-blog-layout__main">
 
-		<div
-			class="ogc-blog-filters"
-			role="group"
-			aria-label="<?php esc_attr_e( 'Filter articles by category', 'ogc-newfinity' ); ?>"
-		>
-			<button
-				type="button"
-				class="ogc-btn ogc-btn--sm ogc-blog-filter<?php echo '' === $active_category ? ' is-active' : ''; ?>"
-				data-category="all"
-				aria-pressed="<?php echo '' === $active_category ? 'true' : 'false'; ?>"
-			>
-				<?php esc_html_e( 'All', 'ogc-newfinity' ); ?>
-			</button>
-			<?php foreach ( $categories as $cat ) : ?>
-				<?php $is_active = ( $active_category === $cat['slug'] ); ?>
-				<button
-					type="button"
-					class="ogc-btn ogc-btn--sm ogc-blog-filter<?php echo $is_active ? ' is-active' : ''; ?>"
-					data-category="<?php echo esc_attr( $cat['slug'] ); ?>"
-					aria-pressed="<?php echo $is_active ? 'true' : 'false'; ?>"
+			<section class="ogc-blog-listing" aria-labelledby="ogc-blog-listing-heading">
+				<h2 id="ogc-blog-listing-heading" class="screen-reader-text">
+					<?php esc_html_e( 'Articles', 'ogc-newfinity' ); ?>
+				</h2>
+
+				<div
+					class="ogc-blog-filters"
+					role="group"
+					aria-label="<?php esc_attr_e( 'Filter articles by category', 'ogc-newfinity' ); ?>"
 				>
-					<?php echo esc_html( $cat['name'] ); ?>
-				</button>
-			<?php endforeach; ?>
+					<button
+						type="button"
+						class="ogc-btn ogc-btn--sm ogc-blog-filter<?php echo '' === $active_category ? ' is-active' : ''; ?>"
+						data-category="all"
+						aria-pressed="<?php echo '' === $active_category ? 'true' : 'false'; ?>"
+					>
+						<?php esc_html_e( 'All', 'ogc-newfinity' ); ?>
+					</button>
+					<?php foreach ( $categories as $cat ) : ?>
+						<?php $is_active = ( $active_category === $cat['slug'] ); ?>
+						<button
+							type="button"
+							class="ogc-btn ogc-btn--sm ogc-blog-filter<?php echo $is_active ? ' is-active' : ''; ?>"
+							data-category="<?php echo esc_attr( $cat['slug'] ); ?>"
+							aria-pressed="<?php echo $is_active ? 'true' : 'false'; ?>"
+						>
+							<?php echo esc_html( $cat['name'] ); ?>
+						</button>
+					<?php endforeach; ?>
+				</div>
+
+				<div
+					id="ogc-blog-grid-wrap"
+					class="ogc-blog-grid-wrap"
+					aria-live="polite"
+					aria-busy="false"
+				>
+					<?php
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup built via escaped template parts.
+					echo ogc_render_blog_grid( $active_category );
+					?>
+				</div>
+			</section>
+
 		</div>
 
-		<div
-			id="ogc-blog-grid-wrap"
-			class="ogc-blog-grid-wrap"
-			aria-live="polite"
-			aria-busy="false"
-		>
-			<?php
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup built via escaped template parts.
-			echo ogc_render_blog_grid( $active_category );
-			?>
-		</div>
-	</section>
+		<?php get_template_part( 'template-parts/blog', 'sidebar' ); ?>
+	</div>
 
 	<section class="ogc-home-cta" aria-labelledby="ogc-blog-cta-heading">
 		<div class="glass-card ogc-home-cta__inner">

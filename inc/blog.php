@@ -280,3 +280,319 @@ function ogc_ajax_filter_blog_posts() {
 }
 add_action( 'wp_ajax_ogc_filter_blog_posts', 'ogc_ajax_filter_blog_posts' );
 add_action( 'wp_ajax_nopriv_ogc_filter_blog_posts', 'ogc_ajax_filter_blog_posts' );
+
+/* --------------------------------------------------------------------------
+   Likes
+   -------------------------------------------------------------------------- */
+
+/**
+ * Cookie name for a liked post.
+ *
+ * @param int $post_id Post ID.
+ * @return string
+ */
+function ogc_like_cookie_name( $post_id ) {
+	return 'ogc_liked_' . (int) $post_id;
+}
+
+/**
+ * Get stored like count for a post.
+ *
+ * @param int $post_id Post ID.
+ * @return int
+ */
+function ogc_get_like_count( $post_id ) {
+	return max( 0, (int) get_post_meta( (int) $post_id, '_ogc_like_count', true ) );
+}
+
+/**
+ * Whether the current visitor already liked this post (cookie check).
+ *
+ * @param int $post_id Post ID.
+ * @return bool
+ */
+function ogc_visitor_has_liked( $post_id ) {
+	$cookie = ogc_like_cookie_name( $post_id );
+	return ! empty( $_COOKIE[ $cookie ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+}
+
+/**
+ * AJAX: increment post like count once per visitor cookie.
+ */
+function ogc_ajax_like_post() {
+	check_ajax_referer( 'ogc_blog_like', 'nonce' );
+
+	$post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+	if ( ! $post_id || 'post' !== get_post_type( $post_id ) || 'publish' !== get_post_status( $post_id ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid post.', 'ogc-newfinity' ) ), 400 );
+	}
+
+	if ( ogc_visitor_has_liked( $post_id ) ) {
+		wp_send_json_success(
+			array(
+				'count'  => ogc_get_like_count( $post_id ),
+				'liked'  => true,
+				'already'=> true,
+			)
+		);
+	}
+
+	$count = ogc_get_like_count( $post_id ) + 1;
+	update_post_meta( $post_id, '_ogc_like_count', $count );
+
+	$cookie = ogc_like_cookie_name( $post_id );
+	$expire = time() + YEAR_IN_SECONDS;
+	$path   = defined( 'COOKIEPATH' ) && COOKIEPATH ? COOKIEPATH : '/';
+	$domain = defined( 'COOKIE_DOMAIN' ) ? COOKIE_DOMAIN : '';
+	setcookie( $cookie, '1', $expire, $path, $domain, is_ssl(), true );
+	$_COOKIE[ $cookie ] = '1';
+
+	wp_send_json_success(
+		array(
+			'count' => $count,
+			'liked' => true,
+		)
+	);
+}
+add_action( 'wp_ajax_ogc_like_post', 'ogc_ajax_like_post' );
+add_action( 'wp_ajax_nopriv_ogc_like_post', 'ogc_ajax_like_post' );
+
+/* --------------------------------------------------------------------------
+   In-content mobile ad slots
+   -------------------------------------------------------------------------- */
+
+/**
+ * Insert 3 mobile-only ad placeholders through single-post content (~25/50/75%).
+ *
+ * @param string $content Post content HTML.
+ * @return string
+ */
+function ogc_insert_mobile_ad_slots( $content ) {
+	if ( is_admin() || ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+
+	if ( false === stripos( $content, '</p>' ) ) {
+		return $content;
+	}
+
+	$parts = preg_split( '/(<\/p>)/i', $content, -1, PREG_SPLIT_DELIM_CAPTURE );
+	if ( ! is_array( $parts ) || count( $parts ) < 2 ) {
+		return $content;
+	}
+
+	$p_indices = array();
+	foreach ( $parts as $i => $chunk ) {
+		if ( preg_match( '/^<\/p>$/i', $chunk ) ) {
+			$p_indices[] = $i;
+		}
+	}
+
+	$p_count = count( $p_indices );
+	if ( $p_count < 1 ) {
+		return $content;
+	}
+
+	if ( 1 === $p_count ) {
+		$targets = array( 0 );
+	} elseif ( 2 === $p_count ) {
+		$targets = array( 0, 1 );
+	} elseif ( 3 === $p_count ) {
+		$targets = array( 0, 1, 2 );
+	} else {
+		$targets = array_unique(
+			array(
+				max( 0, (int) floor( $p_count * 0.25 ) - 1 ),
+				max( 0, (int) floor( $p_count * 0.50 ) - 1 ),
+				max( 0, (int) floor( $p_count * 0.75 ) - 1 ),
+			)
+		);
+		sort( $targets );
+	}
+
+	ob_start();
+	get_template_part(
+		'template-parts/ad',
+		'slot',
+		array( 'variant' => 'inline' )
+	);
+	$slot = (string) ob_get_clean();
+
+	$insert_after = array();
+	foreach ( $targets as $ti ) {
+		if ( isset( $p_indices[ $ti ] ) ) {
+			$insert_after[ $p_indices[ $ti ] ] = true;
+		}
+	}
+
+	$out = '';
+	foreach ( $parts as $i => $chunk ) {
+		$out .= $chunk;
+		if ( isset( $insert_after[ $i ] ) ) {
+			$out .= $slot;
+		}
+	}
+
+	return $out;
+}
+add_filter( 'the_content', 'ogc_insert_mobile_ad_slots', 12 );
+
+/* --------------------------------------------------------------------------
+   Comments — moderation, pagination, link blocking, list markup
+   -------------------------------------------------------------------------- */
+
+/**
+ * Ensure comment moderation + 4-per-page pagination on theme load.
+ */
+function ogc_configure_blog_comments() {
+	$flag = '1.0.0';
+	if ( get_option( 'ogc_blog_comments_configured' ) === $flag ) {
+		return;
+	}
+
+	update_option( 'comment_moderation', '1' );
+	update_option( 'moderation_notify', '1' );
+	update_option( 'page_comments', 1 );
+	update_option( 'comments_per_page', 4 );
+	update_option( 'default_comments_page', 'newest' );
+	update_option( 'comment_order', 'asc' );
+	update_option( 'require_name_email', 0 ); // Name optional; we still require email via form HTML5.
+	update_option( 'ogc_blog_comments_configured', $flag );
+}
+add_action( 'after_setup_theme', 'ogc_configure_blog_comments', 30 );
+add_action( 'after_switch_theme', 'ogc_configure_blog_comments' );
+
+/**
+ * Whether comment text contains a URL-like pattern.
+ *
+ * @param string $text Comment content.
+ * @return bool
+ */
+function ogc_comment_contains_url( $text ) {
+	$text = (string) $text;
+	if ( preg_match( '#https?://#i', $text ) ) {
+		return true;
+	}
+	if ( preg_match( '#www\.#i', $text ) ) {
+		return true;
+	}
+	if ( preg_match( '#\b[a-z0-9][a-z0-9.-]*\.(com|net|org|io|co|nl|dev|app|info|biz|me|xyz)\b#i', $text ) ) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Reject comments that include links before they reach moderation.
+ *
+ * @param array $commentdata Comment data.
+ * @return array
+ */
+function ogc_block_comment_links( $commentdata ) {
+	if ( empty( $commentdata['comment_content'] ) ) {
+		return $commentdata;
+	}
+
+	if ( ogc_comment_contains_url( $commentdata['comment_content'] ) ) {
+		wp_die(
+			esc_html__( "Comments can't contain links — please remove any URLs and try again.", 'ogc-newfinity' ),
+			esc_html__( 'Comment blocked', 'ogc-newfinity' ),
+			array(
+				'response'  => 400,
+				'back_link' => true,
+			)
+		);
+	}
+
+	return $commentdata;
+}
+add_filter( 'preprocess_comment', 'ogc_block_comment_links' );
+
+/**
+ * Never collect a website URL on the comment form.
+ *
+ * @param array $fields Default fields.
+ * @return array
+ */
+function ogc_remove_comment_url_field( $fields ) {
+	unset( $fields['url'] );
+	unset( $fields['cookies'] );
+	return $fields;
+}
+add_filter( 'comment_form_default_fields', 'ogc_remove_comment_url_field' );
+add_filter( 'comment_form_field_cookies', '__return_empty_string' );
+
+/**
+ * Keep field order: Name → Email → Message (not Message-first).
+ *
+ * @param array $fields Comment form fields including comment.
+ * @return array
+ */
+function ogc_comment_form_field_order( $fields ) {
+	$ordered = array();
+	foreach ( array( 'author', 'email', 'comment' ) as $key ) {
+		if ( isset( $fields[ $key ] ) ) {
+			$ordered[ $key ] = $fields[ $key ];
+		}
+	}
+	foreach ( $fields as $key => $markup ) {
+		if ( ! isset( $ordered[ $key ] ) ) {
+			$ordered[ $key ] = $markup;
+		}
+	}
+	return $ordered;
+}
+add_filter( 'comment_form_fields', 'ogc_comment_form_field_order' );
+
+/**
+ * Require email even when WP name/email requirement is relaxed for optional name.
+ *
+ * @param array $commentdata Comment data.
+ * @return array
+ */
+function ogc_require_comment_email( $commentdata ) {
+	$email = isset( $commentdata['comment_author_email'] ) ? trim( (string) $commentdata['comment_author_email'] ) : '';
+	if ( '' === $email || ! is_email( $email ) ) {
+		wp_die(
+			esc_html__( 'Please enter a valid email address.', 'ogc-newfinity' ),
+			esc_html__( 'Comment blocked', 'ogc-newfinity' ),
+			array(
+				'response'  => 400,
+				'back_link' => true,
+			)
+		);
+	}
+	return $commentdata;
+}
+add_filter( 'preprocess_comment', 'ogc_require_comment_email', 5 );
+
+/**
+ * Custom comment list item markup.
+ *
+ * @param WP_Comment $comment Comment object.
+ * @param array      $args    wp_list_comments args.
+ * @param int        $depth   Depth.
+ */
+function ogc_comment_list_item( $comment, $args, $depth ) {
+	$GLOBALS['comment'] = $comment;
+	?>
+	<li <?php comment_class( 'ogc-comment', $comment ); ?> id="comment-<?php comment_ID(); ?>">
+		<article class="ogc-comment__body">
+			<header class="ogc-comment__meta">
+				<span class="ogc-comment__author"><?php echo esc_html( get_comment_author( $comment ) ); ?></span>
+				<span class="ogc-comment__sep" aria-hidden="true">·</span>
+				<time class="ogc-comment__date" datetime="<?php echo esc_attr( get_comment_date( DATE_W3C, $comment ) ); ?>">
+					<?php echo esc_html( get_comment_date( '', $comment ) ); ?>
+				</time>
+			</header>
+			<div class="ogc-comment__content">
+				<?php comment_text( $comment ); ?>
+			</div>
+			<?php if ( '0' === (string) $comment->comment_approved ) : ?>
+				<p class="ogc-comment__awaiting"><?php esc_html_e( 'Your comment is awaiting moderation.', 'ogc-newfinity' ); ?></p>
+			<?php endif; ?>
+		</article>
+	<?php
+	// Closing </li> is handled by WordPress walker.
+}
+
