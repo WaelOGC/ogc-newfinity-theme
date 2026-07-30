@@ -95,11 +95,19 @@
 }
 
 .ogc-contact-notice--success {
-	border-color: rgba(var(--ogc-brand-rgb), 0.45);
+	border-color: rgba(74, 222, 128, 0.45);
+}
+
+.ogc-contact-notice--success p {
+	color: #4ade80;
 }
 
 .ogc-contact-notice--error {
-	border-color: rgba(255, 120, 100, 0.45);
+	border-color: rgba(248, 113, 113, 0.45);
+}
+
+.ogc-contact-notice--error p {
+	color: #f87171;
 }
 
 /* --------------------------------------------------------------------------
@@ -170,6 +178,15 @@
 .ogc-contact-form__field textarea {
 	min-height: 9rem;
 	resize: vertical;
+}
+
+.ogc-contact-form__note {
+	margin: 0.45rem 0 0;
+	font-family: var(--ogc-font-body);
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var(--ogc-text-muted);
+	text-wrap: pretty;
 }
 
 .ogc-contact-form__field input:focus,

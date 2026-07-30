@@ -84,6 +84,7 @@ Deposits are non-refundable once active work has started. Partial refunds are ca
 - Right column: 3 short cards describing each core capability area (content must be real, proofread copy — NOT the garbled/broken text seen on the old site).
 - Location: The Hague, Netherlands.
 - Implemented via page-contact.php + inc/contact-form.php + hero-envelope-send (manual form default; admin-post mail to contact@ogcnewfinity.com).
+- Email delivery requires WP Mail SMTP (Hostinger mailbox) — see docs/10-email-delivery-setup.md (not a theme code fix).
 
 ## Content Rules (non-negotiable, based on audit of old site)
 - No placeholder/demo template text anywhere.

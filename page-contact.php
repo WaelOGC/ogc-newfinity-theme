@@ -214,6 +214,14 @@ $capability_cards = array(
 						rows="6"
 						required
 					></textarea>
+					<p class="ogc-contact-form__note">
+						<?php
+						esc_html_e(
+							'Links and URLs are not allowed in the message field for security reasons.',
+							'ogc-newfinity'
+						);
+						?>
+					</p>
 				</div>
 
 				<button type="submit" class="ogc-btn">
