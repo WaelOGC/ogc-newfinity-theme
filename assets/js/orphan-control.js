@@ -21,9 +21,7 @@
 		'.ogc-footer__about',
 		'.ogc-page-quote__text',
 		'.ogc-blog-card__excerpt',
-		'.ogc-blog-empty',
-		'.ogc-single-content p',
-		'.ogc-single-content li'
+		'.ogc-blog-empty'
 	].join(',');
 
 	var NBSP = '\u00A0';

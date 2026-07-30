@@ -48,13 +48,11 @@ Selecting the core execution runtime for your back-end dictates how your infrast
 
 ### A. Asynchronous I/O (Node.js / Express)
 
-Node.js excels at I/O-heavy workloads — real-time dashboards, WebSocket streaming, high-volume APIs — thanks to its event-driven, non-blocking architecture. The tradeoff: CPU-bound tasks (image processing, heavy math) can block the event loop unless offloaded to worker threads.
+Node.js excels at I/O-heavy workloads — real-time dashboards, WebSocket streaming, high-volume APIs — thanks to its [event-driven, non-blocking architecture](https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick). The tradeoff: CPU-bound tasks (image processing, heavy math) can block the event loop unless offloaded to worker threads.
 
 ### B. High-Performance APIs & AI (Python / FastAPI)
 
-When a platform needs heavy data processing or direct AI integration, Python is the industry standard. FastAPI on ASGI servers like Uvicorn runs async code efficiently, while long-running tasks get offloaded to Celery with Redis as the message broker.
-
-Source: [Node.js — The Event Loop](https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick) · [FastAPI — Async documentation](https://fastapi.tiangolo.com/async/)
+When a platform needs heavy data processing or direct AI integration, Python is the industry standard. [FastAPI](https://fastapi.tiangolo.com/async/) on ASGI servers like Uvicorn runs async code efficiently, while long-running tasks get offloaded to Celery with Redis as the message broker.
 
 ### Engineering Insight
 
@@ -118,13 +116,11 @@ A back-end runtime can scale horizontally across dozens of server instances, but
 
 ### A. PostgreSQL for Complex Relationships
 
-For platforms needing strict transactional consistency and ACID compliance (fintech, e-commerce, multi-tenant SaaS), PostgreSQL remains the gold standard — with JSONB support bridging relational integrity and document-style flexibility.
+For platforms needing strict transactional consistency and ACID compliance (fintech, e-commerce, multi-tenant SaaS), PostgreSQL remains the gold standard — with [JSONB support](https://www.postgresql.org/docs/current/datatype-json.html) bridging relational integrity and document-style flexibility.
 
 ### B. Preventing Connection Exhaustion
 
-Every database connection consumes RAM. A lightweight pooler like PgBouncer reuses a small set of active connections to serve thousands of requests, while Redis caching for read-heavy data can cut database CPU load significantly and drop response latency below 10ms.
-
-Source: [PostgreSQL — JSON Types documentation](https://www.postgresql.org/docs/current/datatype-json.html) · [Redis — Caching patterns](https://redis.io/docs/latest/develop/get-started/)
+Every database connection consumes RAM. A lightweight pooler like PgBouncer reuses a small set of active connections to serve thousands of requests, while [Redis caching](https://redis.io/docs/latest/develop/get-started/) for read-heavy data can cut database CPU load significantly and drop response latency below 10ms.
 
 ### Engineering Insight
 
@@ -146,13 +142,11 @@ Achieving true environment parity across local development, staging, and product
 
 ### A. Immutable Infrastructure with Docker
 
-Wrapping the app, runtime, and dependencies inside Docker containers ensures identical execution regardless of host OS. Multi-stage builds strip out dev tooling from production images, producing minimal, faster, more secure runtime images.
+Wrapping the app, runtime, and dependencies inside Docker containers ensures identical execution regardless of host OS. [Multi-stage builds](https://docs.docker.com/build/building/multi-stage/) strip out dev tooling from production images, producing minimal, faster, more secure runtime images.
 
 ### B. Secret Management
 
 Hardcoded secrets in source repos cause severe breaches. Production configs get injected dynamically via tools like AWS Secrets Manager or HashiCorp Vault, with CORS policies and JWT keys strictly isolated per environment.
-
-Source: [Docker — Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
 
 ### Engineering Insight
 

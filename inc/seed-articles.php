@@ -9,8 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/** Bump to re-seed / update seeded articles. */
-define( 'OGC_ARTICLES_SEED_VERSION', '1.2.2' );
+// Bump this version string EVERY time any file in inc/seed-content/ changes, or edits will not sync.
+define( 'OGC_ARTICLES_SEED_VERSION', '1.9.0' );
 
 /**
  * Convert article markdown (subset) into post HTML.
@@ -317,6 +317,69 @@ function ogc_seed_article_definitions() {
 			'excerpt'  => 'A technical blueprint for scalable full-stack platforms — concurrency runtimes, PostgreSQL pooling and Redis caching, Dockerized environment parity, and enterprise architecture benchmarks.',
 			'source'   => 'inc/seed-content/article-fullstack-architecture.md',
 			'seed_key' => 'article-fullstack-architecture',
+			'author'   => 'Wael Safan',
+		),
+		array(
+			'title'    => 'Cloud vs On-Premise: Choosing the Right Architecture',
+			'slug'     => 'cloud-vs-onprem-choosing-the-right-architecture',
+			'category' => 'build-development',
+			'excerpt'  => 'A practical engineering comparison of Public Cloud, On-Premise Bare-Metal, and Hybrid Cloud — elasticity, latency, total cost of ownership, and disaster recovery.',
+			'source'   => 'inc/seed-content/article-cloud-vs-onprem.md',
+			'seed_key' => 'article-cloud-vs-onprem',
+			'author'   => 'Wael Safan',
+		),
+		array(
+			'title'    => 'Engineering Conversion-Driven UI/UX',
+			'slug'     => 'engineering-conversion-driven-ui-ux',
+			'category' => 'design-experience',
+			'excerpt'  => 'How UX logic, structural visual hierarchy, and frontend performance combine to engineer digital interfaces that actually convert.',
+			'source'   => 'inc/seed-content/article-conversion-driven-ui-ux.md',
+			'seed_key' => 'article-conversion-driven-ui-ux',
+			'author'   => 'Wael Safan',
+		),
+		array(
+			'title'    => 'Dark Mode as Strategic Brand Identity',
+			'slug'     => 'dark-mode-strategic-brand-identity',
+			'category' => 'design-experience',
+			'excerpt'  => 'Why dark mode, visual layering, and geometric branding function as strategic brand positioning tools for technology companies — not just aesthetic trends.',
+			'source'   => 'inc/seed-content/article-dark-mode-brand-identity.md',
+			'seed_key' => 'article-dark-mode-brand-identity',
+			'author'   => 'Wael Safan',
+		),
+		array(
+			'title'    => 'Engineering Event-Driven Automation',
+			'slug'     => 'engineering-event-driven-automation',
+			'category' => 'strategy-growth',
+			'excerpt'  => 'How event-driven automation architecture — webhooks, validated pipelines, and resilient retry queues — replaces manual operational overhead at scale.',
+			'source'   => 'inc/seed-content/article-event-driven-automation.md',
+			'seed_key' => 'article-event-driven-automation',
+			'author'   => 'Wael Safan',
+		),
+		array(
+			'title'    => 'Engineering Sustainable SEO Authority',
+			'slug'     => 'engineering-sustainable-seo-authority',
+			'category' => 'strategy-growth',
+			'excerpt'  => 'How topic cluster architecture and E-E-A-T content principles combine to build durable organic search authority for B2B technology platforms.',
+			'source'   => 'inc/seed-content/article-seo-authority.md',
+			'seed_key' => 'article-seo-authority',
+			'author'   => 'Wael Safan',
+		),
+		array(
+			'title'    => 'Engineering Multi-Model AI Pipelines',
+			'slug'     => 'engineering-multi-model-ai-pipelines',
+			'category' => 'ai-innovation',
+			'excerpt'  => 'How multi-model orchestration, structured data extraction, and RAG pipelines turn AI from a chat widget into a production-grade backend component.',
+			'source'   => 'inc/seed-content/article-multi-model-ai-pipelines.md',
+			'seed_key' => 'article-multi-model-ai-pipelines',
+			'author'   => 'Wael Safan',
+		),
+		array(
+			'title'    => 'Engineering the AI-Driven Web',
+			'slug'     => 'engineering-the-ai-driven-web',
+			'category' => 'ai-innovation',
+			'excerpt'  => 'How intent-based routing and streaming UI are reshaping web architecture — moving from static templates to context-aware, AI-driven platforms.',
+			'source'   => 'inc/seed-content/article-ai-driven-web.md',
+			'seed_key' => 'article-ai-driven-web',
 			'author'   => 'Wael Safan',
 		),
 	);
