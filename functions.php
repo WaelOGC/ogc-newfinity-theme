@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** Theme version — bump when shipping asset cache-busts. */
-define( 'OGC_THEME_VERSION', '1.14.0' );
+define( 'OGC_THEME_VERSION', '1.15.0' );
 
 /** Absolute path to the theme root. */
 define( 'OGC_THEME_DIR', get_template_directory() );
@@ -27,6 +27,7 @@ define( 'OGC_THEME_URI', get_template_directory_uri() );
  * - inc/ai-chat-widget.php
  */
 require_once OGC_THEME_DIR . '/inc/theme-setup.php';
-require_once OGC_THEME_DIR . '/inc/enqueue.php';
 require_once OGC_THEME_DIR . '/inc/template-tags.php';
+require_once OGC_THEME_DIR . '/inc/blog.php';
+require_once OGC_THEME_DIR . '/inc/enqueue.php';
 require_once OGC_THEME_DIR . '/inc/seed-content.php';

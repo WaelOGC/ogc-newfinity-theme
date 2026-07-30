@@ -19,7 +19,11 @@
 		'.ogc-mission-intro__text',
 		'.ogc-home-cta__text',
 		'.ogc-footer__about',
-		'.ogc-page-quote__text'
+		'.ogc-page-quote__text',
+		'.ogc-blog-card__excerpt',
+		'.ogc-blog-empty',
+		'.ogc-single-content p',
+		'.ogc-single-content li'
 	].join(',');
 
 	var NBSP = '\u00A0';
@@ -68,6 +72,9 @@
 		run();
 		window.addEventListener('resize', onResize, { passive: true });
 	}
+
+	/* Expose for AJAX-replaced blog markup (and similar dynamic content). */
+	window.ogcOrphanControlRerun = run;
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', boot);

@@ -70,7 +70,8 @@ function ogc_enqueue_assets() {
 	);
 
 	$needs_home_chrome = is_front_page()
-		|| is_page( array( 'about-ogc-newfinity', 'services', 'our-mission' ) );
+		|| is_page( array( 'about-ogc-newfinity', 'services', 'our-mission' ) )
+		|| ogc_is_blog_surface();
 
 	if ( $needs_home_chrome ) {
 		wp_enqueue_style(
@@ -81,7 +82,7 @@ function ogc_enqueue_assets() {
 		);
 	}
 
-	if ( is_page( array( 'about-ogc-newfinity', 'services', 'our-mission' ) ) ) {
+	if ( is_page( array( 'about-ogc-newfinity', 'services', 'our-mission' ) ) || ogc_is_blog_surface() ) {
 		wp_enqueue_style(
 			'ogc-pages',
 			OGC_THEME_URI . '/assets/css/pages.css',
@@ -136,11 +137,21 @@ function ogc_enqueue_assets() {
 		);
 	}
 
-	if ( is_page( array( 'about-ogc-newfinity', 'services' ) ) ) {
+	if ( is_page( 'about-ogc-newfinity' ) ) {
 		wp_enqueue_script(
 			'ogc-orbit-emblem',
 			OGC_THEME_URI . '/assets/js/orbit-emblem.js',
 			array( 'ogc-three' ),
+			OGC_THEME_VERSION,
+			true
+		);
+	}
+
+	if ( is_page( 'services' ) ) {
+		wp_enqueue_script(
+			'ogc-services-code-screen',
+			OGC_THEME_URI . '/assets/js/services-code-screen.js',
+			array(),
 			OGC_THEME_VERSION,
 			true
 		);
@@ -163,6 +174,24 @@ function ogc_enqueue_assets() {
 		OGC_THEME_VERSION,
 		true
 	);
+
+	if ( is_home() ) {
+		wp_enqueue_script(
+			'ogc-blog-filter',
+			OGC_THEME_URI . '/assets/js/blog-filter.js',
+			array( 'ogc-orphan-control' ),
+			OGC_THEME_VERSION,
+			true
+		);
+		wp_localize_script(
+			'ogc-blog-filter',
+			'ogcBlogFilter',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'ogc_blog_filter' ),
+			)
+		);
+	}
 
 	wp_enqueue_script(
 		'ogc-main',
