@@ -212,19 +212,39 @@ function ogc_get_blog_card_excerpt( $post_id = null ) {
 }
 
 /**
- * Render the post-card grid HTML for a category slug (or all posts).
+ * Resolve the requested blog listing page number (pretty permalinks + ?paged=).
+ *
+ * @return int
+ */
+function ogc_get_blog_paged() {
+	$paged = 1;
+
+	if ( get_query_var( 'paged' ) ) {
+		$paged = (int) get_query_var( 'paged' );
+	} elseif ( get_query_var( 'page' ) ) {
+		$paged = (int) get_query_var( 'page' );
+	} elseif ( isset( $_GET['paged'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$paged = absint( wp_unslash( $_GET['paged'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+
+	return max( 1, $paged );
+}
+
+/**
+ * Query published posts for the blog archive grid.
  *
  * @param string $category_slug Category slug, or empty / 'all' for everything.
+ * @param int    $page          Page number (1-indexed).
  * @param int    $per_page      Posts per page. Default 9.
- * @return string HTML markup.
+ * @return WP_Query
  */
-function ogc_render_blog_grid( $category_slug = '', $per_page = 9 ) {
+function ogc_blog_posts_query( $category_slug = '', $page = 1, $per_page = 9 ) {
 	$args = array(
 		'post_type'           => 'post',
 		'post_status'         => 'publish',
-		'posts_per_page'      => (int) $per_page,
+		'posts_per_page'      => max( 1, (int) $per_page ),
+		'paged'               => max( 1, (int) $page ),
 		'ignore_sticky_posts' => true,
-		'no_found_rows'       => true,
 	);
 
 	$slug = sanitize_title( (string) $category_slug );
@@ -232,7 +252,23 @@ function ogc_render_blog_grid( $category_slug = '', $per_page = 9 ) {
 		$args['category_name'] = $slug;
 	}
 
-	$query = new WP_Query( $args );
+	return new WP_Query( $args );
+}
+
+/**
+ * Render the post-card grid HTML from a query (or run a fresh query).
+ *
+ * @param string        $category_slug Category slug, or empty / 'all'.
+ * @param int           $page          Page number. Default 1.
+ * @param int           $per_page      Posts per page. Default 9.
+ * @param WP_Query|null $query         Optional existing query.
+ * @return string HTML markup.
+ */
+function ogc_render_blog_grid( $category_slug = '', $page = 1, $per_page = 9, $query = null ) {
+	$owns_query = ! ( $query instanceof WP_Query );
+	if ( $owns_query ) {
+		$query = ogc_blog_posts_query( $category_slug, $page, $per_page );
+	}
 
 	ob_start();
 
@@ -243,7 +279,9 @@ function ogc_render_blog_grid( $category_slug = '', $per_page = 9 ) {
 			get_template_part( 'template-parts/blog', 'post-card' );
 		}
 		echo '</div>';
-		wp_reset_postdata();
+		if ( $owns_query ) {
+			wp_reset_postdata();
+		}
 	} else {
 		echo '<p class="ogc-blog-empty">';
 		echo esc_html__( 'No articles in this category yet — check back soon.', 'ogc-newfinity' );
@@ -254,12 +292,165 @@ function ogc_render_blog_grid( $category_slug = '', $per_page = 9 ) {
 }
 
 /**
- * AJAX: return filtered blog card grid HTML.
+ * Build the truncated page list used by blog pagination (matches comment mid/end size).
+ *
+ * @param int $current  Current page.
+ * @param int $total    Total pages.
+ * @param int $end_size Pages at each end. Default 1.
+ * @param int $mid_size Pages either side of current. Default 1.
+ * @return array<int, array{type: string, page?: int}>
+ */
+function ogc_blog_pagination_items( $current, $total, $end_size = 1, $mid_size = 1 ) {
+	$current = max( 1, min( (int) $current, (int) $total ) );
+	$total   = max( 1, (int) $total );
+	$end     = max( 1, (int) $end_size );
+	$mid     = max( 0, (int) $mid_size );
+
+	$pages = array();
+	for ( $i = 1; $i <= $total; $i++ ) {
+		$in_end = ( $i <= $end ) || ( $i > $total - $end );
+		$in_mid = ( $i >= $current - $mid ) && ( $i <= $current + $mid );
+		if ( $in_end || $in_mid ) {
+			$pages[] = $i;
+		}
+	}
+	$pages = array_values( array_unique( $pages ) );
+	sort( $pages, SORT_NUMERIC );
+
+	$items = array();
+	$prev  = 0;
+	foreach ( $pages as $p ) {
+		if ( $prev && $p > $prev + 1 ) {
+			$items[] = array( 'type' => 'dots' );
+		}
+		$items[] = array(
+			'type' => 'page',
+			'page' => (int) $p,
+		);
+		$prev = (int) $p;
+	}
+
+	return $items;
+}
+
+/**
+ * Render numbered blog archive pagination (comment-style truncation).
+ *
+ * Returns empty string when there is only one page (or none).
+ *
+ * @param int $current_page Current page (1-indexed).
+ * @param int $max_pages    Total pages.
+ * @return string HTML markup.
+ */
+function ogc_render_blog_pagination( $current_page, $max_pages ) {
+	$current_page = max( 1, (int) $current_page );
+	$max_pages    = max( 0, (int) $max_pages );
+
+	if ( $max_pages <= 1 ) {
+		return '';
+	}
+
+	$items = ogc_blog_pagination_items( $current_page, $max_pages, 1, 1 );
+
+	ob_start();
+	?>
+	<nav class="ogc-blog-pagination" aria-label="<?php esc_attr_e( 'Blog pages', 'ogc-newfinity' ); ?>">
+		<ul class="page-numbers">
+			<?php if ( $current_page > 1 ) : ?>
+				<li>
+					<button
+						type="button"
+						class="page-numbers prev"
+						data-page="<?php echo esc_attr( (string) ( $current_page - 1 ) ); ?>"
+					>
+						<?php esc_html_e( 'Prev', 'ogc-newfinity' ); ?>
+					</button>
+				</li>
+			<?php endif; ?>
+
+			<?php foreach ( $items as $item ) : ?>
+				<?php if ( 'dots' === $item['type'] ) : ?>
+					<li><span class="page-numbers dots">&hellip;</span></li>
+				<?php else : ?>
+					<?php
+					$page      = (int) $item['page'];
+					$is_current = ( $page === $current_page );
+					?>
+					<li>
+						<?php if ( $is_current ) : ?>
+							<span class="page-numbers current" aria-current="page"><?php echo esc_html( (string) $page ); ?></span>
+						<?php else : ?>
+							<button
+								type="button"
+								class="page-numbers"
+								data-page="<?php echo esc_attr( (string) $page ); ?>"
+							>
+								<?php echo esc_html( (string) $page ); ?>
+							</button>
+						<?php endif; ?>
+					</li>
+				<?php endif; ?>
+			<?php endforeach; ?>
+
+			<?php if ( $current_page < $max_pages ) : ?>
+				<li>
+					<button
+						type="button"
+						class="page-numbers next"
+						data-page="<?php echo esc_attr( (string) ( $current_page + 1 ) ); ?>"
+					>
+						<?php esc_html_e( 'Next', 'ogc-newfinity' ); ?>
+					</button>
+				</li>
+			<?php endif; ?>
+		</ul>
+	</nav>
+	<?php
+
+	return (string) ob_get_clean();
+}
+
+/**
+ * Full blog listing payload: card grid + pagination + meta.
+ *
+ * @param string $category_slug Category slug, or empty / 'all'.
+ * @param int    $page          Page number. Default 1.
+ * @param int    $per_page      Posts per page. Default 9.
+ * @return array{html: string, pagination_html: string, current_page: int, max_pages: int, found_posts: int, category: string}
+ */
+function ogc_get_blog_listing( $category_slug = '', $page = 1, $per_page = 9 ) {
+	$page  = max( 1, (int) $page );
+	$slug  = sanitize_title( (string) $category_slug );
+	$query = ogc_blog_posts_query( $slug, $page, $per_page );
+
+	$max_pages = (int) $query->max_num_pages;
+	if ( $max_pages > 0 && $page > $max_pages ) {
+		$page  = $max_pages;
+		$query = ogc_blog_posts_query( $slug, $page, $per_page );
+		$max_pages = (int) $query->max_num_pages;
+	}
+
+	$html = ogc_render_blog_grid( $slug, $page, $per_page, $query );
+	wp_reset_postdata();
+
+	return array(
+		'html'            => $html,
+		'pagination_html' => ogc_render_blog_pagination( $page, $max_pages ),
+		'current_page'    => $page,
+		'max_pages'       => $max_pages,
+		'found_posts'     => (int) $query->found_posts,
+		'category'        => ( $slug && 'all' !== $slug ) ? $slug : 'all',
+	);
+}
+
+/**
+ * AJAX: return filtered blog card grid + pagination HTML.
  */
 function ogc_ajax_filter_blog_posts() {
 	check_ajax_referer( 'ogc_blog_filter', 'nonce' );
 
 	$category = isset( $_POST['category'] ) ? sanitize_title( wp_unslash( $_POST['category'] ) ) : '';
+	$page     = isset( $_POST['page'] ) ? max( 1, absint( $_POST['page'] ) ) : 1;
 
 	$allowed = wp_list_pluck( ogc_blog_categories(), 'slug' );
 	if ( $category && 'all' !== $category && ! in_array( $category, $allowed, true ) ) {
@@ -269,12 +460,16 @@ function ogc_ajax_filter_blog_posts() {
 		);
 	}
 
-	$html = ogc_render_blog_grid( 'all' === $category ? '' : $category );
+	$listing = ogc_get_blog_listing( 'all' === $category ? '' : $category, $page );
 
 	wp_send_json_success(
 		array(
-			'html'     => $html,
-			'category' => $category ? $category : 'all',
+			'html'            => $listing['html'],
+			'pagination_html' => $listing['pagination_html'],
+			'current_page'    => $listing['current_page'],
+			'max_pages'       => $listing['max_pages'],
+			'found_posts'     => $listing['found_posts'],
+			'category'        => $listing['category'],
 		)
 	);
 }

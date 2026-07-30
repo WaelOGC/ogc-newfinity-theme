@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Bump this version string EVERY time any file in inc/seed-content/ changes, or edits will not sync.
-define( 'OGC_ARTICLES_SEED_VERSION', '1.9.0' );
+define( 'OGC_ARTICLES_SEED_VERSION', '1.10.0' );
 
 /**
  * Convert article markdown (subset) into post HTML.
@@ -380,6 +380,34 @@ function ogc_seed_article_definitions() {
 			'excerpt'  => 'How intent-based routing and streaming UI are reshaping web architecture — moving from static templates to context-aware, AI-driven platforms.',
 			'source'   => 'inc/seed-content/article-ai-driven-web.md',
 			'seed_key' => 'article-ai-driven-web',
+			'author'   => 'Wael Safan',
+		),
+		// TEMPORARY test content for design/pagination preview — remove before real launch.
+		array(
+			'title'    => 'Designing Stable API Contracts for Growing Products',
+			'slug'     => 'designing-stable-api-contracts-for-growing-products',
+			'category' => 'build-development',
+			'excerpt'  => 'How additive versioning, clear deprecation windows, and shared OpenAPI ownership keep APIs evolvable without breaking client teams.',
+			'source'   => 'inc/seed-content/test-article-api-contracts.md',
+			'seed_key' => 'test-article-api-contracts',
+			'author'   => 'Wael Safan',
+		),
+		array(
+			'title'    => 'Motion Systems That Communicate, Not Distract',
+			'slug'     => 'motion-systems-that-communicate-not-distract',
+			'category' => 'design-experience',
+			'excerpt'  => 'A practical take on motion tokens, intent-driven animation, and reduced-motion fallbacks that keep interfaces premium without visual noise.',
+			'source'   => 'inc/seed-content/test-article-motion-systems.md',
+			'seed_key' => 'test-article-motion-systems',
+			'author'   => 'Wael Safan',
+		),
+		array(
+			'title'    => 'Building Evaluation Loops Into AI Features',
+			'slug'     => 'building-evaluation-loops-into-ai-features',
+			'category' => 'ai-innovation',
+			'excerpt'  => 'Why golden-set evals, production sampling, and regression harnesses turn LLM demos into features that survive model upgrades.',
+			'source'   => 'inc/seed-content/test-article-ai-eval-loops.md',
+			'seed_key' => 'test-article-ai-eval-loops',
 			'author'   => 'Wael Safan',
 		),
 	);

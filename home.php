@@ -12,6 +12,7 @@ get_header();
 $submit_url      = home_url( '/submit-idea/' );
 $categories      = ogc_blog_categories();
 $active_category = '';
+$paged           = ogc_get_blog_paged();
 
 if ( isset( $_GET['category'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$requested = sanitize_title( wp_unslash( $_GET['category'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -20,6 +21,8 @@ if ( isset( $_GET['category'] ) ) { // phpcs:ignore WordPress.Security.NonceVeri
 		$active_category = $requested;
 	}
 }
+
+$listing = ogc_get_blog_listing( $active_category, $paged );
 ?>
 
 <article class="ogc-page ogc-page--blog">
@@ -82,7 +85,14 @@ if ( isset( $_GET['category'] ) ) { // phpcs:ignore WordPress.Security.NonceVeri
 				>
 					<?php
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup built via escaped template parts.
-					echo ogc_render_blog_grid( $active_category );
+					echo $listing['html'];
+					?>
+				</div>
+
+				<div id="ogc-blog-pagination-wrap" class="ogc-blog-pagination-wrap">
+					<?php
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside helper.
+					echo $listing['pagination_html'];
 					?>
 				</div>
 			</section>
