@@ -41,6 +41,11 @@
 	font-weight: 600;
 }
 
+.ogc-opt__notice--success,
+.ogc-opt__notice--success p {
+	color: #0a7a3e;
+}
+
 .ogc-opt__notice--error {
 	border-left-color: var(--opt-danger);
 	background: linear-gradient(90deg, rgba(255, 107, 94, 0.16), rgba(255, 107, 94, 0.02));
@@ -249,8 +254,8 @@
 	height: 16px;
 	border-radius: 50%;
 	background: var(--opt-panel-2);
-	border: 1px solid var(--opt-line);
-	color: var(--opt-muted);
+	border: 1px solid var(--opt-accent);
+	color: var(--opt-accent);
 	font-size: 10px;
 	font-weight: 700;
 	cursor: help;

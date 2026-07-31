@@ -77,7 +77,7 @@ Nav slugs (fixed set — reorder/show/hide only): `home`, `about`, `services`, `
 | `ogc_footer_bg_color` | color | `#0A0A0A` | Footer bg token |
 | `ogc_footer_tagline` | textarea | agency paragraph (see code constant) | `ogc_get_footer_tagline()` |
 | `ogc_footer_columns_json` | footer_columns | Quick Links + Legal (current links) | `ogc_get_footer_columns()` → `footer.php` |
-| `ogc_footer_copyright_text` | text | `© {year} OGC NewFinity. All rights reserved.` | `ogc_get_footer_copyright()` (`{year}` → current year) |
+| `ogc_footer_copyright_text` | text | `© {start_year}–{year} OGC NewFinity. All rights reserved.` | `ogc_get_footer_copyright()` (`{year}` → current year, `{start_year}` → 2022) |
 | `ogc_social_x` | url | `https://x.com/OGCNewfinity` | `ogc_get_social_url( 'x' )` — empty hides icon |
 | `ogc_social_linkedin` | url | company LinkedIn URL | ditto |
 | `ogc_social_github` | url | org GitHub URL | ditto |
@@ -113,7 +113,7 @@ Allow-listed Google Fonts only (expanded curated lists in `ogc_heading_font_choi
 | `ogc_font_base_size` | number (px) | `16` | `--ogc-font-size-base` on `html` |
 | `ogc_heading_weight` | select | `700` | `--ogc-heading-weight` |
 | `ogc_body_weight` | select | `400` | `--ogc-body-weight` |
-| `ogc_line_height_body` | number | `1.7` | `--ogc-line-height-body` |
+| `ogc_line_height_body` | number | `1.6` | `--ogc-line-height-body` |
 | `ogc_letter_spacing_heading` | number (em) | `-0.02` | `--ogc-letter-spacing-heading` |
 
 ### Buttons & Effects

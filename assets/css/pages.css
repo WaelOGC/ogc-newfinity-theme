@@ -32,10 +32,10 @@
 .ogc-page-hero__title {
 	margin: 0 0 1.25rem;
 	font-family: var(--ogc-font-heading);
-	font-weight: 700;
+	font-weight: var(--ogc-heading-weight, 700);
 	font-size: clamp(2.25rem, 5.5vw, 3.5rem);
 	line-height: 1.12;
-	letter-spacing: -0.02em;
+	letter-spacing: var(--ogc-letter-spacing-heading, -0.02em);
 	color: var(--ogc-text-primary);
 	text-wrap: balance;
 }

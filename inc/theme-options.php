@@ -572,7 +572,7 @@ function ogc_theme_options_schema() {
 						'type'     => 'text',
 						'label'    => __( 'Copyright line', 'ogc-newfinity' ),
 						'tooltip'  => __( 'Use {year} for the current year and {start_year} for 2022.', 'ogc-newfinity' ),
-						'default'  => '© {year} OGC NewFinity. All rights reserved.',
+						'default'  => '© {start_year}–{year} OGC NewFinity. All rights reserved.',
 						'sanitize' => 'wp_kses_post',
 					),
 				),
@@ -730,7 +730,7 @@ function ogc_theme_options_schema() {
 					'key'     => 'ogc_line_height_body',
 					'type'    => 'number',
 					'label'   => __( 'Body line height', 'ogc-newfinity' ),
-					'default' => 1.7,
+					'default' => 1.6,
 					'attrs'   => array( 'min' => 1.1, 'max' => 2.2, 'step' => 0.05 ),
 				),
 				array(

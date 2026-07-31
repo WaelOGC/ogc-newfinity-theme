@@ -53,12 +53,18 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready
 	--ogc-brand-rgb: 255, 210, 122;
 	--ogc-brand-hover-rgb: 255, 234, 194;
 
-	/* Typography — headings: Space Grotesk bold; body: Inter */
+	/* Typography — headings: Space Grotesk bold; body: Inter.
+	   Theme Options overrides these via ogc_theme_options_css() in wp_head. */
 	--font-heading: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
 	--font-body: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 	--ogc-font-heading: var(--font-heading);
 	--ogc-font-display: var(--font-heading); /* alias — keeps older refs working */
 	--ogc-font-body: var(--font-body);
+	--ogc-font-size-base: 16px;
+	--ogc-heading-weight: 700;
+	--ogc-body-weight: 400;
+	--ogc-line-height-body: 1.6;
+	--ogc-letter-spacing-heading: -0.02em;
 
 	/* Layout / spacing */
 	--ogc-radius: 12px;
@@ -84,9 +90,9 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready
 	--ogc-header-bg-scrolled: rgba(10, 10, 10, 0.5);
 	--ogc-header-text-color: var(--ogc-link-color);
 
-	/* Footer */
+	/* Footer — opaque like the option value; footer.css mixes it to 35% glass */
 	--ogc-footer-logo-width: 54px;
-	--ogc-footer-bg: rgba(10, 10, 10, 0.35);
+	--ogc-footer-bg: #0A0A0A;
 
 	/* Buttons & effects */
 	--ogc-button-radius: var(--ogc-radius);
@@ -105,6 +111,7 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready
 
 html {
 	scroll-behavior: smooth;
+	font-size: var(--ogc-font-size-base, 16px);
 }
 
 body {
@@ -112,7 +119,8 @@ body {
 	background-color: var(--ogc-bg);
 	color: var(--ogc-text-primary);
 	font-family: var(--ogc-font-body);
-	line-height: 1.6;
+	font-weight: var(--ogc-body-weight, 400);
+	line-height: var(--ogc-line-height-body, 1.6);
 	-webkit-font-smoothing: antialiased;
 	position: relative;
 }
@@ -125,7 +133,8 @@ h5,
 h6 {
 	font-family: var(--ogc-font-heading);
 	font-style: normal;
-	font-weight: 700;
+	font-weight: var(--ogc-heading-weight, 700);
+	letter-spacing: var(--ogc-letter-spacing-heading, -0.02em);
 	color: var(--ogc-text-primary);
 }
 
