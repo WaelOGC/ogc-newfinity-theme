@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! get_theme_mod( 'ogc_ads_enabled', false ) ) {
+if ( ! get_theme_mod( 'ogc_ads_enabled', false ) || ! function_exists( 'ogc_get_ad_slot' ) ) {
 	return;
 }
 
@@ -25,10 +25,6 @@ $args = wp_parse_args(
 		'label'   => __( 'Advertisement', 'ogc-newfinity' ),
 	)
 );
-
-if ( ! function_exists( 'ogc_get_ad_slot' ) ) {
-	return;
-}
 
 $variant = sanitize_key( $args['variant'] );
 $slot    = ogc_get_ad_slot( $variant );

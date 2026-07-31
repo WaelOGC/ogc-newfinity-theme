@@ -297,49 +297,36 @@ if ( ! function_exists( 'ogc_primary_nav_items' ) ) {
 	/**
 	 * Fixed primary-nav item set, keyed by the slugs used in Theme Options → Header → Nav order.
 	 *
-	 * Reorder / show / hide only — labels and destinations stay in code so the
-	 * sitemap in docs/03 cannot drift out of a JSON field.
+	 * Labels and paths come from ogc_nav_slug_map() (the same map the admin
+	 * ordering control renders) so the two cannot drift; the array below is the
+	 * fallback for when Theme Options is unavailable. Each nav slug doubles as
+	 * its ogc_get_icon_svg() key.
 	 *
 	 * @return array<string, array{label: string, url: string, icon: string}>
 	 */
 	function ogc_primary_nav_items() {
-		return array(
-			'home'     => array(
-				'label' => __( 'Home', 'ogc-newfinity' ),
-				'url'   => home_url( '/' ),
-				'icon'  => 'home',
-			),
-			'about'    => array(
-				'label' => __( 'About Us', 'ogc-newfinity' ),
-				'url'   => home_url( '/about-ogc-newfinity/' ),
-				'icon'  => 'about',
-			),
-			'services' => array(
-				'label' => __( 'Our Services', 'ogc-newfinity' ),
-				'url'   => home_url( '/services/' ),
-				'icon'  => 'services',
-			),
-			'mission'  => array(
-				'label' => __( 'Our Mission', 'ogc-newfinity' ),
-				'url'   => home_url( '/our-mission/' ),
-				'icon'  => 'mission',
-			),
-			'blog'     => array(
-				'label' => __( 'Blog & Insights', 'ogc-newfinity' ),
-				'url'   => home_url( '/blog/' ),
-				'icon'  => 'blog',
-			),
-			'support'  => array(
-				'label' => __( 'Help & Support', 'ogc-newfinity' ),
-				'url'   => home_url( '/support/' ),
-				'icon'  => 'support',
-			),
-			'contact'  => array(
-				'label' => __( 'Contact', 'ogc-newfinity' ),
-				'url'   => home_url( '/contact/' ),
-				'icon'  => 'contact',
-			),
-		);
+		$map = function_exists( 'ogc_nav_slug_map' )
+			? ogc_nav_slug_map()
+			: array(
+				'home'     => array( 'label' => __( 'Home', 'ogc-newfinity' ), 'path' => '/' ),
+				'about'    => array( 'label' => __( 'About Us', 'ogc-newfinity' ), 'path' => '/about-ogc-newfinity/' ),
+				'services' => array( 'label' => __( 'Our Services', 'ogc-newfinity' ), 'path' => '/services/' ),
+				'mission'  => array( 'label' => __( 'Our Mission', 'ogc-newfinity' ), 'path' => '/our-mission/' ),
+				'blog'     => array( 'label' => __( 'Blog & Insights', 'ogc-newfinity' ), 'path' => '/blog/' ),
+				'support'  => array( 'label' => __( 'Help & Support', 'ogc-newfinity' ), 'path' => '/support/' ),
+				'contact'  => array( 'label' => __( 'Contact', 'ogc-newfinity' ), 'path' => '/contact/' ),
+			);
+
+		$items = array();
+		foreach ( $map as $slug => $row ) {
+			$items[ $slug ] = array(
+				'label' => isset( $row['label'] ) ? (string) $row['label'] : '',
+				'url'   => home_url( isset( $row['path'] ) ? $row['path'] : '/' ),
+				'icon'  => $slug,
+			);
+		}
+
+		return $items;
 	}
 }
 
