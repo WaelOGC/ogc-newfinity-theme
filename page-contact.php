@@ -148,13 +148,15 @@ $capability_cards = array(
 			>
 				<input type="hidden" name="action" value="ogc_contact_submit">
 				<?php wp_nonce_field( 'ogc_contact_submit', 'ogc_contact_nonce' ); ?>
+				<input type="hidden" name="ogc_contact_ts" value="<?php echo esc_attr( (string) time() ); ?>">
 
+				<?php /* Do not use name/label words that resemble real form fields (company, website, url, phone) — browser autofill/password managers can fill hidden honeypot fields and cause false-positive spam rejection of real users. */ ?>
 				<div class="ogc-contact-honeypot" aria-hidden="true">
-					<label for="ogc_company_url"><?php esc_html_e( 'Company website', 'ogc-newfinity' ); ?></label>
+					<label for="ogc_hp_token"><?php esc_html_e( 'Leave this field empty', 'ogc-newfinity' ); ?></label>
 					<input
 						type="text"
-						id="ogc_company_url"
-						name="ogc_company_url"
+						id="ogc_hp_token"
+						name="ogc_hp_token"
 						value=""
 						tabindex="-1"
 						autocomplete="off"

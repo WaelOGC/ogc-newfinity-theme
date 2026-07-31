@@ -72,9 +72,16 @@ function ogc_handle_contact_submit() {
 	}
 
 	/* Honeypot — bots fill this; humans never see it. Silent reject. */
-	$honeypot = isset( $_POST['ogc_company_url'] ) ? sanitize_text_field( wp_unslash( $_POST['ogc_company_url'] ) ) : '';
+	$honeypot = isset( $_POST['ogc_hp_token'] ) ? sanitize_text_field( wp_unslash( $_POST['ogc_hp_token'] ) ) : '';
 	if ( '' !== $honeypot ) {
 		ogc_contact_redirect( 'sent' );
+	}
+
+	/* Time trap — submissions under 2s are almost never human. */
+	$rendered_at = isset( $_POST['ogc_contact_ts'] ) ? absint( wp_unslash( $_POST['ogc_contact_ts'] ) ) : 0;
+	$elapsed     = $rendered_at > 0 ? ( time() - $rendered_at ) : 0;
+	if ( $rendered_at > 0 && $elapsed < 2 ) {
+		ogc_contact_redirect( 'error' );
 	}
 
 	$name    = isset( $_POST['ogc_name'] ) ? sanitize_text_field( wp_unslash( $_POST['ogc_name'] ) ) : '';
