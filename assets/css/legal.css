@@ -1,0 +1,235 @@
+/**
+ * OGC NewFinity — Legal pages (Privacy, Terms, Cookie, Refund).
+ * Long-form prose, TOC, informational notice. Loaded after ogc-main.
+ */
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+
+.ogc-page--legal {
+	gap: 2.5rem;
+}
+
+.ogc-legal-hero {
+	margin-inline: auto;
+	text-align: center;
+	max-width: 40rem;
+}
+
+.ogc-legal-hero .ogc-badge {
+	margin-inline: auto;
+}
+
+.ogc-legal-hero__updated {
+	margin: -0.5rem 0 0;
+	font-family: var(--ogc-font-body);
+	font-size: 0.9375rem;
+	line-height: 1.5;
+	color: var(--ogc-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Layout column
+   -------------------------------------------------------------------------- */
+
+.ogc-legal-layout {
+	margin-inline: auto;
+	width: min(100%, 46rem);
+	display: flex;
+	flex-direction: column;
+	gap: 1.75rem;
+	padding-bottom: 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   Informational notice (neutral — not an error)
+   -------------------------------------------------------------------------- */
+
+.ogc-legal-notice {
+	margin: 0;
+	padding: 1rem 1.15rem;
+	border-color: rgba(245, 245, 245, 0.14);
+}
+
+.ogc-legal-notice.glass-card:hover {
+	transform: none;
+}
+
+.ogc-legal-notice p {
+	margin: 0;
+	font-family: var(--ogc-font-body);
+	font-size: 0.875rem;
+	line-height: 1.6;
+	color: var(--ogc-text-muted);
+	text-wrap: pretty;
+}
+
+/* --------------------------------------------------------------------------
+   Table of contents
+   -------------------------------------------------------------------------- */
+
+.ogc-legal-toc {
+	padding: 0 0 0.25rem;
+	border-bottom: 1px solid rgba(245, 245, 245, 0.1);
+}
+
+.ogc-legal-toc__heading {
+	margin: 0 0 0.75rem;
+	font-family: var(--ogc-font-heading);
+	font-size: 0.8125rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--ogc-text-muted);
+}
+
+.ogc-legal-toc__list {
+	margin: 0;
+	padding: 0 0 1.25rem 1.15rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	font-family: var(--ogc-font-body);
+	font-size: 0.9375rem;
+	line-height: 1.45;
+	color: var(--ogc-text-muted);
+}
+
+.ogc-legal-toc__list a {
+	color: var(--ogc-text-primary);
+	text-decoration: none;
+	border-bottom: 1px solid transparent;
+	transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.ogc-legal-toc__list a:hover,
+.ogc-legal-toc__list a:focus-visible {
+	border-bottom-color: rgba(245, 245, 245, 0.35);
+	outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   Prose
+   -------------------------------------------------------------------------- */
+
+.ogc-legal-prose {
+	font-family: var(--ogc-font-body);
+	font-size: 1rem;
+	line-height: 1.7;
+	color: var(--ogc-text-primary);
+}
+
+.ogc-legal-prose > *:first-child {
+	margin-top: 0;
+}
+
+.ogc-legal-prose h2 {
+	margin: 2.5rem 0 0.85rem;
+	font-family: var(--ogc-font-heading);
+	font-size: clamp(1.35rem, 2.5vw, 1.65rem);
+	font-weight: 700;
+	line-height: 1.25;
+	letter-spacing: -0.015em;
+	color: var(--ogc-text-primary);
+	scroll-margin-top: 6rem;
+}
+
+.ogc-legal-prose h3 {
+	margin: 1.75rem 0 0.65rem;
+	font-family: var(--ogc-font-heading);
+	font-size: 1.125rem;
+	font-weight: 700;
+	line-height: 1.35;
+	color: var(--ogc-text-primary);
+	scroll-margin-top: 6rem;
+}
+
+.ogc-legal-prose p {
+	margin: 0 0 1.1rem;
+	color: var(--ogc-text-muted);
+	text-wrap: pretty;
+}
+
+.ogc-legal-prose strong {
+	color: var(--ogc-text-primary);
+	font-weight: 600;
+}
+
+.ogc-legal-prose a {
+	color: var(--ogc-text-primary);
+	text-decoration: underline;
+	text-decoration-color: rgba(245, 245, 245, 0.35);
+	text-underline-offset: 0.15em;
+}
+
+.ogc-legal-prose a:hover,
+.ogc-legal-prose a:focus-visible {
+	text-decoration-color: rgba(245, 245, 245, 0.7);
+	outline: none;
+}
+
+.ogc-legal-prose ul,
+.ogc-legal-prose ol {
+	margin: 0 0 1.25rem;
+	padding-left: 1.35rem;
+	color: var(--ogc-text-muted);
+}
+
+.ogc-legal-prose li {
+	margin-bottom: 0.4rem;
+	padding-left: 0.2rem;
+}
+
+.ogc-legal-prose li::marker {
+	color: var(--ogc-text-muted);
+}
+
+.ogc-legal-prose code {
+	font-size: 0.9em;
+	padding: 0.1em 0.35em;
+	border-radius: 4px;
+	background: rgba(245, 245, 245, 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   Closing CTA line
+   -------------------------------------------------------------------------- */
+
+.ogc-legal-cta {
+	margin: 0.5rem 0 0;
+	padding-top: 1.5rem;
+	border-top: 1px solid rgba(245, 245, 245, 0.1);
+	font-family: var(--ogc-font-body);
+	font-size: 0.9375rem;
+	line-height: 1.6;
+	color: var(--ogc-text-muted);
+}
+
+.ogc-legal-cta a {
+	color: var(--ogc-text-primary);
+	font-weight: 600;
+	text-decoration: underline;
+	text-decoration-color: rgba(245, 245, 245, 0.35);
+	text-underline-offset: 0.15em;
+}
+
+.ogc-legal-cta a:hover,
+.ogc-legal-cta a:focus-visible {
+	text-decoration-color: rgba(245, 245, 245, 0.7);
+	outline: none;
+}
+
+@media (max-width: 599px) {
+	.ogc-page--legal {
+		gap: 1.75rem;
+	}
+
+	.ogc-legal-layout {
+		gap: 1.35rem;
+	}
+
+	.ogc-legal-prose h2 {
+		margin-top: 2rem;
+	}
+}

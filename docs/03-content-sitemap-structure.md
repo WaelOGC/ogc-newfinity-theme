@@ -13,26 +13,14 @@
 Note: No duplicate URLs. No leftover demo pages (Shop, Cart, Typography, Elements, etc. — all must be removed, these were leftovers from the old theme).
 
 ## Legal Pages (Footer — required for NL/EU agency)
-Required for a Netherlands/EU-based digital agency that takes client payments and refunds. Linked from the site footer Legal column. Full legal copy is a separate task — pages exist as placeholders until then.
+Required for a Netherlands/EU-based digital agency that takes client payments and refunds. Linked from the site footer Legal column.
 
 1. **Privacy Policy** (`/privacy-policy/`)
 2. **Terms and Conditions** (`/terms-and-conditions/`)
 3. **Cookie Policy** (`/cookie-policy/`)
 4. **Refund and Cancellation Policy** (`/refund-policy/`)
 
-### Legal page content notes (outline only — full copy later)
-
-#### Privacy Policy
-GDPR-compliant. Covers what data is collected (contact form, Submit Idea form, analytics, AI chat widget), how it is used, retention, user rights (access, rectification, erasure, portability), and contact email (`contact@ogcnewfinity.com`).
-
-#### Terms and Conditions
-General service terms, scope of work, client responsibilities, intellectual property, and limitation of liability. Must include a clear note that OGC NewFinity may deliver work directly or via a network of independent collaborators, freelancers, and/or partner agencies depending on project size and scope.
-
-#### Cookie Policy
-What cookies are used (analytics, session, AI-chat widget-related cookies if any), purpose of each category, and consent basis under GDPR/ePrivacy.
-
-#### Refund and Cancellation Policy
-Deposits are non-refundable once active work has started. Partial refunds are calculated based on hours/work already delivered — not issued automatically on dissatisfaction alone. Include timeline for refund requests and a note that work may involve third-party collaborators.
+Implemented via `page-legal.php` + `inc/seed-legal.php` + `inc/seed-content/legal-*.md` (version-gated markdown sync; template includes lawyer-review notice).
 
 ## Page-by-Page Content Notes
 
@@ -64,6 +52,7 @@ Deposits are non-refundable once active work has started. Partial refunds are ca
 - Side panel: 3 trust cards — Expert Review, Confidential, Fast Kickoff.
 - Footer meta: "The Hague, Netherlands - Free & Confidential"
 - The manual form is the default theme state and will be fully replaced (not supplemented) by Amy Agent once the plugin ships — see docs/09-amy-agent-plugin-scope.md.
+- Implemented via page-submit-idea.php + inc/submit-idea-form.php + hero-idea-blueprint + ogc_amy_agent_is_active() stub (manual form default; admin-post mail to contact@ogcnewfinity.com).
 
 ### Blog & Insights
 - Hero: "Blog & Insights"
@@ -71,7 +60,7 @@ Deposits are non-refundable once active work has started. Partial refunds are ca
 - Standard WP blog loop below hero (latest posts).
 
 ### Help & Support
-- Hero: "Help & Support" — lead: Browse FAQs · 48h Response Guaranteed; visual: hero-orbit-atom.
+- Hero: "Help & Support" — lead: Browse FAQs · 48h Response Guaranteed; visual: hero-support-network.
 - Categories: General, Technical Support, Collaboration (3 cards + matching FAQ accordion sections).
 - Client-side FAQ search + guaranteed 48h response note.
 - Closing CTA → Get in Touch (/contact/) + contact@ogcnewfinity.com (support questions, not Submit Your Idea).

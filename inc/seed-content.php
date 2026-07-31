@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** Bump this to re-seed menus/pages after structural sitemap changes. */
-define( 'OGC_CONTENT_SEED_VERSION', '1.6.0' );
+define( 'OGC_CONTENT_SEED_VERSION', '1.8.0' );
 
 /**
  * Ensure a published page exists for the given slug.
@@ -42,7 +42,10 @@ function ogc_ensure_page( $title, $slug, $content ) {
 	}
 
 	// Pages whose markup lives in PHP templates — clear leftover editor placeholders.
-	$template_driven = array( 'home', 'about-ogc-newfinity', 'services', 'our-mission', 'support', 'contact', 'blog' );
+	// Legal slugs are listed here so ogc_ensure_page only creates/publishes the page
+	// (empty body). Body HTML is owned by inc/seed-legal.php (version-gated resync),
+	// avoiding double-writes against the old "coming soon" placeholder path below.
+	$template_driven = array( 'home', 'about-ogc-newfinity', 'services', 'our-mission', 'support', 'contact', 'blog', 'submit-idea', 'privacy-policy', 'terms-and-conditions', 'cookie-policy', 'refund-policy' );
 
 	if ( $existing instanceof WP_Post ) {
 		$update = array( 'ID' => (int) $existing->ID );
@@ -97,23 +100,21 @@ function ogc_seed_content() {
 		return;
 	}
 
-	$placeholder = '<!-- wp:paragraph --><p>Full policy content coming soon.</p><!-- /wp:paragraph -->';
-	$coming_soon = '<!-- wp:paragraph --><p>Page content coming soon.</p><!-- /wp:paragraph -->';
-
 	$pages = array(
 		// Content is rendered by dedicated templates — keep editor body empty (no placeholder copy).
 		'home'                 => array( 'Home', '' ),
 		'about-ogc-newfinity'  => array( 'About Us', '' ),
 		'services'             => array( 'Our Services', '' ),
 		'our-mission'          => array( 'Our Mission', '' ),
-		'submit-idea'          => array( 'Submit Your Idea', $coming_soon ),
+		'submit-idea'          => array( 'Submit Your Idea', '' ),
 		'blog'                 => array( 'Blog & Insights', '' ),
 		'support'              => array( 'Help & Support', '' ),
 		'contact'              => array( 'Contact', '' ),
-		'privacy-policy'       => array( 'Privacy Policy', $placeholder ),
-		'terms-and-conditions' => array( 'Terms and Conditions', $placeholder ),
-		'cookie-policy'        => array( 'Cookie Policy', $placeholder ),
-		'refund-policy'        => array( 'Refund and Cancellation Policy', $placeholder ),
+		// Legal: slug/title only here; markdown body + page-legal.php template synced by inc/seed-legal.php.
+		'privacy-policy'       => array( 'Privacy Policy', '' ),
+		'terms-and-conditions' => array( 'Terms and Conditions', '' ),
+		'cookie-policy'        => array( 'Cookie Policy', '' ),
+		'refund-policy'        => array( 'Refund and Cancellation Policy', '' ),
 	);
 
 	$page_ids = array();

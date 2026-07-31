@@ -69,8 +69,11 @@ function ogc_enqueue_assets() {
 		OGC_THEME_VERSION
 	);
 
+	$is_legal_page = is_page( array( 'privacy-policy', 'terms-and-conditions', 'cookie-policy', 'refund-policy' ) );
+
 	$needs_home_chrome = is_front_page()
-		|| is_page( array( 'about-ogc-newfinity', 'services', 'our-mission', 'support', 'contact' ) )
+		|| is_page( array( 'about-ogc-newfinity', 'services', 'our-mission', 'support', 'contact', 'submit-idea' ) )
+		|| $is_legal_page
 		|| ogc_is_blog_surface();
 
 	if ( $needs_home_chrome ) {
@@ -82,7 +85,7 @@ function ogc_enqueue_assets() {
 		);
 	}
 
-	if ( is_page( array( 'about-ogc-newfinity', 'services', 'our-mission', 'support', 'contact' ) ) || ogc_is_blog_surface() ) {
+	if ( is_page( array( 'about-ogc-newfinity', 'services', 'our-mission', 'support', 'contact', 'submit-idea' ) ) || $is_legal_page || ogc_is_blog_surface() ) {
 		wp_enqueue_style(
 			'ogc-pages',
 			OGC_THEME_URI . '/assets/css/pages.css',
@@ -100,11 +103,29 @@ function ogc_enqueue_assets() {
 		);
 	}
 
-	if ( is_page( 'contact' ) ) {
+	if ( is_page( array( 'contact', 'submit-idea' ) ) ) {
 		wp_enqueue_style(
 			'ogc-contact',
 			OGC_THEME_URI . '/assets/css/contact.css',
 			array( 'ogc-main', 'ogc-pages' ),
+			OGC_THEME_VERSION
+		);
+	}
+
+	if ( $is_legal_page ) {
+		wp_enqueue_style(
+			'ogc-legal',
+			OGC_THEME_URI . '/assets/css/legal.css',
+			array( 'ogc-main', 'ogc-pages' ),
+			OGC_THEME_VERSION
+		);
+	}
+
+	if ( is_page( 'submit-idea' ) ) {
+		wp_enqueue_style(
+			'ogc-submit-idea',
+			OGC_THEME_URI . '/assets/css/submit-idea.css',
+			array( 'ogc-main', 'ogc-pages', 'ogc-contact' ),
 			OGC_THEME_VERSION
 		);
 	}
@@ -186,6 +207,16 @@ function ogc_enqueue_assets() {
 		wp_enqueue_script(
 			'ogc-envelope-send',
 			OGC_THEME_URI . '/assets/js/envelope-send.js',
+			array(),
+			OGC_THEME_VERSION,
+			true
+		);
+	}
+
+	if ( is_page( 'submit-idea' ) ) {
+		wp_enqueue_script(
+			'ogc-idea-blueprint',
+			OGC_THEME_URI . '/assets/js/idea-blueprint.js',
 			array(),
 			OGC_THEME_VERSION,
 			true

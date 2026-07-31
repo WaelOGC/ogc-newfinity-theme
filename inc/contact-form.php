@@ -38,32 +38,6 @@ function ogc_contact_redirect( $status ) {
 }
 
 /**
- * Whether a message body contains a URL or URL-like domain (anti-spam).
- *
- * Matches explicit schemes (http/https), www. prefixes, and bare domains with
- * a real TLD — not short abbreviations like "e.g." or dotted version numbers.
- * Adjust the pattern here if legitimate messages are false-positiving.
- *
- * @param string $message Sanitized message text.
- * @return bool True if a URL-like pattern is found.
- */
-function ogc_message_contains_url( $message ) {
-	$message = (string) $message;
-	if ( '' === $message ) {
-		return false;
-	}
-
-	/*
-	 * 1) Explicit URL schemes or www.
-	 * 2) Bare domain: label.tld with a known/common TLD (first label ≥ 2 chars
-	 *    so "e.g." does not match). Adjust the TLD list if needed.
-	 */
-	$pattern = '/(?:https?:\/\/|www\.)|(?:\b[a-z0-9][a-z0-9-]{0,61}[a-z0-9]\.(?:com|net|org|io|ru|xyz|info|biz|nl|eu|co|uk|de|fr|app|dev|ai|me|tv|cc|us|be|es|it|ch|at|se|no|dk|fi|pl|cz|pt|ie|au|ca|jp|cn|in|br)\b)/i';
-
-	return (bool) preg_match( $pattern, $message );
-}
-
-/**
  * Handle Contact form submissions (logged-in and logged-out).
  */
 function ogc_handle_contact_submit() {

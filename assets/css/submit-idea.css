@@ -1,0 +1,57 @@
+/**
+ * OGC NewFinity — Submit Your Idea page only (/submit-idea/).
+ * Idea-blueprint hero sizing + footer meta. Form/notice/layout reuse contact.css.
+ */
+
+/* --------------------------------------------------------------------------
+   Hero — idea blueprint canvas
+   -------------------------------------------------------------------------- */
+
+.ogc-idea-blueprint {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: min(100%, 440px);
+	margin: 0 auto;
+	user-select: none;
+	pointer-events: none;
+}
+
+.ogc-idea-blueprint__canvas {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1;
+	background: transparent;
+}
+
+@media (min-width: 900px) {
+	.ogc-idea-blueprint {
+		width: min(100%, 480px);
+	}
+}
+
+@media (max-width: 599px) {
+	.ogc-idea-blueprint {
+		width: min(100%, 300px);
+	}
+}
+
+/* --------------------------------------------------------------------------
+   Footer meta
+   -------------------------------------------------------------------------- */
+
+.ogc-submit-idea-meta {
+	margin: 1.25rem 0 0;
+	font-family: var(--ogc-font-body);
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var(--ogc-text-muted);
+	text-align: center;
+	text-wrap: pretty;
+}
+
+@media (min-width: 900px) {
+	.ogc-submit-idea-meta {
+		text-align: left;
+	}
+}
