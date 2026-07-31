@@ -38,10 +38,13 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready
 	--ogc-accent-end: var(--accent-gradient-end);
 
 	/* Body / non-interactive text (never use link orange for these) */
-	--ogc-text-primary: #F5F5F5;
+	--ogc-text-primary: var(--text-primary);
 	--ogc-text: var(--ogc-text-primary);
 	--ogc-text-muted: var(--text-secondary);
 	--ogc-text-on-accent: var(--text-on-accent);
+
+	/* H1 shimmer / underline swoosh mode — overridden by Customizer */
+	--ogc-swoosh-mode: gradient;
 
 	/* Links & interactive chrome */
 	--ogc-link-color: #FFD27A;

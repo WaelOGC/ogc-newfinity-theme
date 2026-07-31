@@ -8,6 +8,9 @@
 	'use strict';
 
 	var rmMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+	function ogcReducedMotion() {
+		return rmMq.matches || document.body.classList.contains('ogc-motion-reduced-by-admin');
+	}
 
 	/* Brand accents already used across other hero canvases. */
 	var AMBER = '#FFB000';
@@ -281,7 +284,7 @@
 			var bulbA = state.bulb;
 			var planA = state.plan;
 
-			if (rmMq.matches) {
+			if (ogcReducedMotion()) {
 				/* Near-static blend — both faintly present, no morph churn. */
 				bulbA = 0.72;
 				planA = 0.28;
@@ -306,7 +309,7 @@
 			var dt = Math.min(0.05, (now - lastTs) / 1000);
 			lastTs = now;
 
-			var speedMul = rmMq.matches ? 0.06 : 1;
+			var speedMul = ogcReducedMotion() ? 0.06 : 1;
 			cycleT += dt * 1000 * speedMul;
 			draw(cycleProgress());
 		}

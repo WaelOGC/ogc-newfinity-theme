@@ -116,15 +116,35 @@
 	text-wrap: balance;
 }
 
-/* Slow continuous shimmer on "future." only */
+/* H1 accent shimmer / swoosh — modes via --ogc-swoosh-mode + body.ogc-swoosh-* */
 .hero-shimmer {
-	background: linear-gradient(90deg, #ffd27a 0%, #ffeac2 50%, #ffd27a 100%);
+	background: linear-gradient(
+		90deg,
+		var(--accent-gradient-start) 0%,
+		var(--accent-gradient-end) 50%,
+		var(--accent-gradient-start) 100%
+	);
 	background-size: 200% auto;
 	-webkit-background-clip: text;
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
 	color: transparent;
 	animation: ogc-shimmer 4s linear infinite;
+}
+
+body.ogc-swoosh-solid .hero-shimmer {
+	background: var(--accent-gradient-start);
+	background-size: auto;
+	animation: none;
+}
+
+body.ogc-swoosh-none .hero-shimmer {
+	background: none;
+	-webkit-background-clip: unset;
+	background-clip: unset;
+	-webkit-text-fill-color: var(--ogc-text-primary);
+	color: var(--ogc-text-primary);
+	animation: none;
 }
 
 @keyframes ogc-shimmer {
@@ -141,6 +161,34 @@
 		animation: none;
 		background-position: 50% center;
 	}
+}
+
+body.ogc-motion-reduced-by-admin .hero-shimmer {
+	animation: none;
+	background-position: 50% center;
+}
+
+/* Optional Customizer hero background — additive layer behind canvas/content */
+.ogc-home-hero,
+.ogc-split-hero {
+	position: relative;
+}
+
+.ogc-hero-bg {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	opacity: 0.35;
+}
+
+.ogc-home-hero > *:not(.ogc-hero-bg),
+.ogc-split-hero > *:not(.ogc-hero-bg) {
+	position: relative;
+	z-index: 1;
 }
 
 .ogc-home-hero__lead {

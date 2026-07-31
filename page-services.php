@@ -75,6 +75,7 @@ $how_we_work = array(
 <article class="ogc-page ogc-page--services">
 
 	<section class="ogc-page-hero ogc-split-hero" aria-labelledby="ogc-services-hero-heading">
+		<?php ogc_render_hero_bg( 'services' ); ?>
 		<div class="ogc-split-hero__copy">
 			<p class="ogc-badge"><?php esc_html_e( 'OGC NEWFINITY', 'ogc-newfinity' ); ?></p>
 			<h1 id="ogc-services-hero-heading" class="ogc-page-hero__title">

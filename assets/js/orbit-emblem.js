@@ -12,6 +12,9 @@
 	if (typeof THREE === 'undefined') { return; }
 
 	var rmMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+	function ogcReducedMotion() {
+		return rmMq.matches || document.body.classList.contains('ogc-motion-reduced-by-admin');
+	}
 	var TEX = 1024;
 
 	/* Fixed tilt so rings read at an angle; spin is Y-only so OGC stays readable. */
@@ -126,7 +129,7 @@
 		}
 
 		function frame() {
-			if (!rmMq.matches && emblem) {
+			if (!ogcReducedMotion() && emblem) {
 				emblem.rotation.y += 0.006;
 			}
 			renderer.render(scene, camera);
@@ -143,7 +146,7 @@
 				frame();
 				return;
 			}
-			if (rmMq.matches) {
+			if (ogcReducedMotion()) {
 				if (emblem) {
 					emblem.rotation.set(TILT_X, FACE_Y, TILT_Z);
 				}

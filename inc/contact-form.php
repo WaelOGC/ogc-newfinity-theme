@@ -90,7 +90,7 @@ function ogc_handle_contact_submit() {
 		'Reply-To: ' . $name . ' <' . $email . '>',
 	);
 
-	$sent = wp_mail( 'contact@ogcnewfinity.com', $mail_subject, $body, $headers );
+	$sent = wp_mail( ogc_get_contact_email(), $mail_subject, $body, $headers );
 
 	ogc_contact_redirect( $sent ? 'sent' : 'error' );
 }

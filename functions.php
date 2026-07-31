@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** Theme version — bump when shipping asset cache-busts. */
-define( 'OGC_THEME_VERSION', '1.20.0' );
+define( 'OGC_THEME_VERSION', '1.21.0' );
 
 /** Absolute path to the theme root. */
 define( 'OGC_THEME_DIR', get_template_directory() );
@@ -22,7 +22,6 @@ define( 'OGC_THEME_URI', get_template_directory_uri() );
  * Load core includes.
  *
  * Planned (later steps):
- * - inc/customizer.php
  * - inc/theme-options-page.php
  * - inc/ai-chat-widget.php
  */
@@ -32,6 +31,7 @@ require_once OGC_THEME_DIR . '/inc/blog.php';
 require_once OGC_THEME_DIR . '/inc/seed-articles.php';
 require_once OGC_THEME_DIR . '/inc/seed-legal.php';
 require_once OGC_THEME_DIR . '/inc/widgets.php';
+require_once OGC_THEME_DIR . '/inc/customizer.php';
 require_once OGC_THEME_DIR . '/inc/enqueue.php';
 require_once OGC_THEME_DIR . '/inc/seed-content.php';
 require_once OGC_THEME_DIR . '/inc/form-helpers.php';

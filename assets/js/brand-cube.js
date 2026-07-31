@@ -12,6 +12,9 @@
 	if (!root || !canvas || typeof THREE === 'undefined') { return; }
 
 	var rmMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+	function ogcReducedMotion() {
+		return rmMq.matches || document.body.classList.contains('ogc-motion-reduced-by-admin');
+	}
 	var HALF = 1.05;
 	var TEX  = 1024;
 
@@ -233,7 +236,7 @@
 
 	function onMove(e) {
 		var p = setPtr(e);
-		if (isDrag && !rmMq.matches) {
+		if (isDrag && !ogcReducedMotion()) {
 			var dx = p.x - lx, dy = p.y - ly;
 			if (Math.abs(dx) + Math.abs(dy) > 5) didDrag = true;
 			vx = dx * 0.012; vy = dy * 0.012;
@@ -269,7 +272,7 @@
 	}
 
 	function frame() {
-		if (!isDrag && !rmMq.matches) {
+		if (!isDrag && !ogcReducedMotion()) {
 			cube.rotation.y += 0.004 + vx;
 			cube.rotation.x += 0.0015 + vy;
 		}
@@ -285,7 +288,7 @@
 	function sync() {
 		stop();
 		if (!inView) { frame(); return; }
-		if (rmMq.matches) { cube.rotation.set(0.38, -0.62, 0.1); vx = 0; vy = 0; frame(); return; }
+		if (ogcReducedMotion()) { cube.rotation.set(0.38, -0.62, 0.1); vx = 0; vy = 0; frame(); return; }
 		tick();
 	}
 

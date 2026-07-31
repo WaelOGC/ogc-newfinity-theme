@@ -32,38 +32,29 @@
 					</p>
 				</div>
 				<p class="ogc-footer__about">
-					<?php
-					esc_html_e(
-						'OGC NewFinity is a digital agency in The Hague, Netherlands, delivering ethical innovation across software and app development, custom WordPress, UI/UX, marketing strategy, cybersecurity, and AI solutions.',
-						'ogc-newfinity'
-					);
-					?>
+					<?php echo esc_html( ogc_get_footer_tagline() ); ?>
 				</p>
 				<ul class="ogc-social" aria-label="<?php esc_attr_e( 'Social media', 'ogc-newfinity' ); ?>">
-					<li>
-						<a class="ogc-social__link" href="https://x.com/OGCNewfinity" target="_blank" rel="noopener noreferrer">
-							<span class="screen-reader-text"><?php esc_html_e( 'OGC NewFinity on X', 'ogc-newfinity' ); ?></span>
-							<?php ogc_social_icon( 'x' ); ?>
-						</a>
-					</li>
-					<li>
-						<a class="ogc-social__link" href="https://www.linkedin.com/company/ogc-newfinity" target="_blank" rel="noopener noreferrer">
-							<span class="screen-reader-text"><?php esc_html_e( 'OGC NewFinity on LinkedIn', 'ogc-newfinity' ); ?></span>
-							<?php ogc_social_icon( 'linkedin' ); ?>
-						</a>
-					</li>
-					<li>
-						<a class="ogc-social__link" href="https://github.com/OGC-NewFinity" target="_blank" rel="noopener noreferrer">
-							<span class="screen-reader-text"><?php esc_html_e( 'OGC NewFinity on GitHub', 'ogc-newfinity' ); ?></span>
-							<?php ogc_social_icon( 'github' ); ?>
-						</a>
-					</li>
-					<li>
-						<a class="ogc-social__link" href="https://discord.com/invite/AyzKNHdn" target="_blank" rel="noopener noreferrer">
-							<span class="screen-reader-text"><?php esc_html_e( 'OGC NewFinity on Discord', 'ogc-newfinity' ); ?></span>
-							<?php ogc_social_icon( 'discord' ); ?>
-						</a>
-					</li>
+					<?php
+					$ogc_socials = array(
+						'x'        => __( 'OGC NewFinity on X', 'ogc-newfinity' ),
+						'linkedin' => __( 'OGC NewFinity on LinkedIn', 'ogc-newfinity' ),
+						'github'   => __( 'OGC NewFinity on GitHub', 'ogc-newfinity' ),
+						'discord'  => __( 'OGC NewFinity on Discord', 'ogc-newfinity' ),
+					);
+					foreach ( $ogc_socials as $network => $label ) :
+						$url = ogc_get_social_url( $network );
+						if ( ! $url ) {
+							continue;
+						}
+						?>
+						<li>
+							<a class="ogc-social__link" href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener noreferrer">
+								<span class="screen-reader-text"><?php echo esc_html( $label ); ?></span>
+								<?php ogc_social_icon( $network ); ?>
+							</a>
+						</li>
+					<?php endforeach; ?>
 				</ul>
 			</div>
 
@@ -83,11 +74,11 @@
 				<ul class="ogc-footer__contact">
 					<li class="ogc-footer__contact-item">
 						<span class="ogc-footer__contact-icon" aria-hidden="true"><?php ogc_footer_icon( 'map' ); ?></span>
-						<span><?php esc_html_e( 'The Hague, Netherlands', 'ogc-newfinity' ); ?></span>
+						<span><?php echo esc_html( ogc_get_location_text() ); ?></span>
 					</li>
 					<li class="ogc-footer__contact-item">
 						<span class="ogc-footer__contact-icon" aria-hidden="true"><?php ogc_footer_icon( 'mail' ); ?></span>
-						<a href="mailto:contact@ogcnewfinity.com">contact@ogcnewfinity.com</a>
+						<a href="mailto:<?php echo esc_attr( ogc_get_contact_email() ); ?>"><?php echo esc_html( ogc_get_contact_email() ); ?></a>
 					</li>
 				</ul>
 			</div>

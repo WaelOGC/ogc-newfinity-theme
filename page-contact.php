@@ -80,9 +80,10 @@ $capability_cards = array(
 			</h1>
 			<p class="ogc-page-hero__lead">
 				<?php
-				esc_html_e(
-					'The Hague, Netherlands — every message gets a real reply within 48 hours.',
-					'ogc-newfinity'
+				printf(
+					/* translators: %s: location text */
+					esc_html__( '%s — every message gets a real reply within 48 hours.', 'ogc-newfinity' ),
+					esc_html( ogc_get_location_text() )
 				);
 				?>
 			</p>
@@ -267,7 +268,7 @@ $capability_cards = array(
 				?>
 				<div class="ogc-contact-location__copy">
 					<p class="ogc-contact-location__label"><?php esc_html_e( 'Based in', 'ogc-newfinity' ); ?></p>
-					<p class="ogc-contact-location__place"><?php esc_html_e( 'The Hague, Netherlands', 'ogc-newfinity' ); ?></p>
+					<p class="ogc-contact-location__place"><?php echo esc_html( ogc_get_location_text() ); ?></p>
 				</div>
 			</div>
 		</aside>

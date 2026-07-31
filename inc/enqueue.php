@@ -13,17 +13,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Enqueue theme stylesheets and scripts.
  */
 function ogc_enqueue_assets() {
-	wp_enqueue_style(
-		'ogc-fonts',
-		'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap',
-		array(),
-		null
-	);
+	// Allow-listed Google Fonts for the Customizer-selected heading + body pair only.
+	$fonts_url  = function_exists( 'ogc_get_google_fonts_url' ) ? ogc_get_google_fonts_url() : '';
+	$style_deps = array();
+	if ( $fonts_url ) {
+		wp_enqueue_style(
+			'ogc-fonts',
+			$fonts_url,
+			array(),
+			null
+		);
+		$style_deps[] = 'ogc-fonts';
+	}
 
 	wp_enqueue_style(
 		'ogc-style',
 		get_stylesheet_uri(),
-		array( 'ogc-fonts' ),
+		$style_deps,
 		OGC_THEME_VERSION
 	);
 
@@ -159,18 +165,39 @@ function ogc_enqueue_assets() {
 			OGC_THEME_VERSION,
 			true
 		);
+		$location = ogc_get_location_text();
+		$email    = ogc_get_contact_email();
 		wp_localize_script(
 			'ogc-brand-cube',
 			'ogcBrandCube',
 			array(
 				'homeUrl' => home_url( '/' ),
 				'faces'   => array(
-					array( 'title' => __( 'About us',       'ogc-newfinity' ), 'btn' => __( 'Learn more',       'ogc-newfinity' ), 'body' => __( 'OGC NewFinity is a digital agency based in The Hague, Netherlands, founded in 2022. We build technology with a simple standard: it has to actually work for the people using it.', 'ogc-newfinity' ), 'url' => home_url( '/about-ogc-newfinity/' ) ),
+					array(
+						'title' => __( 'About us', 'ogc-newfinity' ),
+						'btn'   => __( 'Learn more', 'ogc-newfinity' ),
+						'body'  => sprintf(
+							/* translators: %s: location text */
+							__( 'OGC NewFinity is a digital agency based in %s, founded in 2022. We build technology with a simple standard: it has to actually work for the people using it.', 'ogc-newfinity' ),
+							$location
+						),
+						'url'   => home_url( '/about-ogc-newfinity/' ),
+					),
 					array( 'title' => __( 'Our services',   'ogc-newfinity' ), 'btn' => __( 'View services',    'ogc-newfinity' ), 'body' => __( 'Software, WordPress, UI/UX, marketing strategy, cybersecurity, and AI — six capabilities, one team.', 'ogc-newfinity' ), 'url' => home_url( '/services/' ) ),
 					array( 'title' => __( 'Our mission',    'ogc-newfinity' ), 'btn' => __( 'Read our mission', 'ogc-newfinity' ), 'body' => __( 'Ethical innovation, built with intention. We measure success by whether our work actually earns your trust.', 'ogc-newfinity' ), 'url' => home_url( '/our-mission/' ) ),
-					array( 'title' => __( 'Contact us',     'ogc-newfinity' ), 'btn' => __( 'Get in touch',     'ogc-newfinity' ), 'body' => __( 'Based in The Hague, Netherlands. contact@ogcnewfinity.com — every message gets a real reply within 48 hours.', 'ogc-newfinity' ), 'url' => home_url( '/contact/' ) ),
+					array(
+						'title' => __( 'Contact us', 'ogc-newfinity' ),
+						'btn'   => __( 'Get in touch', 'ogc-newfinity' ),
+						'body'  => sprintf(
+							/* translators: 1: location text, 2: contact email */
+							__( 'Based in %1$s. %2$s — every message gets a real reply within 48 hours.', 'ogc-newfinity' ),
+							$location,
+							$email
+						),
+						'url'   => home_url( '/contact/' ),
+					),
 					array( 'title' => __( 'Leave feedback', 'ogc-newfinity' ), 'btn' => __( 'Share feedback',   'ogc-newfinity' ), 'body' => __( "Had an experience with us? We'd like to hear about it, good or bad.", 'ogc-newfinity' ), 'url' => home_url( '/support/' ) ),
-					array( 'title' => __( 'AI support',     'ogc-newfinity' ), 'btn' => __( 'Chat now',         'ogc-newfinity' ), 'body' => __( 'Talk to our assistant for quick answers about our services and process.', 'ogc-newfinity' ), 'url' => home_url( '/support/#ai-support' ) ),
+					array( 'title' => __( 'AI support',     'ogc-newfinity' ), 'btn' => __( 'Chat now',         'ogc-newfinity' ), 'body' => __( 'Talk to our assistant for quick answers about our services and process.', 'ogc-newfinity' ), 'url' => home_url( '/support/' ) ),
 				),
 			)
 		);

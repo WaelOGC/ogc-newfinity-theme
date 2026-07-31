@@ -11,7 +11,10 @@
 get_header();
 
 $contact_url = home_url( '/contact/' );
-$mail_url    = 'mailto:contact@ogcnewfinity.com';
+$mail_url    = 'mailto:' . ogc_get_contact_email();
+$contact_email = ogc_get_contact_email();
+$location    = ogc_get_location_text();
+$response    = ogc_get_response_time_text();
 
 $categories = array(
 	array(
@@ -51,7 +54,10 @@ $faq_sections = array(
 			),
 			array(
 				'q' => 'Where are you based, and do you work with clients outside the Netherlands?',
-				'a' => 'We\'re based in The Hague, Netherlands, and work with clients across the EU and internationally. Most collaboration happens online; we adapt meeting times and delivery to what works for your team.',
+				'a' => sprintf(
+					'We\'re based in %s, and work with clients across the EU and internationally. Most collaboration happens online; we adapt meeting times and delivery to what works for your team.',
+					$location
+				),
 			),
 		),
 	),
@@ -114,7 +120,13 @@ $faq_sections = array(
 				<span class="hero-shimmer"><?php esc_html_e( 'Support', 'ogc-newfinity' ); ?></span>
 			</h1>
 			<p class="ogc-page-hero__lead">
-				<?php esc_html_e( 'Browse FAQs · 48h Response Guaranteed', 'ogc-newfinity' ); ?>
+				<?php
+				printf(
+					/* translators: %s: response-time guarantee text */
+					esc_html__( 'Browse FAQs · %s Guaranteed', 'ogc-newfinity' ),
+					esc_html( $response )
+				);
+				?>
 			</p>
 		</div>
 		<div class="ogc-split-hero__visual">
@@ -238,7 +250,7 @@ $faq_sections = array(
 				<?php esc_html_e( 'Get in Touch', 'ogc-newfinity' ); ?>
 			</a>
 			<p class="ogc-support-cta__mail">
-				<a href="<?php echo esc_url( $mail_url ); ?>">contact@ogcnewfinity.com</a>
+				<a href="<?php echo esc_url( $mail_url ); ?>"><?php echo esc_html( $contact_email ); ?></a>
 			</p>
 		</div>
 	</section>

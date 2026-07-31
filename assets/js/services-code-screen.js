@@ -8,6 +8,9 @@
 	'use strict';
 
 	var rmMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+	function ogcReducedMotion() {
+		return rmMq.matches || document.body.classList.contains('ogc-motion-reduced-by-admin');
+	}
 
 	var CELL_TARGET = 21;
 	var TICK_MS = 110;
@@ -311,7 +314,7 @@
 				return;
 			}
 			draw();
-			var ms = rmMq.matches ? TICK_MS_REDUCED : TICK_MS;
+			var ms = ogcReducedMotion() ? TICK_MS_REDUCED : TICK_MS;
 			tickTimer = setInterval(tick, ms);
 		}
 

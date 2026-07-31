@@ -49,6 +49,7 @@ $practice = array(
 <article class="ogc-page ogc-page--mission">
 
 	<section class="ogc-page-hero ogc-split-hero ogc-mission-hero" aria-labelledby="ogc-mission-hero-heading">
+		<?php ogc_render_hero_bg( 'mission' ); ?>
 		<div class="ogc-split-hero__copy">
 			<p class="ogc-badge"><?php esc_html_e( 'OGC NEWFINITY', 'ogc-newfinity' ); ?></p>
 			<h1 id="ogc-mission-hero-heading" class="ogc-page-hero__title">

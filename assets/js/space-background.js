@@ -16,6 +16,9 @@
 	}
 
 	var reduceMotionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+	function ogcReducedMotion() {
+		return reduceMotionMq.matches || document.body.classList.contains('ogc-motion-reduced-by-admin');
+	}
 	var desktopMq = window.matchMedia('(min-width: 1025px)');
 	var tabletMq = window.matchMedia('(min-width: 600px) and (max-width: 1024px)');
 
@@ -403,7 +406,7 @@
 	function renderFrame(animate) {
 		var cfg = tierConfig(currentTier || getTier());
 
-		if (animate && !reduceMotionMq.matches) {
+		if (animate && !ogcReducedMotion()) {
 			asteroids.forEach(function (mesh) {
 				mesh.rotation.x += mesh.userData.spin.x;
 				mesh.rotation.y += mesh.userData.spin.y;
@@ -441,7 +444,7 @@
 
 	function applyMotionPreference() {
 		stopLoop();
-		if (reduceMotionMq.matches) {
+		if (ogcReducedMotion()) {
 			renderFrame(false);
 			return;
 		}
@@ -456,7 +459,7 @@
 		}
 		buildContent(tier);
 		resize();
-		if (reduceMotionMq.matches) {
+		if (ogcReducedMotion()) {
 			renderFrame(false);
 		}
 	}
@@ -489,7 +492,7 @@
 		window.addEventListener(
 			'mousemove',
 			function (e) {
-				if (!tierConfig(currentTier).mouseParallax || reduceMotionMq.matches) {
+				if (!tierConfig(currentTier).mouseParallax || ogcReducedMotion()) {
 					return;
 				}
 				mouseX = (e.clientX / window.innerWidth) * 2 - 1;

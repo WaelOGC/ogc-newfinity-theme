@@ -64,7 +64,7 @@ $trust = array(
 	),
 	array(
 		'icon'  => 'clock',
-		'title' => '48h Response',
+		'title' => ogc_get_response_time_text(),
 		'text'  => 'Every inquiry gets a real, considered response within 48 hours — guaranteed.',
 	),
 );
@@ -73,6 +73,7 @@ $trust = array(
 <article class="ogc-home">
 
 	<section class="ogc-home-hero" aria-labelledby="ogc-home-hero-heading">
+		<?php ogc_render_hero_bg( 'home' ); ?>
 		<div class="ogc-home-hero__copy">
 			<p class="ogc-badge"><?php esc_html_e( 'OGC NEWFINITY', 'ogc-newfinity' ); ?></p>
 			<h1 id="ogc-home-hero-heading" class="ogc-home-hero__title">
@@ -81,9 +82,10 @@ $trust = array(
 			</h1>
 			<p class="ogc-home-hero__lead">
 				<?php
-				esc_html_e(
-					'OGC NewFinity is a digital agency in The Hague, Netherlands, building AI-driven software, secure web platforms, and ethical technology strategy for ambitious teams.',
-					'ogc-newfinity'
+				printf(
+					/* translators: %s: location text */
+					esc_html__( 'OGC NewFinity is a digital agency in %s, building AI-driven software, secure web platforms, and ethical technology strategy for ambitious teams.', 'ogc-newfinity' ),
+					esc_html( ogc_get_location_text() )
 				);
 				?>
 			</p>

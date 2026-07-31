@@ -116,9 +116,17 @@ add_action( 'after_setup_theme', 'ogc_configure_static_front_page', 20 );
 add_action( 'init', 'ogc_configure_static_front_page', 30 );
 
 /**
- * Output theme favicon / apple-touch-icon link tags (canonical logo mark).
+ * Output theme favicon / apple-touch-icon link tags.
+ * Prefers WordPress Site Icon (Customizer → Site Identity) when set;
+ * otherwise falls back to bundled assets in assets/images/Identity/favicon/.
  */
 function ogc_output_favicons() {
+	$site_icon = function_exists( 'get_site_icon_url' ) ? get_site_icon_url( 512 ) : '';
+	if ( $site_icon ) {
+		// Native Site Icon handles link tags via core; skip bundled duplicates.
+		return;
+	}
+
 	$base = OGC_THEME_URI . '/assets/images/Identity/favicon';
 	?>
 	<link rel="icon" href="<?php echo esc_url( $base . '/favicon-32.png' ); ?>" sizes="32x32" type="image/png">

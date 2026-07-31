@@ -8,6 +8,9 @@
 	'use strict';
 
 	var rmMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+	function ogcReducedMotion() {
+		return rmMq.matches || document.body.classList.contains('ogc-motion-reduced-by-admin');
+	}
 
 	/* Brand accents already used across other hero canvases. */
 	var AMBER = '#FFB000';
@@ -212,12 +215,12 @@
 		}
 
 		function advance(dt) {
-			var speedMul = rmMq.matches ? 0.08 : 1;
+			var speedMul = ogcReducedMotion() ? 0.08 : 1;
 			var i;
 			for (i = 0; i < nodes.length; i++) {
 				nodes[i].angle += nodes[i].speed * nodes[i].dir * dt * speedMul;
 			}
-			pulseT += dt * (rmMq.matches ? 0.25 : 1);
+			pulseT += dt * (ogcReducedMotion() ? 0.25 : 1);
 		}
 
 		function frame(ts) {

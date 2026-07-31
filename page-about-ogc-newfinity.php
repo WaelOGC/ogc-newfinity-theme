@@ -69,17 +69,19 @@ $service_tags = array(
 <article class="ogc-page ogc-page--about">
 
 	<section class="ogc-page-hero ogc-split-hero" aria-labelledby="ogc-about-hero-heading">
+		<?php ogc_render_hero_bg( 'about' ); ?>
 		<div class="ogc-split-hero__copy">
-			<p class="ogc-badge"><?php esc_html_e( 'THE HAGUE, NETHERLANDS', 'ogc-newfinity' ); ?></p>
+			<p class="ogc-badge"><?php echo esc_html( strtoupper( ogc_get_location_text() ) ); ?></p>
 			<h1 id="ogc-about-hero-heading" class="ogc-page-hero__title">
 				<?php esc_html_e( 'About OGC', 'ogc-newfinity' ); ?>
 				<span class="hero-shimmer"><?php esc_html_e( 'NewFinity', 'ogc-newfinity' ); ?></span>
 			</h1>
 			<p class="ogc-page-hero__lead">
 				<?php
-				esc_html_e(
-					'OGC NewFinity is a digital agency based in The Hague, Netherlands, founded in 2022. We build software, websites, and digital strategy for teams that need real engineering behind their ideas — not templates, not shortcuts. Every project is handled directly by the people who build it.',
-					'ogc-newfinity'
+				printf(
+					/* translators: %s: location text */
+					esc_html__( 'OGC NewFinity is a digital agency based in %s, founded in 2022. We build software, websites, and digital strategy for teams that need real engineering behind their ideas — not templates, not shortcuts. Every project is handled directly by the people who build it.', 'ogc-newfinity' ),
+					esc_html( ogc_get_location_text() )
 				);
 				?>
 			</p>

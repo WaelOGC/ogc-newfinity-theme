@@ -8,6 +8,9 @@
 	'use strict';
 
 	var rmMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+	function ogcReducedMotion() {
+		return rmMq.matches || document.body.classList.contains('ogc-motion-reduced-by-admin');
+	}
 
 	/* Brand accents already used across other hero canvases. */
 	var AMBER = '#FFB000';
@@ -255,14 +258,14 @@
 			var state = cycleProgress();
 			var openAmt = flapOpenAmount(state);
 
-			if (rmMq.matches) {
+			if (ogcReducedMotion()) {
 				/* Near-static: flap gently ajar, no particle churn. */
 				openAmt = 0.55;
 			}
 
 			var origin = drawEnvelope(openAmt);
 
-			if (!rmMq.matches) {
+			if (!ogcReducedMotion()) {
 				drawParticles(origin);
 			} else {
 				/* One soft static sparkle above the opening. */
@@ -277,12 +280,12 @@
 		}
 
 		function advance(dt) {
-			var speedMul = rmMq.matches ? 0.06 : 1;
+			var speedMul = ogcReducedMotion() ? 0.06 : 1;
 			var prevPhase = cycleProgress().phase;
 			cycleT += dt * 1000 * speedMul;
 			var state = cycleProgress();
 
-			if (!rmMq.matches) {
+			if (!ogcReducedMotion()) {
 				var emitting = state.phase === 'send';
 				if (prevPhase !== 'send' && state.phase === 'send') {
 					particleSeed = 0;

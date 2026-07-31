@@ -9,6 +9,9 @@
 	if (typeof THREE === 'undefined') { return; }
 
 	var rmMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+	function ogcReducedMotion() {
+		return rmMq.matches || document.body.classList.contains('ogc-motion-reduced-by-admin');
+	}
 
 	/* Needle angles (rad around Z). 0 = north / +Y. */
 	var NORTH = 0;
@@ -85,7 +88,7 @@
 		function frame(now) {
 			now = now || performance.now();
 
-			if (!rmMq.matches && inView && needle) {
+			if (!ogcReducedMotion() && inView && needle) {
 				var elapsed = now - phaseStart;
 
 				if (phase === 'search') {
@@ -129,7 +132,7 @@
 				frame();
 				return;
 			}
-			if (rmMq.matches) {
+			if (ogcReducedMotion()) {
 				setNeedle(NORTH);
 				frame();
 				return;

@@ -167,7 +167,13 @@ $trust_cards = array(
 			<?php do_action( 'ogc_submit_idea_render' ); ?>
 
 			<p class="ogc-submit-idea-meta">
-				<?php esc_html_e( 'The Hague, Netherlands · Free & Confidential', 'ogc-newfinity' ); ?>
+				<?php
+				printf(
+					/* translators: %s: location text */
+					esc_html__( '%s · Free & Confidential', 'ogc-newfinity' ),
+					esc_html( ogc_get_location_text() )
+				);
+				?>
 			</p>
 		</div>
 
