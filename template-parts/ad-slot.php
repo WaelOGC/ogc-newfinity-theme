@@ -26,20 +26,12 @@ $args = wp_parse_args(
 	)
 );
 
-$variant = sanitize_key( $args['variant'] );
-
-if ( function_exists( 'ogc_get_ads_config' ) ) {
-	$ads_config = ogc_get_ads_config();
-} else {
-	$ads_raw    = get_theme_mod( 'ogc_ads_config_json', '' );
-	$ads_config = is_array( $ads_raw ) ? $ads_raw : json_decode( (string) $ads_raw, true );
-}
-
-if ( ! is_array( $ads_config ) || ! isset( $ads_config[ $variant ] ) ) {
+if ( ! function_exists( 'ogc_get_ad_slot' ) ) {
 	return;
 }
 
-$slot = is_object( $ads_config[ $variant ] ) ? (array) $ads_config[ $variant ] : $ads_config[ $variant ];
+$variant = sanitize_key( $args['variant'] );
+$slot    = ogc_get_ad_slot( $variant );
 
 if ( ! is_array( $slot ) || empty( $slot['enabled'] ) ) {
 	return;

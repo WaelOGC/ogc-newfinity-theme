@@ -2021,7 +2021,6 @@ function ogc_theme_options_css() {
 		'--ogc-btn-radius'          => ogc_css_num( ogc_mod( 'ogc_button_radius' ) ) . 'px',
 		'--ogc-button-radius'       => ogc_css_num( ogc_mod( 'ogc_button_radius' ) ) . 'px',
 		'--ogc-focus-ring'          => $accent_end,
-		'--ogc-button-radius'       => ogc_css_num( ogc_mod( 'ogc_button_radius' ) ) . 'px',
 		'--ogc-btn-shadow'          => ogc_button_shadow_value( ogc_mod( 'ogc_button_shadow_style' ), $shadow_rgb, $brand_rgb, $shadow_opacity ),
 		'--ogc-shadow-rgb'          => $shadow_rgb,
 		'--ogc-shadow-opacity'      => ogc_css_num( $shadow_opacity ),
@@ -2032,12 +2031,12 @@ function ogc_theme_options_css() {
 		'--ogc-hover-duration-outline' => ogc_speed_ms( ogc_mod( 'ogc_button_hover_duration_outline' ) ) . 'ms',
 		'--ogc-btn-duration-primary'   => ogc_speed_ms( ogc_mod( 'ogc_button_hover_duration_primary' ) ) . 'ms',
 		'--ogc-btn-duration-outline'   => ogc_speed_ms( ogc_mod( 'ogc_button_hover_duration_outline' ) ) . 'ms',
-		'--ogc-hover-lift-primary'     => $primary['lift'],
-		'--ogc-hover-scale-primary'    => $primary['scale'],
-		'--ogc-hover-glow-primary'     => $primary['glow'],
-		'--ogc-hover-lift-outline'     => $outline['lift'],
-		'--ogc-hover-scale-outline'    => $outline['scale'],
-		'--ogc-hover-glow-outline'     => $outline['glow'],
+		'--ogc-hover-lift-primary'     => $hover_base['lift'],
+		'--ogc-hover-scale-primary'    => $hover_base['scale'],
+		'--ogc-hover-glow-primary'     => $hover_base['glow'],
+		'--ogc-hover-lift-outline'     => $hover_base['lift'],
+		'--ogc-hover-scale-outline'    => $hover_base['scale'],
+		'--ogc-hover-glow-outline'     => $hover_base['glow'],
 
 		/* Motion */
 		'--ogc-transition-duration' => $transition_ms . 'ms',
@@ -2046,6 +2045,7 @@ function ogc_theme_options_css() {
 
 		/* Header */
 		'--ogc-header-bg'           => sprintf( 'rgba(%s, %s)', $header_rgb, ogc_css_num( $header_opacity ) ),
+		'--ogc-header-bg-scrolled'  => sprintf( 'rgba(%s, %s)', $header_rgb, ogc_css_num( max( 0.5, $header_opacity ) ) ),
 		'--ogc-header-text-color'   => ogc_mod( 'ogc_header_text_color' ),
 		'--ogc-header-logo-width'   => ogc_css_num( ogc_mod( 'ogc_header_logo_width_desktop' ) ) . 'px',
 		'--ogc-header-logo-width-desktop' => ogc_css_num( ogc_mod( 'ogc_header_logo_width_desktop' ) ) . 'px',
