@@ -18,7 +18,7 @@ The theme’s permanent site-wide visual system is:
    - Mobile uses a lighter blur (8px) for performance; grids stack to 1 column.
    - This is the official card treatment for services, stats, forms, feature panels, etc. Do **not** mix with the old flat solid charcoal card style.
 
-3. **Buttons** — always `.ogc-btn` (embossed dark chip, brand border, white label). Never solid gradient-filled glowing CTA buttons from external demos.
+3. **Buttons** — primary `.ogc-btn` (embossed dark chip, brand border, white label) and secondary `.ogc-btn-outline`. Hover/focus/active/disabled treatments are configured in Theme Options → Buttons & Effects (`assets/css/button-effects.css`). Never solid gradient-filled glowing CTA buttons from external demos.
 4. **Icons** — always `.ogc-icon` chips via `ogc_icon()` / `template-parts/icon.php` (embossed container + outline SVG).
 
 ## Color Palette
@@ -26,7 +26,7 @@ The theme’s permanent site-wide visual system is:
 |---|---|---|
 | `--bg-primary` / `--ogc-bg` | #0A0A0A / near-black | Page / WebGL clear color |
 | `--bg-panel` / `--ogc-bg-panel` | #141414 | Glass card base mix, panels |
-| `--border-accent` | #FFD27A | Dividers / accent borders |
+| `--border-accent` | #FFD27A | Dividers / accent borders (overridable via Theme Options) |
 | `--accent-gradient-start` | #FFD27A | Accent bars / gradient strips / pills |
 | `--accent-gradient-end` | #FFEAC2 | Accent bars / gradient strips / pills |
 | `--ogc-text-primary` | #F5F5F5 | Body / non-interactive text |
@@ -37,12 +37,14 @@ The theme’s permanent site-wide visual system is:
 | `--ogc-brand-rgb` | 255, 210, 122 | For `rgba(var(--ogc-brand-rgb), a)` borders/glows |
 | `--text-on-accent` | #1A1200 / near-black | Text on solid brand badges |
 
-Interactive text (links, nav) uses `--ogc-link-color` / `--ogc-link-hover`. Button **labels** are white; brand color lives on borders/glows. Body paragraphs use `--ogc-text-primary` — never brand yellow.
+All of the above (plus header/footer/button tokens) are overridden at runtime by `ogc_theme_options_css()` from **wp-admin → OGC NewFinity**. See `docs/04-admin-theme-options.md`.
+
+Interactive text (links, nav) uses `--ogc-link-color` / `--ogc-link-hover`. Button **labels** are white on primary; outline buttons use link color. Body paragraphs use `--ogc-text-primary` — never brand yellow.
 
 ## Typography
 - **Display/Headings (H1–H6, hero titles):** Space Grotesk, bold (700), **not** italic. Token: `--ogc-font-heading`.
 - **Body & UI text (nav, buttons, form fields, cards):** Inter. Token: `--ogc-font-body`.
-- **Header logo mark:** Bold “OGC” text in Space Grotesk (`ogc_get_logo( context => header )`). Full PNG logo reserved for footer / large placements.
+- **Header / footer logos:** PNG mark via `ogc_get_logo()`; widths and optional uploads controlled in Theme Options (Header / Footer tabs).
 - **Badges/pills/eyebrow labels:** Sans-serif, bold, uppercase, small size; dark text on orange gradient pill when used.
 
 ## Layout Patterns (reuse consistently)
@@ -55,18 +57,18 @@ Interactive text (links, nav) uses `--ogc-link-color` / `--ogc-link-hover`. Butt
 
 ## Components to Build
 - Pill badge (eyebrow label)
-- Gradient underline swoosh (SVG, under H1s) — optional accent
+- Gradient underline / H1 accent (`.hero-shimmer` + Theme Options “H1 Underline Style”)
 - **Primary button** — `.ogc-btn` embossed chip (white label, brand border)
+- **Outline button** — `.ogc-btn-outline` secondary CTA
 - Info/feature card — `.glass-card`
 - Service card — `.glass-card` + real 6-service list from docs/01
 - Form fields — dark / glass-compatible, accent border
-- Footer bar + header/nav (already implemented)
+- Footer bar + header/nav (already implemented; editable via Theme Options)
 
 ## Logo
-- **Canonical file:** `assets/images/Identity/logo-ogc-newfinity-light.png` — used site-wide (header, footer, favicon source).
-- Header: logo image alone at ~40px height (legible orbit-globe + OGC lettering).
-- Footer: same file at ~52px height next to the “OGC NewFinity” wordmark.
-- Favicons generated from the same mark: `assets/images/Identity/favicon/` (32 / 180 / 512) and registered as WordPress Site Icon.
+- **Canonical file:** `assets/images/Identity/logo-ogc-newfinity-light.png` — default site-wide mark.
+- Header / footer logos are overridable in Theme Options (separate uploads + width controls). Defaults: header ~40px height, footer ~54px width next to the “OGC NewFinity” wordmark.
+- Favicons: WP Site Icon (Customizer → Site Identity) with bundled files in `assets/images/Identity/favicon/` as fallback.
 
 ## Responsiveness
 Must be fully responsive (mobile, tablet, desktop). Space background and glass cards both adapt detail/layout per breakpoint (see Official Visual Identity Layer). Split heroes stack vertically on mobile (text first).

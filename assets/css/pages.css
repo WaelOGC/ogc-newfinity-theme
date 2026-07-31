@@ -890,6 +890,13 @@
 	padding: 0.28rem 0.7rem;
 }
 
+.ogc-blog-card__date {
+	font-family: var(--ogc-font-body);
+	font-size: 0.75rem;
+	letter-spacing: 0.02em;
+	color: var(--ogc-text-muted);
+}
+
 .ogc-blog-card__title {
 	margin: 0;
 	font-family: var(--ogc-font-heading);
@@ -1165,6 +1172,23 @@
 	.ogc-ad-slot--inline {
 		display: flex;
 	}
+}
+
+/* Slots holding real creative: label above content, no placeholder chrome */
+.ogc-ad-slot--filled {
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 0.5rem;
+	border-style: solid;
+	border-color: rgba(var(--ogc-brand-rgb), 0.2);
+	aspect-ratio: auto;
+}
+
+.ogc-ad-slot--filled .ogc-ad-slot__img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: var(--ogc-radius-sm);
 }
 
 /* Cover overlay hero */

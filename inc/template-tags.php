@@ -28,6 +28,7 @@ function ogc_get_logo_uri() {
  * @param array $args {
  *     Optional.
  *     @type string $class   Extra CSS class on the wrapper link. Default ''.
+ *     @type string $src     Image URL override (Theme Options header/footer logo). Default '' (bundled mark).
  *     @type int    $width   Image width attribute. Default 40.
  *     @type int    $height  Image height attribute. Default 38.
  *     @type bool   $lazy    Whether to lazy-load. Default true.
@@ -39,12 +40,15 @@ function ogc_get_logo( $args = array() ) {
 		$args,
 		array(
 			'class'  => '',
+			'src'    => '',
 			'width'  => 40,
 			'height' => 38,
 			'lazy'   => true,
 			'alt'    => 'OGC NewFinity logo',
 		)
 	);
+
+	$src = is_string( $args['src'] ) && '' !== trim( $args['src'] ) ? trim( $args['src'] ) : ogc_get_logo_uri();
 
 	$classes = trim( 'ogc-logo ' . $args['class'] );
 	$loading = $args['lazy'] ? 'lazy' : 'eager';
@@ -53,7 +57,7 @@ function ogc_get_logo( $args = array() ) {
 
 	printf(
 		'<img src="%1$s" alt="%2$s" width="%3$d" height="%4$d" loading="%5$s" decoding="async" class="ogc-logo__img"%6$s>',
-		esc_url( ogc_get_logo_uri() ),
+		esc_url( $src ),
 		esc_attr( $args['alt'] ),
 		(int) $args['width'],
 		(int) $args['height'],
@@ -288,6 +292,170 @@ function ogc_nav_menu_item_title( $title, $item, $args, $depth ) {
 	return $chip . '<span class="ogc-nav__label">' . esc_html( wp_strip_all_tags( $title ) ) . '</span>';
 }
 add_filter( 'nav_menu_item_title', 'ogc_nav_menu_item_title', 10, 4 );
+
+if ( ! function_exists( 'ogc_primary_nav_items' ) ) {
+	/**
+	 * Fixed primary-nav item set, keyed by the slugs used in Theme Options → Header → Nav order.
+	 *
+	 * Reorder / show / hide only — labels and destinations stay in code so the
+	 * sitemap in docs/03 cannot drift out of a JSON field.
+	 *
+	 * @return array<string, array{label: string, url: string, icon: string}>
+	 */
+	function ogc_primary_nav_items() {
+		return array(
+			'home'     => array(
+				'label' => __( 'Home', 'ogc-newfinity' ),
+				'url'   => home_url( '/' ),
+				'icon'  => 'home',
+			),
+			'about'    => array(
+				'label' => __( 'About Us', 'ogc-newfinity' ),
+				'url'   => home_url( '/about-ogc-newfinity/' ),
+				'icon'  => 'about',
+			),
+			'services' => array(
+				'label' => __( 'Our Services', 'ogc-newfinity' ),
+				'url'   => home_url( '/services/' ),
+				'icon'  => 'services',
+			),
+			'mission'  => array(
+				'label' => __( 'Our Mission', 'ogc-newfinity' ),
+				'url'   => home_url( '/our-mission/' ),
+				'icon'  => 'mission',
+			),
+			'blog'     => array(
+				'label' => __( 'Blog & Insights', 'ogc-newfinity' ),
+				'url'   => home_url( '/blog/' ),
+				'icon'  => 'blog',
+			),
+			'support'  => array(
+				'label' => __( 'Help & Support', 'ogc-newfinity' ),
+				'url'   => home_url( '/support/' ),
+				'icon'  => 'support',
+			),
+			'contact'  => array(
+				'label' => __( 'Contact', 'ogc-newfinity' ),
+				'url'   => home_url( '/contact/' ),
+				'icon'  => 'contact',
+			),
+		);
+	}
+}
+
+if ( ! function_exists( 'ogc_primary_nav_current_slug' ) ) {
+	/**
+	 * Nav slug matching the current request, for current-menu-item styling.
+	 *
+	 * @return string Slug from ogc_primary_nav_items(), or '' when nothing matches.
+	 */
+	function ogc_primary_nav_current_slug() {
+		if ( is_front_page() ) {
+			return 'home';
+		}
+		if ( is_home() || is_singular( 'post' ) || is_category() || is_tag() ) {
+			return 'blog';
+		}
+		if ( is_page( 'about-ogc-newfinity' ) ) {
+			return 'about';
+		}
+		if ( is_page( 'services' ) ) {
+			return 'services';
+		}
+		if ( is_page( 'our-mission' ) ) {
+			return 'mission';
+		}
+		if ( is_page( 'support' ) ) {
+			return 'support';
+		}
+		if ( is_page( 'contact' ) ) {
+			return 'contact';
+		}
+
+		return '';
+	}
+}
+
+if ( ! function_exists( 'ogc_render_primary_nav' ) ) {
+	/**
+	 * Echo the primary nav list from the Theme Options nav order.
+	 *
+	 * Mirrors the markup wp_nav_menu() produces for this theme
+	 * (ul.ogc-nav__list > li.menu-item > a > icon chip + .ogc-nav__label)
+	 * so header.css needs no branch for the two rendering paths.
+	 * Falls back to the full ordered item set when no order is stored.
+	 */
+	function ogc_render_primary_nav() {
+		$items = ogc_primary_nav_items();
+		$order = function_exists( 'ogc_get_nav_order' ) ? ogc_get_nav_order() : array();
+
+		if ( ! is_array( $order ) || empty( $order ) ) {
+			$order = array();
+			foreach ( array_keys( $items ) as $slug ) {
+				$order[] = array(
+					'slug'    => $slug,
+					'visible' => true,
+				);
+			}
+		}
+
+		$current = ogc_primary_nav_current_slug();
+
+		echo '<ul id="ogc-primary-menu" class="ogc-nav__list">';
+
+		foreach ( $order as $entry ) {
+			if ( is_object( $entry ) ) {
+				$entry = (array) $entry;
+			}
+
+			if ( is_string( $entry ) ) {
+				$entry = array( 'slug' => $entry );
+			}
+
+			if ( ! is_array( $entry ) || empty( $entry['slug'] ) ) {
+				continue;
+			}
+
+			$slug = sanitize_key( $entry['slug'] );
+			if ( ! isset( $items[ $slug ] ) ) {
+				continue;
+			}
+
+			$visible = array_key_exists( 'visible', $entry ) ? (bool) $entry['visible'] : true;
+			if ( ! $visible ) {
+				continue;
+			}
+
+			$item    = $items[ $slug ];
+			$classes = array( 'menu-item', 'menu-item-' . $slug );
+
+			if ( $slug === $current ) {
+				$classes[] = 'current-menu-item';
+				$classes[] = 'current_page_item';
+			}
+
+			printf(
+				'<li class="%1$s"><a href="%2$s"%3$s>',
+				esc_attr( implode( ' ', $classes ) ),
+				esc_url( $item['url'] ),
+				$slug === $current ? ' aria-current="page"' : ''
+			);
+
+			ogc_icon(
+				$item['icon'],
+				array(
+					'size'  => 'sm',
+					'class' => 'ogc-nav__icon',
+				)
+			);
+
+			echo '<span class="ogc-nav__label">' . esc_html( $item['label'] ) . '</span>';
+			echo '</a></li>';
+		}
+
+		echo '</ul>';
+	}
+}
 
 /**
  * Whether the future Amy Agent plugin is active and owning Submit Your Idea UI.

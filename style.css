@@ -69,6 +69,31 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready
 	--ogc-accent-bar-height: 5px;
 	--ogc-transition: 0.2s ease;
 	--ogc-grid-size: 72px;
+
+	/* ------------------------------------------------------------------
+	   Theme Options fallbacks (docs/04). inc/theme-options.php re-declares
+	   these in wp_head from saved theme mods; the values here are the
+	   zero-theme-mod look, so the site is identical before anything is saved.
+	   Angles/lengths must keep their units when overridden.
+	   ------------------------------------------------------------------ */
+
+	/* Header */
+	--ogc-header-logo-width-desktop: 40px;
+	--ogc-header-logo-width-mobile: 40px;
+	--ogc-header-bg: transparent;
+	--ogc-header-bg-scrolled: rgba(10, 10, 10, 0.5);
+	--ogc-header-text-color: var(--ogc-link-color);
+
+	/* Footer */
+	--ogc-footer-logo-width: 54px;
+	--ogc-footer-bg: rgba(10, 10, 10, 0.35);
+
+	/* Buttons & effects */
+	--ogc-button-radius: var(--ogc-radius);
+	--ogc-transition-speed: 0.2s;
+	--ogc-gradient-angle: 145deg;
+	--ogc-gradient-angle-active: 90deg;
+	--ogc-focus-ring: var(--ogc-link-hover);
 }
 
 /* Minimal base reset — fuller styles live in assets/css/main.css */

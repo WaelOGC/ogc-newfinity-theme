@@ -186,31 +186,8 @@ add_action( 'init', 'ogc_maybe_register_site_icon', 25 );
 
 /**
  * Fallback primary nav when no menu is assigned yet.
- * Mirrors the 7-item sitemap primary nav (Submit Idea stays a CTA).
+ * Shares markup with the Theme Options nav-order renderer (Submit Idea stays a CTA).
  */
 function ogc_primary_nav_fallback() {
-	$items = array(
-		array( 'label' => __( 'Home', 'ogc-newfinity' ), 'url' => home_url( '/' ), 'icon' => 'home' ),
-		array( 'label' => __( 'About Us', 'ogc-newfinity' ), 'url' => home_url( '/about-ogc-newfinity/' ), 'icon' => 'about' ),
-		array( 'label' => __( 'Our Services', 'ogc-newfinity' ), 'url' => home_url( '/services/' ), 'icon' => 'services' ),
-		array( 'label' => __( 'Our Mission', 'ogc-newfinity' ), 'url' => home_url( '/our-mission/' ), 'icon' => 'mission' ),
-		array( 'label' => __( 'Blog & Insights', 'ogc-newfinity' ), 'url' => home_url( '/blog/' ), 'icon' => 'blog' ),
-		array( 'label' => __( 'Help & Support', 'ogc-newfinity' ), 'url' => home_url( '/support/' ), 'icon' => 'support' ),
-		array( 'label' => __( 'Contact', 'ogc-newfinity' ), 'url' => home_url( '/contact/' ), 'icon' => 'contact' ),
-	);
-
-	echo '<ul id="ogc-primary-menu" class="ogc-nav__list">';
-	foreach ( $items as $item ) {
-		echo '<li class="menu-item"><a href="' . esc_url( $item['url'] ) . '">';
-		ogc_icon(
-			$item['icon'],
-			array(
-				'size'  => 'sm',
-				'class' => 'ogc-nav__icon',
-			)
-		);
-		echo '<span class="ogc-nav__label">' . esc_html( $item['label'] ) . '</span>';
-		echo '</a></li>';
-	}
-	echo '</ul>';
+	ogc_render_primary_nav();
 }

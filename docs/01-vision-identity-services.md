@@ -45,4 +45,4 @@ The client (site admin) must be able to change, without touching code or Cursor:
 - Images
 - Visual effects/animations (on/off or intensity where feasible)
 
-All via WordPress Dashboard → Theme Options page and/or the native Customizer. Full spec lives in `04-admin-theme-options.md`. This was a known weak point in the previous OGC NewFinity build and must work reliably this time.
+All via WordPress Dashboard → **OGC NewFinity** (top-level Theme Options admin page). Full field map lives in `04-admin-theme-options.md`. Settings store as theme_mods and output CSS custom properties in `wp_head`. Native Customizer is only used for core Site Identity (logo / Site Icon), not for brand options. This was a known weak point in the previous OGC NewFinity build and must work reliably this time.

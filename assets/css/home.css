@@ -182,7 +182,7 @@ body.ogc-motion-reduced-by-admin .hero-shimmer {
 	background-position: center;
 	background-size: cover;
 	background-repeat: no-repeat;
-	opacity: 0.35;
+	/* Opacity is inline from ogc_render_hero_bg() (Theme Options → Pages) */
 }
 
 .ogc-home-hero > *:not(.ogc-hero-bg),

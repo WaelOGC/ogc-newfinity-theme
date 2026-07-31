@@ -62,6 +62,13 @@ function ogc_enqueue_assets() {
 	);
 
 	wp_enqueue_style(
+		'ogc-button-effects',
+		OGC_THEME_URI . '/assets/css/button-effects.css',
+		array( 'ogc-main' ),
+		OGC_THEME_VERSION
+	);
+
+	wp_enqueue_style(
 		'ogc-header',
 		OGC_THEME_URI . '/assets/css/header.css',
 		array( 'ogc-main' ),
@@ -321,6 +328,15 @@ function ogc_enqueue_assets() {
 	wp_enqueue_script(
 		'ogc-main',
 		OGC_THEME_URI . '/assets/js/main.js',
+		array(),
+		OGC_THEME_VERSION,
+		true
+	);
+
+	// Self-gating: bails unless a body class selects the ripple hover effect.
+	wp_enqueue_script(
+		'ogc-button-ripple',
+		OGC_THEME_URI . '/assets/js/button-ripple.js',
 		array(),
 		OGC_THEME_VERSION,
 		true

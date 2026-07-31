@@ -93,7 +93,7 @@ $trust = array(
 				<a class="ogc-btn" href="<?php echo esc_url( $submit_url ); ?>">
 					<?php esc_html_e( 'Submit Your Idea', 'ogc-newfinity' ); ?>
 				</a>
-				<a class="ogc-btn" href="<?php echo esc_url( $services_url ); ?>">
+				<a class="ogc-btn ogc-btn-outline" href="<?php echo esc_url( $services_url ); ?>">
 					<?php esc_html_e( 'Our Services', 'ogc-newfinity' ); ?>
 				</a>
 			</div>

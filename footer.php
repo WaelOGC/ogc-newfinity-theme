@@ -4,6 +4,113 @@
  *
  * @package OGC_NewFinity
  */
+
+$ogc_footer_logo   = function_exists( 'ogc_get_footer_logo_url' ) ? ogc_get_footer_logo_url() : '';
+$ogc_footer_logo_w = max( 16, (int) get_theme_mod( 'ogc_footer_logo_width', 54 ) );
+
+$ogc_footer_columns = function_exists( 'ogc_get_footer_columns' ) ? ogc_get_footer_columns() : array();
+if ( ! is_array( $ogc_footer_columns ) || empty( $ogc_footer_columns ) ) {
+	$ogc_footer_columns = array(
+		array(
+			'title' => __( 'Quick Links', 'ogc-newfinity' ),
+			'links' => array(
+				array(
+					'label' => __( 'Our Services', 'ogc-newfinity' ),
+					'url'   => home_url( '/services/' ),
+				),
+				array(
+					'label' => __( 'Our Mission', 'ogc-newfinity' ),
+					'url'   => home_url( '/our-mission/' ),
+				),
+				array(
+					'label' => __( 'Submit Your Idea', 'ogc-newfinity' ),
+					'url'   => home_url( '/submit-idea/' ),
+				),
+				array(
+					'label' => __( 'Blog & Insights', 'ogc-newfinity' ),
+					'url'   => home_url( '/blog/' ),
+				),
+				array(
+					'label' => __( 'Help & Support', 'ogc-newfinity' ),
+					'url'   => home_url( '/support/' ),
+				),
+			),
+		),
+		array(
+			'title' => __( 'Legal', 'ogc-newfinity' ),
+			'links' => array(
+				array(
+					'label' => __( 'Privacy Policy', 'ogc-newfinity' ),
+					'url'   => home_url( '/privacy-policy/' ),
+				),
+				array(
+					'label' => __( 'Terms and Conditions', 'ogc-newfinity' ),
+					'url'   => home_url( '/terms-and-conditions/' ),
+				),
+				array(
+					'label' => __( 'Cookie Policy', 'ogc-newfinity' ),
+					'url'   => home_url( '/cookie-policy/' ),
+				),
+				array(
+					'label' => __( 'Refund Policy', 'ogc-newfinity' ),
+					'url'   => home_url( '/refund-policy/' ),
+				),
+			),
+		),
+	);
+}
+$ogc_footer_columns = array_values( $ogc_footer_columns );
+
+/**
+ * Render one link column from the Theme Options footer-columns structure.
+ * Skips columns with no usable links so an emptied column leaves no bare heading.
+ */
+$ogc_render_footer_column = static function ( $column ) {
+	if ( is_object( $column ) ) {
+		$column = (array) $column;
+	}
+	if ( ! is_array( $column ) ) {
+		return;
+	}
+
+	$title = isset( $column['title'] ) ? sanitize_text_field( (string) $column['title'] ) : '';
+	$links = isset( $column['links'] ) && is_array( $column['links'] ) ? $column['links'] : array();
+
+	$rows = array();
+	foreach ( $links as $link ) {
+		if ( is_object( $link ) ) {
+			$link = (array) $link;
+		}
+		if ( ! is_array( $link ) ) {
+			continue;
+		}
+		$label = isset( $link['label'] ) ? sanitize_text_field( (string) $link['label'] ) : '';
+		$url   = isset( $link['url'] ) ? esc_url( (string) $link['url'] ) : '';
+		if ( '' === $label || '' === $url ) {
+			continue;
+		}
+		$rows[] = array(
+			'label' => $label,
+			'url'   => $url,
+		);
+	}
+
+	if ( empty( $rows ) ) {
+		return;
+	}
+	?>
+	<nav class="ogc-footer__col" aria-label="<?php echo esc_attr( $title ); ?>">
+		<?php if ( '' !== $title ) : ?>
+			<p class="ogc-footer__heading"><?php echo esc_html( $title ); ?></p>
+		<?php endif; ?>
+		<ul class="ogc-footer__links">
+			<?php foreach ( $rows as $row ) : ?>
+				<li><a href="<?php echo esc_url( $row['url'] ); ?>"><?php echo esc_html( $row['label'] ); ?></a></li>
+			<?php endforeach; ?>
+		</ul>
+	</nav>
+	<?php
+};
 ?>
 </main><!-- #ogc-content -->
 
@@ -19,8 +126,10 @@
 					ogc_get_logo(
 						array(
 							'class'  => 'ogc-footer__logo',
-							'width'  => 54,
-							'height' => 52,
+							'src'    => $ogc_footer_logo,
+							'width'  => $ogc_footer_logo_w,
+							// Mark is 21:20 — keep attributes proportional to the configured width.
+							'height' => (int) round( $ogc_footer_logo_w * 20 / 21 ),
 							'lazy'   => true,
 							'alt'    => 'OGC NewFinity logo',
 						)
@@ -58,16 +167,11 @@
 				</ul>
 			</div>
 
-			<nav class="ogc-footer__col" aria-label="<?php esc_attr_e( 'Quick Links', 'ogc-newfinity' ); ?>">
-				<p class="ogc-footer__heading"><?php esc_html_e( 'Quick Links', 'ogc-newfinity' ); ?></p>
-				<ul class="ogc-footer__links">
-					<li><a href="<?php echo esc_url( home_url( '/services/' ) ); ?>"><?php esc_html_e( 'Our Services', 'ogc-newfinity' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/our-mission/' ) ); ?>"><?php esc_html_e( 'Our Mission', 'ogc-newfinity' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/submit-idea/' ) ); ?>"><?php esc_html_e( 'Submit Your Idea', 'ogc-newfinity' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>"><?php esc_html_e( 'Blog & Insights', 'ogc-newfinity' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/support/' ) ); ?>"><?php esc_html_e( 'Help & Support', 'ogc-newfinity' ); ?></a></li>
-				</ul>
-			</nav>
+			<?php
+			if ( isset( $ogc_footer_columns[0] ) ) {
+				$ogc_render_footer_column( $ogc_footer_columns[0] );
+			}
+			?>
 
 			<div class="ogc-footer__col">
 				<p class="ogc-footer__heading"><?php esc_html_e( 'Contact', 'ogc-newfinity' ); ?></p>
@@ -83,15 +187,11 @@
 				</ul>
 			</div>
 
-			<nav class="ogc-footer__col" aria-label="<?php esc_attr_e( 'Legal', 'ogc-newfinity' ); ?>">
-				<p class="ogc-footer__heading"><?php esc_html_e( 'Legal', 'ogc-newfinity' ); ?></p>
-				<ul class="ogc-footer__links">
-					<li><a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'ogc-newfinity' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/terms-and-conditions/' ) ); ?>"><?php esc_html_e( 'Terms and Conditions', 'ogc-newfinity' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/cookie-policy/' ) ); ?>"><?php esc_html_e( 'Cookie Policy', 'ogc-newfinity' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/refund-policy/' ) ); ?>"><?php esc_html_e( 'Refund Policy', 'ogc-newfinity' ); ?></a></li>
-				</ul>
-			</nav>
+			<?php
+			foreach ( array_slice( $ogc_footer_columns, 1 ) as $ogc_footer_column ) {
+				$ogc_render_footer_column( $ogc_footer_column );
+			}
+			?>
 
 		</div>
 	</div>
@@ -100,8 +200,17 @@
 
 	<div class="ogc-footer__copyright">
 		<p>
-			&copy; 2022&ndash;<?php echo esc_html( date( 'Y' ) ); ?>
-			<?php esc_html_e( 'OGC NewFinity. All rights reserved.', 'ogc-newfinity' ); ?>
+			<?php
+			if ( function_exists( 'ogc_get_footer_copyright' ) ) {
+				echo esc_html( ogc_get_footer_copyright() );
+			} else {
+				printf(
+					/* translators: %s: current year */
+					esc_html__( '© 2022–%s OGC NewFinity. All rights reserved.', 'ogc-newfinity' ),
+					esc_html( wp_date( 'Y' ) )
+				);
+			}
+			?>
 		</p>
 	</div>
 </footer>

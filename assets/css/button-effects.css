@@ -1,0 +1,408 @@
+/**
+ * OGC NewFinity — button hover / active / focus effects.
+ *
+ * Driven by Theme Options → Buttons & Effects (docs/04). Primary (.ogc-btn) and
+ * outline (.ogc-btn-outline) are configured independently, so every effect is
+ * gated twice: once per variant.
+ *
+ * Gating contract — ogc_theme_options_body_classes() puts these on <body>
+ * (the data-attribute forms are accepted as an equivalent alternative):
+ *   ogc-btn-primary-{effect}    | data-ogc-btn-primary="{effect}"
+ *   ogc-btn-outline-{effect}    | data-ogc-btn-outline="{effect}"
+ *   ogc-btn-primary-intensity-{subtle|medium|strong}   (outline: same)
+ *   ogc-btn-active-{scale-down|darken|none}
+ *   ogc-btn-disabled-{dimmed|grayscale}
+ *   ogc-btn-focus-{outline|glow-ring}
+ *
+ * effect = lift | glow | scale | fill-sweep | border-pulse | gradient-shift
+ *          | icon-slide | ripple | none
+ *
+ * Per-variant tuning comes from the option CSS vars --ogc-btn-duration-*,
+ * --ogc-hover-lift-*, --ogc-hover-scale-* and --ogc-hover-glow-*.
+ *
+ * Loaded after main.css, so plain property overrides win on ties.
+ */
+
+/* --------------------------------------------------------------------------
+   Per-variant tokens — one set of generic names both variants resolve into
+   -------------------------------------------------------------------------- */
+
+.ogc-btn {
+	position: relative;
+	--ogc-btn-fx-duration: var(--ogc-btn-duration-primary, var(--ogc-transition-speed, 0.22s));
+	--ogc-btn-fx-intensity: var(--ogc-btn-intensity-primary, 1);
+	--ogc-btn-fx-lift: var(--ogc-hover-lift-primary, -4px);
+	--ogc-btn-fx-scale: var(--ogc-hover-scale-primary, 1.03);
+	--ogc-btn-fx-glow: var(--ogc-hover-glow-primary, 0.4);
+	transition-duration: var(--ogc-btn-fx-duration);
+}
+
+.ogc-btn.ogc-btn-outline {
+	--ogc-btn-fx-duration: var(--ogc-btn-duration-outline, var(--ogc-transition-speed, 0.22s));
+	--ogc-btn-fx-intensity: var(--ogc-btn-intensity-outline, 1);
+	--ogc-btn-fx-lift: var(--ogc-hover-lift-outline, -4px);
+	--ogc-btn-fx-scale: var(--ogc-hover-scale-outline, 1.03);
+	--ogc-btn-fx-glow: var(--ogc-hover-glow-outline, 0.4);
+}
+
+/* Multiplier for the effects with no dedicated numeric option var */
+body.ogc-btn-primary-intensity-subtle {
+	--ogc-btn-intensity-primary: 0.55;
+}
+
+body.ogc-btn-primary-intensity-medium {
+	--ogc-btn-intensity-primary: 1;
+}
+
+body.ogc-btn-primary-intensity-strong {
+	--ogc-btn-intensity-primary: 1.6;
+}
+
+body.ogc-btn-outline-intensity-subtle {
+	--ogc-btn-intensity-outline: 0.55;
+}
+
+body.ogc-btn-outline-intensity-medium {
+	--ogc-btn-intensity-outline: 1;
+}
+
+body.ogc-btn-outline-intensity-strong {
+	--ogc-btn-intensity-outline: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   lift — raise + deepen shadow
+   -------------------------------------------------------------------------- */
+
+:is(body.ogc-btn-primary-lift, body[data-ogc-btn-primary='lift']) .ogc-btn:not(.ogc-btn-outline):hover,
+:is(body.ogc-btn-primary-lift, body[data-ogc-btn-primary='lift']) .ogc-btn:not(.ogc-btn-outline):focus-visible,
+:is(body.ogc-btn-outline-lift, body[data-ogc-btn-outline='lift']) .ogc-btn.ogc-btn-outline:hover,
+:is(body.ogc-btn-outline-lift, body[data-ogc-btn-outline='lift']) .ogc-btn.ogc-btn-outline:focus-visible {
+	transform: translateY(var(--ogc-btn-fx-lift, -4px));
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.1),
+		0 calc(6px * var(--ogc-btn-fx-intensity, 1)) calc(16px * var(--ogc-btn-fx-intensity, 1)) rgba(0, 0, 0, 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   glow — accent halo, no movement
+   -------------------------------------------------------------------------- */
+
+:is(body.ogc-btn-primary-glow, body[data-ogc-btn-primary='glow']) .ogc-btn:not(.ogc-btn-outline):hover,
+:is(body.ogc-btn-primary-glow, body[data-ogc-btn-primary='glow']) .ogc-btn:not(.ogc-btn-outline):focus-visible,
+:is(body.ogc-btn-outline-glow, body[data-ogc-btn-outline='glow']) .ogc-btn.ogc-btn-outline:hover,
+:is(body.ogc-btn-outline-glow, body[data-ogc-btn-outline='glow']) .ogc-btn.ogc-btn-outline:focus-visible {
+	transform: none;
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.1),
+		0 0 calc(18px * var(--ogc-btn-fx-intensity, 1)) rgba(var(--ogc-brand-hover-rgb), var(--ogc-btn-fx-glow, 0.4)),
+		0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   scale — grow in place
+   -------------------------------------------------------------------------- */
+
+:is(body.ogc-btn-primary-scale, body[data-ogc-btn-primary='scale']) .ogc-btn:not(.ogc-btn-outline):hover,
+:is(body.ogc-btn-primary-scale, body[data-ogc-btn-primary='scale']) .ogc-btn:not(.ogc-btn-outline):focus-visible,
+:is(body.ogc-btn-outline-scale, body[data-ogc-btn-outline='scale']) .ogc-btn.ogc-btn-outline:hover,
+:is(body.ogc-btn-outline-scale, body[data-ogc-btn-outline='scale']) .ogc-btn.ogc-btn-outline:focus-visible {
+	transform: scale(var(--ogc-btn-fx-scale, 1.03));
+}
+
+/* --------------------------------------------------------------------------
+   fill-sweep — accent gradient wipes in from the left behind the label
+   -------------------------------------------------------------------------- */
+
+:is(body.ogc-btn-primary-fill-sweep, body[data-ogc-btn-primary='fill-sweep']) .ogc-btn:not(.ogc-btn-outline),
+:is(body.ogc-btn-outline-fill-sweep, body[data-ogc-btn-outline='fill-sweep']) .ogc-btn.ogc-btn-outline {
+	overflow: hidden;
+	isolation: isolate;
+}
+
+:is(body.ogc-btn-primary-fill-sweep, body[data-ogc-btn-primary='fill-sweep']) .ogc-btn:not(.ogc-btn-outline)::before,
+:is(body.ogc-btn-outline-fill-sweep, body[data-ogc-btn-outline='fill-sweep']) .ogc-btn.ogc-btn-outline::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background: var(
+		--ogc-accent-gradient,
+		linear-gradient(var(--ogc-gradient-angle-active, 90deg), var(--ogc-accent-start), var(--ogc-accent-end))
+	);
+	transform: translateX(-101%);
+	transition: transform var(--ogc-btn-fx-duration) ease;
+}
+
+:is(body.ogc-btn-primary-fill-sweep, body[data-ogc-btn-primary='fill-sweep']) .ogc-btn:not(.ogc-btn-outline):hover::before,
+:is(body.ogc-btn-primary-fill-sweep, body[data-ogc-btn-primary='fill-sweep']) .ogc-btn:not(.ogc-btn-outline):focus-visible::before,
+:is(body.ogc-btn-outline-fill-sweep, body[data-ogc-btn-outline='fill-sweep']) .ogc-btn.ogc-btn-outline:hover::before,
+:is(body.ogc-btn-outline-fill-sweep, body[data-ogc-btn-outline='fill-sweep']) .ogc-btn.ogc-btn-outline:focus-visible::before {
+	transform: translateX(0);
+}
+
+:is(body.ogc-btn-primary-fill-sweep, body[data-ogc-btn-primary='fill-sweep']) .ogc-btn:not(.ogc-btn-outline):hover,
+:is(body.ogc-btn-primary-fill-sweep, body[data-ogc-btn-primary='fill-sweep']) .ogc-btn:not(.ogc-btn-outline):focus-visible,
+:is(body.ogc-btn-outline-fill-sweep, body[data-ogc-btn-outline='fill-sweep']) .ogc-btn.ogc-btn-outline:hover,
+:is(body.ogc-btn-outline-fill-sweep, body[data-ogc-btn-outline='fill-sweep']) .ogc-btn.ogc-btn-outline:focus-visible {
+	color: var(--ogc-text-on-accent);
+	transform: none;
+	border-color: rgba(var(--ogc-brand-hover-rgb), 0.95);
+}
+
+/* --------------------------------------------------------------------------
+   border-pulse — expanding accent ring loop
+   -------------------------------------------------------------------------- */
+
+@keyframes ogc-btn-border-pulse {
+	from {
+		box-shadow: 0 0 0 0 rgba(var(--ogc-brand-hover-rgb), calc(0.55 * var(--ogc-btn-fx-intensity, 1)));
+	}
+
+	to {
+		box-shadow: 0 0 0 calc(7px * var(--ogc-btn-fx-intensity, 1)) rgba(var(--ogc-brand-hover-rgb), 0);
+	}
+}
+
+:is(body.ogc-btn-primary-border-pulse, body[data-ogc-btn-primary='border-pulse']) .ogc-btn:not(.ogc-btn-outline):hover,
+:is(body.ogc-btn-primary-border-pulse, body[data-ogc-btn-primary='border-pulse']) .ogc-btn:not(.ogc-btn-outline):focus-visible,
+:is(body.ogc-btn-outline-border-pulse, body[data-ogc-btn-outline='border-pulse']) .ogc-btn.ogc-btn-outline:hover,
+:is(body.ogc-btn-outline-border-pulse, body[data-ogc-btn-outline='border-pulse']) .ogc-btn.ogc-btn-outline:focus-visible {
+	transform: none;
+	border-color: rgba(var(--ogc-brand-hover-rgb), 0.95);
+	animation: ogc-btn-border-pulse calc(var(--ogc-btn-fx-duration) * 4) ease-out infinite;
+}
+
+/* --------------------------------------------------------------------------
+   gradient-shift — pan an accent-tinted gradient across the chip
+   -------------------------------------------------------------------------- */
+
+@keyframes ogc-btn-gradient-shift {
+	from {
+		background-position: 0% 50%;
+	}
+
+	to {
+		background-position: 100% 50%;
+	}
+}
+
+:is(body.ogc-btn-primary-gradient-shift, body[data-ogc-btn-primary='gradient-shift']) .ogc-btn:not(.ogc-btn-outline),
+:is(body.ogc-btn-outline-gradient-shift, body[data-ogc-btn-outline='gradient-shift']) .ogc-btn.ogc-btn-outline {
+	background-size: 220% 220%;
+	background-position: 0% 50%;
+}
+
+:is(body.ogc-btn-primary-gradient-shift, body[data-ogc-btn-primary='gradient-shift']) .ogc-btn:not(.ogc-btn-outline):hover,
+:is(body.ogc-btn-primary-gradient-shift, body[data-ogc-btn-primary='gradient-shift']) .ogc-btn:not(.ogc-btn-outline):focus-visible,
+:is(body.ogc-btn-outline-gradient-shift, body[data-ogc-btn-outline='gradient-shift']) .ogc-btn.ogc-btn-outline:hover,
+:is(body.ogc-btn-outline-gradient-shift, body[data-ogc-btn-outline='gradient-shift']) .ogc-btn.ogc-btn-outline:focus-visible {
+	transform: none;
+	background-image: linear-gradient(
+		var(--ogc-gradient-angle, 145deg),
+		rgba(var(--ogc-brand-rgb), calc(0.22 * var(--ogc-btn-fx-intensity, 1))),
+		#141414,
+		rgba(var(--ogc-brand-hover-rgb), calc(0.22 * var(--ogc-btn-fx-intensity, 1)))
+	);
+	animation: ogc-btn-gradient-shift calc(var(--ogc-btn-fx-duration) * 5) ease-in-out infinite alternate;
+}
+
+/* --------------------------------------------------------------------------
+   icon-slide — nudge any icon/arrow inside the button
+   -------------------------------------------------------------------------- */
+
+:is(body.ogc-btn-primary-icon-slide, body[data-ogc-btn-primary='icon-slide']) .ogc-btn:not(.ogc-btn-outline) :is(svg, .ogc-btn__icon, .ogc-icon),
+:is(body.ogc-btn-outline-icon-slide, body[data-ogc-btn-outline='icon-slide']) .ogc-btn.ogc-btn-outline :is(svg, .ogc-btn__icon, .ogc-icon) {
+	transition: transform var(--ogc-btn-fx-duration) ease;
+}
+
+:is(body.ogc-btn-primary-icon-slide, body[data-ogc-btn-primary='icon-slide']) .ogc-btn:not(.ogc-btn-outline):hover :is(svg, .ogc-btn__icon, .ogc-icon),
+:is(body.ogc-btn-primary-icon-slide, body[data-ogc-btn-primary='icon-slide']) .ogc-btn:not(.ogc-btn-outline):focus-visible :is(svg, .ogc-btn__icon, .ogc-icon),
+:is(body.ogc-btn-outline-icon-slide, body[data-ogc-btn-outline='icon-slide']) .ogc-btn.ogc-btn-outline:hover :is(svg, .ogc-btn__icon, .ogc-icon),
+:is(body.ogc-btn-outline-icon-slide, body[data-ogc-btn-outline='icon-slide']) .ogc-btn.ogc-btn-outline:focus-visible :is(svg, .ogc-btn__icon, .ogc-icon) {
+	transform: translateX(calc(3px * var(--ogc-btn-fx-intensity, 1)));
+}
+
+:is(body.ogc-btn-primary-icon-slide, body[data-ogc-btn-primary='icon-slide']) .ogc-btn:not(.ogc-btn-outline):hover,
+:is(body.ogc-btn-primary-icon-slide, body[data-ogc-btn-primary='icon-slide']) .ogc-btn:not(.ogc-btn-outline):focus-visible,
+:is(body.ogc-btn-outline-icon-slide, body[data-ogc-btn-outline='icon-slide']) .ogc-btn.ogc-btn-outline:hover,
+:is(body.ogc-btn-outline-icon-slide, body[data-ogc-btn-outline='icon-slide']) .ogc-btn.ogc-btn-outline:focus-visible {
+	transform: none;
+}
+
+/* --------------------------------------------------------------------------
+   ripple — pointer-origin circle, spans injected by assets/js/button-ripple.js
+   -------------------------------------------------------------------------- */
+
+:is(body.ogc-btn-primary-ripple, body[data-ogc-btn-primary='ripple']) .ogc-btn:not(.ogc-btn-outline),
+:is(body.ogc-btn-outline-ripple, body[data-ogc-btn-outline='ripple']) .ogc-btn.ogc-btn-outline {
+	overflow: hidden;
+}
+
+:is(body.ogc-btn-primary-ripple, body[data-ogc-btn-primary='ripple']) .ogc-btn:not(.ogc-btn-outline):hover,
+:is(body.ogc-btn-primary-ripple, body[data-ogc-btn-primary='ripple']) .ogc-btn:not(.ogc-btn-outline):focus-visible,
+:is(body.ogc-btn-outline-ripple, body[data-ogc-btn-outline='ripple']) .ogc-btn.ogc-btn-outline:hover,
+:is(body.ogc-btn-outline-ripple, body[data-ogc-btn-outline='ripple']) .ogc-btn.ogc-btn-outline:focus-visible {
+	transform: none;
+	border-color: rgba(var(--ogc-brand-hover-rgb), 0.9);
+}
+
+.ogc-ripple {
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+	transform: scale(0);
+	background: radial-gradient(
+		circle,
+		rgba(var(--ogc-brand-hover-rgb), calc(0.45 * var(--ogc-btn-fx-intensity, 1))) 0%,
+		rgba(var(--ogc-brand-rgb), 0) 70%
+	);
+	animation: ogc-btn-ripple calc(var(--ogc-btn-fx-duration) * 2.5) ease-out forwards;
+}
+
+@keyframes ogc-btn-ripple {
+	from {
+		transform: scale(0);
+		opacity: 1;
+	}
+
+	to {
+		transform: scale(1);
+		opacity: 0;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   none — colour/border feedback only, no motion or shadow change
+   -------------------------------------------------------------------------- */
+
+:is(body.ogc-btn-primary-none, body[data-ogc-btn-primary='none']) .ogc-btn:not(.ogc-btn-outline):hover,
+:is(body.ogc-btn-primary-none, body[data-ogc-btn-primary='none']) .ogc-btn:not(.ogc-btn-outline):focus-visible,
+:is(body.ogc-btn-outline-none, body[data-ogc-btn-outline='none']) .ogc-btn.ogc-btn-outline:hover,
+:is(body.ogc-btn-outline-none, body[data-ogc-btn-outline='none']) .ogc-btn.ogc-btn-outline:focus-visible {
+	transform: none;
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.08),
+		0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   Active (pressed) states — Theme Options → Buttons & Effects
+   -------------------------------------------------------------------------- */
+
+body.ogc-btn-active-scale-down .ogc-btn:active,
+body.ogc-btn-active-scale-down .ogc-btn:hover:active,
+body.ogc-btn-active-scale-down .ogc-btn:focus-visible:active {
+	transform: scale(calc(1 - 0.03 * var(--ogc-btn-fx-intensity, 1)));
+}
+
+body.ogc-btn-active-darken .ogc-btn:active,
+body.ogc-btn-active-darken .ogc-btn:hover:active,
+body.ogc-btn-active-darken .ogc-btn:focus-visible:active {
+	filter: brightness(0.86);
+}
+
+body.ogc-btn-active-none .ogc-btn:active,
+body.ogc-btn-active-none .ogc-btn:hover:active,
+body.ogc-btn-active-none .ogc-btn:focus-visible:active {
+	transform: none;
+	filter: none;
+}
+
+/* --------------------------------------------------------------------------
+   Disabled — dimmed by default, grayscale opt-in
+   -------------------------------------------------------------------------- */
+
+.ogc-btn[disabled],
+.ogc-btn.is-disabled,
+.ogc-btn[aria-disabled='true'] {
+	cursor: not-allowed;
+	pointer-events: none;
+	opacity: 0.5;
+	transform: none;
+	box-shadow: none;
+	animation: none;
+}
+
+body.ogc-btn-disabled-grayscale .ogc-btn[disabled],
+body.ogc-btn-disabled-grayscale .ogc-btn.is-disabled,
+body.ogc-btn-disabled-grayscale .ogc-btn[aria-disabled='true'] {
+	opacity: 0.65;
+	filter: grayscale(1);
+}
+
+/* --------------------------------------------------------------------------
+   Focus — always visible, never removable from Theme Options
+   -------------------------------------------------------------------------- */
+
+.ogc-btn:focus-visible {
+	outline: 2px solid var(--ogc-focus-ring, var(--ogc-link-hover));
+	outline-offset: 2px;
+}
+
+/* Ring lives on ::after so it never competes with the effect box-shadows.
+   The transparent outline is kept so forced-colors modes still show focus. */
+body.ogc-btn-focus-glow-ring .ogc-btn:focus-visible {
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+}
+
+body.ogc-btn-focus-glow-ring .ogc-btn:focus-visible::after {
+	content: '';
+	position: absolute;
+	inset: -3px;
+	border-radius: inherit;
+	pointer-events: none;
+	box-shadow:
+		0 0 0 2px rgba(var(--ogc-brand-rgb), 0.6),
+		0 0 14px rgba(var(--ogc-brand-hover-rgb), 0.55);
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion — OS preference and the admin motion toggle share this path.
+   !important is needed because the gated effect selectors above outrank these.
+   The fill-sweep ::before keeps its transform (it carries the contrast the
+   hovered label depends on) and simply lands instantly instead of wiping.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.ogc-btn,
+	.ogc-btn:hover,
+	.ogc-btn:focus-visible,
+	.ogc-btn:active {
+		transform: none !important;
+	}
+
+	.ogc-btn,
+	.ogc-btn::before,
+	.ogc-btn::after,
+	.ogc-btn:hover,
+	.ogc-btn:focus-visible {
+		animation: none !important;
+		transition-duration: 0.001s !important;
+	}
+
+	.ogc-ripple {
+		display: none !important;
+	}
+}
+
+body.ogc-motion-reduced-by-admin .ogc-btn,
+body.ogc-motion-reduced-by-admin .ogc-btn:hover,
+body.ogc-motion-reduced-by-admin .ogc-btn:focus-visible,
+body.ogc-motion-reduced-by-admin .ogc-btn:active {
+	transform: none !important;
+}
+
+body.ogc-motion-reduced-by-admin .ogc-btn,
+body.ogc-motion-reduced-by-admin .ogc-btn::before,
+body.ogc-motion-reduced-by-admin .ogc-btn::after,
+body.ogc-motion-reduced-by-admin .ogc-btn:hover,
+body.ogc-motion-reduced-by-admin .ogc-btn:focus-visible {
+	animation: none !important;
+	transition-duration: 0.001s !important;
+}
+
+body.ogc-motion-reduced-by-admin .ogc-ripple {
+	display: none !important;
+}

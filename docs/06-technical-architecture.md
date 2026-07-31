@@ -32,14 +32,14 @@ ogc-newfinity/
 ├── inc/
 │   ├── theme-setup.php        → add_theme_support, menus, image sizes
 │   ├── enqueue.php            → wp_enqueue_scripts hook logic
-│   ├── customizer.php         → Customizer settings (colors, fonts, images) — see doc 04
-│   ├── theme-options-page.php → Custom admin settings page — see doc 04
+│   ├── theme-options.php      → Branded Theme Options admin + getters + CSS vars — see doc 04
 │   ├── ai-chat-widget.php     → Gemini API REST endpoint + widget render — see doc 05
 │   └── template-tags.php      → reusable helper functions (card renderers, badge renderer, etc.)
 ├── template-parts/
 │   ├── hero-split.php         → reusable split-hero layout (badge + headline + underline + right column)
 │   ├── card-feature.php       → reusable feature/info card
 │   ├── card-service.php       → reusable service card
+│   ├── ad-slot.php            → Ads Manager slots (sidebar / inline) — see doc 04
 │   └── cta-band.php           → reusable CTA section
 └── screenshot.png             → theme screenshot for WP admin theme picker
 ```
@@ -54,7 +54,7 @@ ogc-newfinity/
    2. Header/footer + base CSS variables + typography.
    3. Homepage template.
    4. Remaining page templates one at a time.
-   5. Theme Options / Customizer wiring (doc 04).
+   5. Theme Options admin page wiring (doc 04).
    6. AI chat widget (doc 05).
    7. Final QA pass against `03-content-sitemap-structure.md` content rules.
 

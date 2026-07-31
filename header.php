@@ -4,6 +4,16 @@
  *
  * @package OGC_NewFinity
  */
+
+// Rendered logo size comes from --ogc-header-logo-width-* (theme-options CSS);
+// the same value drives the img attributes so there is no layout shift.
+$ogc_header_logo    = function_exists( 'ogc_get_header_logo_url' ) ? ogc_get_header_logo_url() : '';
+$ogc_logo_desktop_w = max( 16, (int) get_theme_mod( 'ogc_header_logo_width_desktop', 40 ) );
+
+$ogc_header_classes = array( 'ogc-site-header' );
+if ( ! get_theme_mod( 'ogc_header_sticky', true ) ) {
+	$ogc_header_classes[] = 'ogc-site-header--static';
+}
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -17,7 +27,7 @@
 
 <?php get_template_part( 'template-parts/background', 'layer' ); ?>
 
-<div class="ogc-site-header">
+<div class="<?php echo esc_attr( implode( ' ', $ogc_header_classes ) ); ?>">
 	<div class="ogc-accent-bar" aria-hidden="true"></div>
 
 	<header class="ogc-header" role="banner">
@@ -27,8 +37,10 @@
 				ogc_get_logo(
 					array(
 						'class'  => 'ogc-header__logo',
-						'width'  => 42,
-						'height' => 40,
+						'src'    => $ogc_header_logo,
+						// Mark is 21:20 — keep attributes proportional so CSS height sizing causes no shift.
+						'width'  => (int) round( $ogc_logo_desktop_w * 21 / 20 ),
+						'height' => $ogc_logo_desktop_w,
 						'lazy'   => false,
 						'alt'    => 'OGC NewFinity logo',
 					)
@@ -38,16 +50,20 @@
 
 			<nav class="ogc-nav" id="ogc-primary-nav" aria-label="<?php esc_attr_e( 'Primary', 'ogc-newfinity' ); ?>">
 				<?php
-				wp_nav_menu(
-					array(
-						'theme_location' => 'primary',
-						'container'      => false,
-						'menu_class'     => 'ogc-nav__list',
-						'menu_id'        => 'ogc-primary-menu',
-						'depth'          => 1,
-						'fallback_cb'    => 'ogc_primary_nav_fallback',
-					)
-				);
+				if ( function_exists( 'ogc_get_nav_order' ) ) {
+					ogc_render_primary_nav();
+				} else {
+					wp_nav_menu(
+						array(
+							'theme_location' => 'primary',
+							'container'      => false,
+							'menu_class'     => 'ogc-nav__list',
+							'menu_id'        => 'ogc-primary-menu',
+							'depth'          => 1,
+							'fallback_cb'    => 'ogc_primary_nav_fallback',
+						)
+					);
+				}
 				?>
 			</nav>
 

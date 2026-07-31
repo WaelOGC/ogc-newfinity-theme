@@ -4,8 +4,12 @@
  */
 
 .ogc-footer {
-	/* Lighter glass — starfield stays visibly present */
-	background: rgba(10, 10, 10, 0.35);
+	/* Lighter glass — starfield stays visibly present. Colour comes from Theme
+	   Options → Footer (--ogc-footer-bg is an opaque hex, so it is mixed down
+	   to the 35% glass level here rather than used directly). */
+	background: none;
+	background-color: rgba(10, 10, 10, 0.35);
+	background-color: color-mix(in srgb, var(--ogc-footer-bg, #0a0a0a) 35%, transparent);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
 	border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -53,9 +57,10 @@
 	margin-bottom: 1rem;
 }
 
+/* Logo size from Theme Options → Footer */
 .ogc-footer__logo .ogc-logo__img {
-	width: 54px;
-	height: 52px;
+	width: var(--ogc-footer-logo-width, 54px);
+	height: auto;
 	object-fit: contain;
 }
 

@@ -189,7 +189,7 @@ function ogc_the_post_cover( $args = array() ) {
 }
 
 /**
- * Trimmed excerpt for blog cards (~22 words).
+ * Trimmed excerpt for blog cards; word count from Theme Options → Posts.
  *
  * @param int|null $post_id Post ID.
  * @return string
@@ -203,8 +203,10 @@ function ogc_get_blog_card_excerpt( $post_id = null ) {
 		return '';
 	}
 
-	if ( count( $words ) > 22 ) {
-		$words = array_slice( $words, 0, 22 );
+	$limit = max( 5, (int) get_theme_mod( 'ogc_blog_excerpt_length', 22 ) );
+
+	if ( count( $words ) > $limit ) {
+		$words = array_slice( $words, 0, $limit );
 		return implode( ' ', $words ) . '…';
 	}
 

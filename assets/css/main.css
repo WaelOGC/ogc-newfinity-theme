@@ -32,29 +32,49 @@
 	cursor: pointer;
 	text-decoration: none;
 	color: #ffffff;
-	background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+	background: linear-gradient(var(--ogc-gradient-angle, 145deg), #1a1a1a, #0d0d0d);
 	border: 1px solid rgba(var(--ogc-brand-rgb), 0.5);
-	border-radius: var(--ogc-radius);
+	border-radius: var(--ogc-button-radius, var(--ogc-radius));
 	box-shadow:
 		inset 0 1px 0 rgba(255, 255, 255, 0.08),
 		0 2px 6px rgba(0, 0, 0, 0.4);
 	transition:
-		box-shadow 0.2s ease,
-		transform 0.2s ease,
-		border-color 0.2s ease,
-		background 0.2s ease,
-		color 0.2s ease;
+		box-shadow var(--ogc-transition-speed, 0.2s) ease,
+		transform var(--ogc-transition-speed, 0.2s) ease,
+		border-color var(--ogc-transition-speed, 0.2s) ease,
+		background var(--ogc-transition-speed, 0.2s) ease,
+		color var(--ogc-transition-speed, 0.2s) ease;
 }
 
 .ogc-btn:hover,
 .ogc-btn:focus-visible {
 	color: #ffffff;
 	border-color: rgba(var(--ogc-brand-hover-rgb), 0.9);
-	background: linear-gradient(145deg, #1f1f1f, #101010);
+	background: linear-gradient(var(--ogc-gradient-angle, 145deg), #1f1f1f, #101010);
 	box-shadow:
 		inset 0 1px 0 rgba(255, 255, 255, 0.1),
 		0 4px 12px rgba(0, 0, 0, 0.55);
 	transform: translateY(-1px);
+}
+
+/* Secondary / outline variant — transparent chip, accent border */
+.ogc-btn.ogc-btn-outline {
+	color: var(--ogc-link-color);
+	background: none;
+	background-color: rgba(10, 10, 10, 0.35);
+	border-color: rgba(var(--ogc-brand-rgb), 0.55);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.ogc-btn.ogc-btn-outline:hover,
+.ogc-btn.ogc-btn-outline:focus-visible {
+	color: var(--ogc-link-hover);
+	background: none;
+	background-color: var(--ogc-btn-hover-bg);
+	border-color: rgba(var(--ogc-brand-hover-rgb), 0.95);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.06),
+		0 4px 12px rgba(0, 0, 0, 0.45);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -69,11 +89,12 @@
 	font-size: 0.75rem;
 }
 
+/* Active state (blog filter chips) — accent gradient */
 .ogc-btn.is-active,
 .ogc-btn[aria-pressed='true'] {
 	color: var(--ogc-text-on-accent);
 	background: linear-gradient(
-		90deg,
+		var(--ogc-gradient-angle-active, 90deg),
 		var(--ogc-accent-start),
 		var(--ogc-accent-end)
 	);
@@ -89,7 +110,7 @@
 .ogc-btn[aria-pressed='true']:focus-visible {
 	color: var(--ogc-text-on-accent);
 	background: linear-gradient(
-		90deg,
+		var(--ogc-gradient-angle-active, 90deg),
 		var(--ogc-accent-start),
 		var(--ogc-accent-end)
 	);
