@@ -26,6 +26,7 @@ require_once OGC_THEME_DIR . '/inc/template-tags.php';
 require_once OGC_THEME_DIR . '/inc/blog.php';
 require_once OGC_THEME_DIR . '/inc/seed-articles.php';
 require_once OGC_THEME_DIR . '/inc/seed-legal.php';
+require_once OGC_THEME_DIR . '/inc/seed-coming-soon.php';
 require_once OGC_THEME_DIR . '/inc/widgets.php';
 require_once OGC_THEME_DIR . '/inc/theme-options.php';
 require_once OGC_THEME_DIR . '/inc/ads.php';
