@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Bump this version string EVERY time any file in inc/seed-content/ changes, or edits will not sync.
-define( 'OGC_ARTICLES_SEED_VERSION', '1.11.0' );
+define( 'OGC_ARTICLES_SEED_VERSION', '1.12.0' );
 
 /**
  * Convert article markdown (subset) into post HTML.
