@@ -315,6 +315,14 @@
 	box-shadow: none;
 }
 
+.ogc-opt__input:hover,
+.ogc-opt__select:hover,
+.ogc-opt__textarea:hover {
+	background-color: var(--opt-panel) !important;
+	color: var(--opt-text) !important;
+	border-color: var(--opt-line);
+}
+
 .ogc-opt__input:focus,
 .ogc-opt__select:focus,
 .ogc-opt__textarea:focus {
@@ -347,6 +355,11 @@
 	font-size: 12.5px;
 	line-height: 1.6;
 	background: #0b0b0d;
+}
+
+.ogc-opt__textarea--code:hover {
+	background-color: #0b0b0d !important;
+	color: var(--opt-text) !important;
 }
 
 .ogc-opt__number {
@@ -423,6 +436,12 @@
 	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 	font-size: 12.5px;
 	text-transform: uppercase;
+}
+
+.ogc-opt__color-text:hover {
+	background-color: var(--opt-panel) !important;
+	color: var(--opt-text) !important;
+	border-color: var(--opt-line);
 }
 
 .ogc-opt__color-reset {
@@ -748,6 +767,16 @@
 	cursor: pointer;
 }
 
+.ogc-opt__linkrow input:hover,
+.ogc-opt__linkrow select:hover,
+.ogc-opt__field-inline input:hover,
+.ogc-opt__field-inline select:hover,
+.ogc-opt__field-inline textarea:hover,
+.ogc-opt__card-head input[type="text"]:hover {
+	background-color: var(--opt-panel-2) !important;
+	color: var(--opt-text) !important;
+}
+
 .ogc-opt__row-remove {
 	padding: 4px 10px;
 	border: 1px solid var(--opt-line);
@@ -780,6 +809,7 @@
 
 .ogc-opt__field-inline input[type="text"],
 .ogc-opt__field-inline input[type="url"],
+.ogc-opt__field-inline input[type="number"],
 .ogc-opt__field-inline select,
 .ogc-opt__field-inline textarea {
 	width: 100%;
