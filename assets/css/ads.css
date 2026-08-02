@@ -1,0 +1,64 @@
+/**
+ * Front-end ad slots — layout + device visibility.
+ */
+
+.ogc-ad-slot {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	width: 100%;
+	margin: 1.5rem 0;
+	padding: 0.5rem;
+	border: 1px solid rgba(var(--ogc-brand-rgb), 0.2);
+	border-radius: var(--ogc-radius-sm);
+	background: rgba(20, 20, 20, 0.35);
+	color: var(--ogc-text-muted);
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.ogc-ad-slot__label {
+	font-family: var(--ogc-font-body);
+	font-size: 0.6875rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.ogc-ad-slot--listing {
+	margin: 0 0 1.5rem;
+	grid-column: 1 / -1;
+}
+
+.ogc-ad-slot__img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	border-radius: var(--ogc-radius-sm);
+}
+
+.ogc-ad-slot__link {
+	display: inline-block;
+	max-width: 100%;
+	line-height: 0;
+}
+
+.ogc-ad-slot .adsbygoogle {
+	width: 100%;
+}
+
+/* Tablet: hide slots flagged hide_tablet (768–1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+	.ogc-ad-hide-tablet {
+		display: none !important;
+	}
+}
+
+/* Mobile: hide slots flagged hide_mobile (<768px) */
+@media (max-width: 767px) {
+	.ogc-ad-hide-mobile {
+		display: none !important;
+	}
+}

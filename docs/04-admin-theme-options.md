@@ -31,7 +31,7 @@ Save posts to `admin-post.php?action=ogc_save_theme_options` (nonce-protected). 
 7. **Images** — light logo + optional hero backgrounds (Home/About/Services/Mission)  
 8. **Pages** — hero background opacity per key page  
 9. **Posts** — blog card image/date/category toggles + excerpt length  
-10. **Ads Manager** — master enable + per-slot config JSON (`sidebar`, `inline`)  
+10. **Ads Manager** — Google AdSense + advertiser creatives (sub-tabs), placement limits, page-restricted rendering  
 11. **Advanced** — custom CSS/JS, import/export, reset  
 
 Social links live under **Footer** (not a separate tab).
@@ -40,7 +40,7 @@ Social links live under **Footer** (not a separate tab).
 
 ## Field Reference
 
-Types: `color` | `text` | `email` | `url` | `textarea` | `monospace` | `number` | `range` | `checkbox` | `select` | `image` | `nav_order` | `footer_columns` | `ads_config`
+Types: `color` | `text` | `email` | `url` | `textarea` | `monospace` | `number` | `range` | `checkbox` | `select` | `image` | `nav_order` | `footer_columns` | `social_custom` | `adsense_slots` | `custom_ads`
 
 Sanitize: every field has a callback (hex, email, `esc_url_raw`, text/textarea, whitelist select, image URL, JSON structure validators).
 
@@ -82,6 +82,7 @@ Nav slugs (fixed set — reorder/show/hide only): `home`, `about`, `services`, `
 | `ogc_social_linkedin` | url | company LinkedIn URL | ditto |
 | `ogc_social_github` | url | org GitHub URL | ditto |
 | `ogc_social_discord` | url | invite URL | ditto |
+| `ogc_social_custom` | social_custom | `[]` | Repeater (label, URL, icon); max 8; `ogc_get_custom_social_links()` → footer after fixed icons |
 
 Footer layout: **Brand** (fixed) → JSON columns (default Quick Links, then after Contact insert pattern) → **Contact** (location + email getters) → remaining JSON columns (Legal). Brand + Contact columns are not fully free-form JSON so location/email stay tied to General fields.
 
@@ -187,16 +188,27 @@ Each section links back to its OGC NewFinity tab. Field tooltips from the schema
 | `ogc_blog_excerpt_length` | number (words) | `22` | `ogc_get_blog_card_excerpt()` in `inc/blog.php` |
 
 ### Ads Manager
+Admin UI splits into two JS sub-tabs (**Google ads** / **Advertisers' advertisements**) plus shared placement limits below. Front-end code: `inc/ads.php`, `template-parts/ad-slot.php`, `assets/css/ads.css`.
+
 | Key | Type | Default | Read by |
 |---|---|---|---|
-| `ogc_ads_enabled` | checkbox | **off** | `template-parts/ad-slot.php` — master gate |
-| `ogc_ads_config_json` | ads_config | sidebar + inline slots, disabled, empty | ad-slot by `variant` key |
+| `ogc_ads_enabled` | checkbox | **off** | Master gate — no slots, no AdSense loader |
+| `ogc_adsense_client_id` | text | `''` | `ca-pub-…` → AdSense script in `wp_head` |
+| `ogc_adsense_auto_ads` | checkbox | off | Auto ads snippet only when client ID set |
+| `ogc_adsense_slots_json` | adsense_slots | `[]` | Manual AdSense units |
+| `ogc_custom_ads_json` | custom_ads | `[]` | Advertiser image/code creatives |
+| `ogc_ads_per_article` | number 0–6 | `2` | Hard cap for `placement=article` |
+| `ogc_ads_per_widget_area` | number 0–4 | `1` | Hard cap for `placement=listing` |
 
-Slot keys in use (do not invent new ones without updating call sites):
-- `sidebar` — `template-parts/blog-sidebar.php`
-- `inline` — `ogc_insert_mobile_ad_slots()` in `inc/blog.php`
+**AdSense unit fields:** label, slot ID, format (`auto` / `horizontal` / `vertical` / `rectangle` / `inarticle`), full-width responsive, placement, hide mobile, hide tablet.
 
-Per slot: `enabled`, `type` (`image`|`code`), `image`, `url`, `code`. Code is trusted-admin input, sanitized with a scoped `wp_kses` allow-list (`script`/`iframe`/`ins`, no inline event handlers). If master off, slot disabled, or no content → **render nothing** (no empty `.ogc-ad-slot`).
+**Advertiser fields:** label, type (`image`|`code`), image URL + click-through URL or raw code, size (leaderboard / medium rectangle / skyscraper / mobile banner / custom w+h), lazy load, placement, hide mobile, hide tablet.
+
+**Placement (enforced in PHP):**
+- `article` — injected evenly through single-post content via `the_content` (`is_single()` + post type `post` only)
+- `listing` — inserted between cards in `ogc_render_blog_grid()` when `is_home() || is_category() || is_archive()` (plus blog-filter AJAX)
+
+Priority within a placement: AdSense units (list order), then advertiser creatives (list order); only the first N slots render up to the cap. Device classes `ogc-ad-hide-mobile` / `ogc-ad-hide-tablet` are styled in `ads.css`. Legacy `ogc_ads_config_json` migrates once into `ogc_custom_ads_json` then is removed.
 
 ### Advanced
 | Key | Type | Default | Output |
@@ -213,7 +225,7 @@ Also on this tab: **Export** (JSON download of schema keys), **Import** (schema 
 - Contact email → display + `inc/contact-form.php` / `inc/submit-idea-form.php` `wp_mail()`
 - Motion toggle → existing hero JS reduced-motion path
 - Buttons → `assets/css/button-effects.css` + optional ripple JS
-- Ads → `template-parts/ad-slot.php` only
+- Ads → `inc/ads.php` + `template-parts/ad-slot.php` on single posts + blog listing only
 
 ## Explicitly Out Of Scope (still requires code)
 - Adding/removing entire page sections or templates
@@ -224,7 +236,7 @@ Also on this tab: **Export** (JSON download of schema keys), **Import** (schema 
 1. Existing getters (email→mail, social hide, hero bg, motion freeze) still work  
 2. Header logo widths desktop vs mobile  
 3. Footer column link edits reflect live  
-4. Ads off = zero `.ogc-ad-slot` in source; on + image slot renders  
+4. Ads off = zero `.ogc-ad-slot` in source; on + configured slot renders on post/listing only (never Home/About/etc.)  
 5. Primary vs outline hover effects independent; Tab focus always visible  
 6. Color preset fills fields but does not save until Save all  
 7. Empty GA/Pixel IDs = no tracking tags  
@@ -232,3 +244,5 @@ Also on this tab: **Export** (JSON download of schema keys), **Import** (schema 
 9. Export/import round-trip; bogus keys ignored  
 10. Reset This Tab vs Reset All (with confirm)  
 11. Fresh install / zero theme_mods matches previous hardcoded look  
+12. AdSense client ID loads script once; Auto ads only when toggled on  
+13. Placement caps trim excess slots; device-hide classes respect breakpoints  

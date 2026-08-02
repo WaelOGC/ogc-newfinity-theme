@@ -164,6 +164,17 @@ $ogc_render_footer_column = static function ( $column ) {
 							</a>
 						</li>
 					<?php endforeach; ?>
+					<?php
+					$ogc_custom_socials = function_exists( 'ogc_get_custom_social_links' ) ? ogc_get_custom_social_links() : array();
+					foreach ( $ogc_custom_socials as $ogc_custom_social ) :
+						?>
+						<li>
+							<a class="ogc-social__link" href="<?php echo esc_url( $ogc_custom_social['url'] ); ?>" target="_blank" rel="noopener noreferrer">
+								<span class="screen-reader-text"><?php echo esc_html( $ogc_custom_social['label'] ); ?></span>
+								<?php ogc_social_icon( $ogc_custom_social['icon'] ); ?>
+							</a>
+						</li>
+					<?php endforeach; ?>
 				</ul>
 			</div>
 

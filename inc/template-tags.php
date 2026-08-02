@@ -71,7 +71,7 @@ function ogc_get_logo( $args = array() ) {
 /**
  * Echo an inline social icon SVG by network key.
  *
- * @param string $network One of: x, linkedin, github, discord, facebook, reddit, copy.
+ * @param string $network One of: x, linkedin, github, discord, facebook, reddit, copy, link.
  */
 function ogc_social_icon( $network ) {
 	$icons = array(
@@ -82,7 +82,12 @@ function ogc_social_icon( $network ) {
 		'facebook' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>',
 		'reddit'   => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 01-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 01.042.52c0 2.769-3.209 5.002-7.14 5.002-3.932 0-7.14-2.233-7.14-5.002 0-.175.014-.348.042-.52-.575-.281-1.01-.898-1.01-1.614 0-.968.786-1.754 1.754-1.754.463 0 .878.175 1.19.469 1.19-.87 2.848-1.432 4.659-1.5l.885-4.182a.342.342 0 01.14-.197.35.35 0 01.238-.042l2.914.614a1.25 1.25 0 011.21-.845zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 00-.231.094.33.33 0 000 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 000-.463.33.33 0 00-.463 0c-.547.533-1.684.73-2.498.73-.814 0-1.98-.185-2.498-.73a.327.327 0 00-.232-.094z"/></svg>',
 		'copy'     => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>',
+		'link'     => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>',
 	);
+
+	if ( ! isset( $icons[ $network ] ) ) {
+		$network = 'link';
+	}
 
 	if ( isset( $icons[ $network ] ) ) {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted static SVG markup.

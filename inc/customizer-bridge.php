@@ -14,96 +14,112 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Customizer accordion group heading control.
+ * Define Customizer-only control classes.
+ *
+ * WP_Customize_Control is not loaded on regular front/admin requests — only when
+ * the Customizer boots. Must never declare these classes at file top-level.
  */
-class OGC_Customize_Group_Control extends WP_Customize_Control {
-
-	/**
-	 * Control type.
-	 *
-	 * @var string
-	 */
-	public $type = 'ogc_group';
-
-	/**
-	 * Group id used by customize-controls.js to show/hide sibling fields.
-	 *
-	 * @var string
-	 */
-	public $group_id = '';
-
-	/**
-	 * Whether the group starts expanded.
-	 *
-	 * @var bool
-	 */
-	public $expanded = true;
-
-	/**
-	 * Expose group metadata to the controls JS.
-	 */
-	public function to_json() {
-		parent::to_json();
-		$this->json['group_id'] = $this->group_id;
-		$this->json['expanded'] = (bool) $this->expanded;
+function ogc_customize_bridge_register_control_classes() {
+	if ( ! class_exists( 'WP_Customize_Control' ) ) {
+		return;
 	}
 
-	/**
-	 * Render the accordion toggle.
-	 */
-	public function render_content() {
-		$expanded = $this->expanded ? 'true' : 'false';
-		?>
-		<button
-			type="button"
-			class="ogc-cz-group<?php echo $this->expanded ? ' is-open' : ''; ?>"
-			aria-expanded="<?php echo esc_attr( $expanded ); ?>"
-			data-ogc-group="<?php echo esc_attr( $this->group_id ); ?>"
-		>
-			<span class="ogc-cz-group__label"><?php echo esc_html( $this->label ); ?></span>
-			<span class="ogc-cz-group__chevron dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
-		</button>
-		<?php
+	if ( ! class_exists( 'OGC_Customize_Group_Control', false ) ) {
+		/**
+		 * Customizer accordion group heading control.
+		 */
+		class OGC_Customize_Group_Control extends WP_Customize_Control {
+
+			/**
+			 * Control type.
+			 *
+			 * @var string
+			 */
+			public $type = 'ogc_group';
+
+			/**
+			 * Group id used by customize-controls.js to show/hide sibling fields.
+			 *
+			 * @var string
+			 */
+			public $group_id = '';
+
+			/**
+			 * Whether the group starts expanded.
+			 *
+			 * @var bool
+			 */
+			public $expanded = true;
+
+			/**
+			 * Expose group metadata to the controls JS.
+			 */
+			public function to_json() {
+				parent::to_json();
+				$this->json['group_id'] = $this->group_id;
+				$this->json['expanded'] = (bool) $this->expanded;
+			}
+
+			/**
+			 * Render the accordion toggle.
+			 */
+			public function render_content() {
+				$expanded = $this->expanded ? 'true' : 'false';
+				?>
+				<button
+					type="button"
+					class="ogc-cz-group<?php echo $this->expanded ? ' is-open' : ''; ?>"
+					aria-expanded="<?php echo esc_attr( $expanded ); ?>"
+					data-ogc-group="<?php echo esc_attr( $this->group_id ); ?>"
+				>
+					<span class="ogc-cz-group__label"><?php echo esc_html( $this->label ); ?></span>
+					<span class="ogc-cz-group__chevron dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
+				</button>
+				<?php
+			}
+		}
 	}
-}
 
-/**
- * Footer link columns builder — label + URL inputs (same JSON theme_mod as the dashboard).
- */
-class OGC_Customize_Footer_Columns_Control extends WP_Customize_Control {
+	if ( ! class_exists( 'OGC_Customize_Footer_Columns_Control', false ) ) {
+		/**
+		 * Footer link columns builder — label + URL inputs (same JSON theme_mod as the dashboard).
+		 */
+		class OGC_Customize_Footer_Columns_Control extends WP_Customize_Control {
 
-	/**
-	 * Control type.
-	 *
-	 * @var string
-	 */
-	public $type = 'ogc_footer_columns';
+			/**
+			 * Control type.
+			 *
+			 * @var string
+			 */
+			public $type = 'ogc_footer_columns';
 
-	/**
-	 * Expose parsed columns to the controls JS.
-	 */
-	public function to_json() {
-		parent::to_json();
-		$decoded = json_decode( (string) $this->value(), true );
-		$this->json['columns'] = is_array( $decoded ) ? $decoded : array();
-	}
+			/**
+			 * Expose parsed columns to the controls JS.
+			 */
+			public function to_json() {
+				parent::to_json();
+				$decoded = json_decode( (string) $this->value(), true );
+				$this->json['columns'] = is_array( $decoded ) ? $decoded : array();
+			}
 
-	/**
-	 * Shell markup; rows are built in customize-controls.js.
-	 */
-	public function render_content() {
-		?>
-		<?php if ( ! empty( $this->label ) ) : ?>
-			<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
-		<?php endif; ?>
-		<div class="ogc-cz-footer-cols" data-ogc-footer-cols></div>
-		<textarea
-			class="ogc-cz-footer-cols__store"
-			<?php $this->link(); ?>
-			hidden
-			rows="1"
-		><?php echo esc_textarea( $this->value() ); ?></textarea>
-		<?php
+			/**
+			 * Shell markup; rows are built in customize-controls.js.
+			 */
+			public function render_content() {
+				?>
+				<?php if ( ! empty( $this->label ) ) : ?>
+					<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
+				<?php endif; ?>
+				<div class="ogc-cz-footer-cols" data-ogc-footer-cols></div>
+				<textarea
+					class="ogc-cz-footer-cols__store"
+					<?php $this->link(); ?>
+					hidden
+					rows="1"
+				><?php echo esc_textarea( $this->value() ); ?></textarea>
+				<?php
+			}
+		}
 	}
 }
 
@@ -188,7 +204,7 @@ function ogc_customize_add_schema_field( $wp_customize, $key, $section, $group_i
 
 	$type      = $field['type'];
 	$transport = ( 'image' === $type ) ? 'refresh' : 'postMessage';
-	if ( in_array( $type, array( 'footer_columns', 'nav_order', 'ads_config', 'monospace' ), true ) ) {
+	if ( in_array( $type, array( 'footer_columns', 'nav_order', 'adsense_slots', 'custom_ads', 'monospace' ), true ) ) {
 		$transport = 'refresh';
 	}
 	if ( ! empty( $overrides['transport'] ) ) {
@@ -334,6 +350,8 @@ function ogc_customize_control_meta( $wp_customize ) {
  * @param WP_Customize_Manager $wp_customize Manager.
  */
 function ogc_customize_bridge_register( $wp_customize ) {
+	ogc_customize_bridge_register_control_classes();
+
 	$pages = array(
 		'home'     => __( 'Home', 'ogc-newfinity' ),
 		'about'    => __( 'About', 'ogc-newfinity' ),

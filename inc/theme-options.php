@@ -305,17 +305,80 @@ function ogc_default_footer_columns_json() {
 }
 
 /**
- * Default ad slot configuration JSON.
+ * Ad placement choices shared by AdSense and advertiser slots.
+ *
+ * @return array<string, string>
+ */
+function ogc_ads_placement_choices() {
+	return array(
+		'article' => __( 'Inside article body', 'ogc-newfinity' ),
+		'listing' => __( 'Between blog listing posts', 'ogc-newfinity' ),
+	);
+}
+
+/**
+ * AdSense format choices.
+ *
+ * @return array<string, string>
+ */
+function ogc_adsense_format_choices() {
+	return array(
+		'auto'       => __( 'Auto', 'ogc-newfinity' ),
+		'horizontal' => __( 'Horizontal', 'ogc-newfinity' ),
+		'vertical'   => __( 'Vertical', 'ogc-newfinity' ),
+		'rectangle'  => __( 'Rectangle', 'ogc-newfinity' ),
+		'inarticle'  => __( 'In-article', 'ogc-newfinity' ),
+	);
+}
+
+/**
+ * Advertiser ad size choices (preset dimensions).
+ *
+ * @return array<string, string>
+ */
+function ogc_custom_ad_size_choices() {
+	return array(
+		'leaderboard'       => __( 'Leaderboard 728×90', 'ogc-newfinity' ),
+		'medium_rectangle'  => __( 'Medium Rectangle 300×250', 'ogc-newfinity' ),
+		'skyscraper'        => __( 'Skyscraper 160×600', 'ogc-newfinity' ),
+		'mobile_banner'     => __( 'Mobile Banner 320×50', 'ogc-newfinity' ),
+		'custom'            => __( 'Custom', 'ogc-newfinity' ),
+	);
+}
+
+/**
+ * Pixel dimensions for a preset advertiser size key.
+ *
+ * @param string $size Size key.
+ * @return array{0:int,1:int}|null
+ */
+function ogc_custom_ad_size_dimensions( $size ) {
+	$map = array(
+		'leaderboard'      => array( 728, 90 ),
+		'medium_rectangle' => array( 300, 250 ),
+		'skyscraper'       => array( 160, 600 ),
+		'mobile_banner'    => array( 320, 50 ),
+	);
+
+	return isset( $map[ $size ] ) ? $map[ $size ] : null;
+}
+
+/**
+ * Default empty AdSense slots JSON.
  *
  * @return string
  */
-function ogc_default_ads_config_json() {
-	return wp_json_encode(
-		array(
-			array( 'key' => 'sidebar', 'enabled' => false, 'type' => 'image', 'image' => '', 'url' => '', 'code' => '' ),
-			array( 'key' => 'inline', 'enabled' => false, 'type' => 'image', 'image' => '', 'url' => '', 'code' => '' ),
-		)
-	);
+function ogc_default_adsense_slots_json() {
+	return '[]';
+}
+
+/**
+ * Default empty advertiser ads JSON.
+ *
+ * @return string
+ */
+function ogc_default_custom_ads_json() {
+	return '[]';
 }
 
 /* =========================================================================
@@ -361,6 +424,13 @@ function ogc_theme_options_schema() {
 			'default' => $data[1],
 		);
 	}
+	$social_fields[] = array(
+		'key'     => 'ogc_social_custom',
+		'type'    => 'social_custom',
+		'label'   => __( 'Custom social links', 'ogc-newfinity' ),
+		'tooltip' => __( 'Add extra platforms below the four fixed icons. Clear the URL to remove a row on save.', 'ogc-newfinity' ),
+		'default' => '[]',
+	);
 
 	$hero_pages = array(
 		'home'     => __( 'Home', 'ogc-newfinity' ),
@@ -1125,20 +1195,74 @@ function ogc_theme_options_schema() {
 		'ads'      => array(
 			'label'       => __( 'Ads', 'ogc-newfinity' ),
 			'icon'        => 'dashicons-megaphone',
-			'description' => __( 'Optional promotional slots rendered by the ad-slot template part.', 'ogc-newfinity' ),
+			'description' => __( 'Google AdSense and advertiser creatives — restricted to blog posts and listings.', 'ogc-newfinity' ),
 			'fields'      => array(
 				array(
 					'key'     => 'ogc_ads_enabled',
 					'type'    => 'checkbox',
-					'label'   => __( 'Enable ad slots', 'ogc-newfinity' ),
-					'tooltip' => __( 'Master switch. Individual slots also need their own toggle.', 'ogc-newfinity' ),
+					'label'   => __( 'Enable ads', 'ogc-newfinity' ),
+					'tooltip' => __( 'Master switch. No ad markup is rendered when this is off.', 'ogc-newfinity' ),
 					'default' => false,
+					'subtab'  => 'shared_top',
 				),
 				array(
-					'key'     => 'ogc_ads_config_json',
-					'type'    => 'ads_config',
-					'label'   => __( 'Ad slots', 'ogc-newfinity' ),
-					'default' => ogc_default_ads_config_json(),
+					'key'     => 'ogc_adsense_client_id',
+					'type'    => 'text',
+					'label'   => __( 'AdSense client ID', 'ogc-newfinity' ),
+					'tooltip' => __( 'Your publisher ID from Google AdSense (ca-pub-…).', 'ogc-newfinity' ),
+					'default' => '',
+					'attrs'   => array( 'placeholder' => 'ca-pub-XXXXXXXXXXXXXXXX' ),
+					'sanitize'=> 'ogc_sanitize_adsense_client_id',
+					'subtab'  => 'google',
+				),
+				array(
+					'key'     => 'ogc_adsense_auto_ads',
+					'type'    => 'checkbox',
+					'label'   => __( 'Enable auto ads', 'ogc-newfinity' ),
+					'tooltip' => __( 'Outputs the AdSense Auto ads snippet when a client ID is set.', 'ogc-newfinity' ),
+					'default' => false,
+					'subtab'  => 'google',
+				),
+				array(
+					'key'     => 'ogc_adsense_slots_json',
+					'type'    => 'adsense_slots',
+					'label'   => __( 'AdSense units', 'ogc-newfinity' ),
+					'tooltip' => __( 'Manual ad units. Placement and device visibility are enforced on the front end.', 'ogc-newfinity' ),
+					'default' => ogc_default_adsense_slots_json(),
+					'subtab'  => 'google',
+				),
+				array(
+					'key'     => 'ogc_custom_ads_json',
+					'type'    => 'custom_ads',
+					'label'   => __( "Advertisers' advertisements", 'ogc-newfinity' ),
+					'tooltip' => __( 'Image or embed-code creatives from direct advertisers.', 'ogc-newfinity' ),
+					'default' => ogc_default_custom_ads_json(),
+					'subtab'  => 'advertisers',
+				),
+				array(
+					'key'     => 'ogc_ads_limits_heading',
+					'type'    => 'heading',
+					'label'   => __( 'Placement limits', 'ogc-newfinity' ),
+					'tooltip' => __( 'Hard caps applied regardless of how many slots are configured.', 'ogc-newfinity' ),
+					'subtab'  => 'shared',
+				),
+				array(
+					'key'     => 'ogc_ads_per_article',
+					'type'    => 'number',
+					'label'   => __( 'Ads per article', 'ogc-newfinity' ),
+					'tooltip' => __( 'Maximum ad slots injected into a single post body (0–6).', 'ogc-newfinity' ),
+					'default' => 2,
+					'attrs'   => array( 'min' => 0, 'max' => 6, 'step' => 1 ),
+					'subtab'  => 'shared',
+				),
+				array(
+					'key'     => 'ogc_ads_per_widget_area',
+					'type'    => 'number',
+					'label'   => __( 'Ads per listing', 'ogc-newfinity' ),
+					'tooltip' => __( 'Maximum ad slots between posts on the blog listing (0–4).', 'ogc-newfinity' ),
+					'default' => 1,
+					'attrs'   => array( 'min' => 0, 'max' => 4, 'step' => 1 ),
+					'subtab'  => 'shared',
 				),
 			),
 		),
@@ -1191,7 +1315,9 @@ function ogc_default_sanitizer_for_type( $type ) {
 		'image'          => 'ogc_sanitize_image_url',
 		'nav_order'      => 'ogc_sanitize_nav_order_json',
 		'footer_columns' => 'ogc_sanitize_footer_columns_json',
-		'ads_config'     => 'ogc_sanitize_ads_config_json',
+		'social_custom'  => 'ogc_sanitize_social_custom_json',
+		'adsense_slots'  => 'ogc_sanitize_adsense_slots_json',
+		'custom_ads'     => 'ogc_sanitize_custom_ads_json',
 	);
 
 	return isset( $map[ $type ] ) ? $map[ $type ] : '';
@@ -1624,35 +1750,183 @@ function ogc_sanitize_relative_or_absolute_url( $value ) {
 }
 
 /**
- * Sanitize the ad slots JSON.
+ * Allowed icon keys for custom social rows (footer fixed set + generic link).
+ *
+ * @return array<string, string> key => label.
+ */
+function ogc_social_custom_icon_choices() {
+	return array(
+		'link'     => __( 'Link (generic)', 'ogc-newfinity' ),
+		'x'        => __( 'X', 'ogc-newfinity' ),
+		'linkedin' => __( 'LinkedIn', 'ogc-newfinity' ),
+		'github'   => __( 'GitHub', 'ogc-newfinity' ),
+		'discord'  => __( 'Discord', 'ogc-newfinity' ),
+	);
+}
+
+/**
+ * Sanitize the custom social links JSON repeater.
  *
  * @param mixed $value Raw JSON.
  * @return string Normalized JSON.
  */
-function ogc_sanitize_ads_config_json( $value ) {
-	$rows = ogc_decode_json_list( $value );
-	$out  = array();
-	$seen = array();
+function ogc_sanitize_social_custom_json( $value ) {
+	$rows  = ogc_decode_json_list( $value );
+	$icons = ogc_social_custom_icon_choices();
+	$out   = array();
 
-	foreach ( array_slice( $rows, 0, 10 ) as $row ) {
-		if ( ! is_array( $row ) || empty( $row['key'] ) ) {
+	foreach ( array_slice( $rows, 0, 8 ) as $row ) {
+		if ( ! is_array( $row ) ) {
 			continue;
 		}
-		$key = sanitize_key( $row['key'] );
-		if ( '' === $key || isset( $seen[ $key ] ) ) {
+
+		$label = sanitize_text_field( isset( $row['label'] ) ? $row['label'] : '' );
+		$url   = esc_url_raw( isset( $row['url'] ) ? (string) $row['url'] : '' );
+		$icon  = sanitize_key( isset( $row['icon'] ) ? $row['icon'] : 'link' );
+		if ( ! isset( $icons[ $icon ] ) ) {
+			$icon = 'link';
+		}
+
+		if ( '' === $url ) {
 			continue;
 		}
-		$seen[ $key ] = true;
-
-		$type = isset( $row['type'] ) && 'code' === $row['type'] ? 'code' : 'image';
 
 		$out[] = array(
-			'key'     => $key,
-			'enabled' => ! empty( $row['enabled'] ) && ogc_sanitize_checkbox( $row['enabled'] ),
-			'type'    => $type,
-			'image'   => ogc_sanitize_image_url( isset( $row['image'] ) ? $row['image'] : '' ),
-			'url'     => ogc_sanitize_relative_or_absolute_url( isset( $row['url'] ) ? $row['url'] : '' ),
-			'code'    => ogc_sanitize_ad_code( isset( $row['code'] ) ? $row['code'] : '' ),
+			'label' => $label,
+			'url'   => $url,
+			'icon'  => $icon,
+		);
+	}
+
+	return wp_json_encode( $out );
+}
+
+/**
+ * Sanitize an AdSense publisher client ID.
+ *
+ * @param mixed $value Raw value.
+ * @return string
+ */
+function ogc_sanitize_adsense_client_id( $value ) {
+	$value = trim( (string) $value );
+	if ( '' === $value ) {
+		return '';
+	}
+
+	$value = preg_replace( '/[^a-zA-Z0-9\-]/', '', $value );
+	if ( preg_match( '/^ca-pub-\d{8,20}$/i', $value ) ) {
+		return strtolower( $value );
+	}
+
+	return '';
+}
+
+/**
+ * Sanitize AdSense manual units JSON.
+ *
+ * @param mixed $value Raw JSON.
+ * @return string Normalized JSON.
+ */
+function ogc_sanitize_adsense_slots_json( $value ) {
+	$rows     = ogc_decode_json_list( $value );
+	$out      = array();
+	$formats  = ogc_adsense_format_choices();
+	$places   = ogc_ads_placement_choices();
+
+	foreach ( array_slice( $rows, 0, 12 ) as $row ) {
+		if ( ! is_array( $row ) ) {
+			continue;
+		}
+
+		$label   = isset( $row['label'] ) ? sanitize_text_field( $row['label'] ) : '';
+		$slot_id = isset( $row['slot_id'] ) ? preg_replace( '/\D/', '', (string) $row['slot_id'] ) : '';
+		$format  = isset( $row['format'] ) ? sanitize_key( $row['format'] ) : 'auto';
+		$place   = isset( $row['placement'] ) ? sanitize_key( $row['placement'] ) : 'article';
+
+		if ( ! isset( $formats[ $format ] ) ) {
+			$format = 'auto';
+		}
+		if ( ! isset( $places[ $place ] ) ) {
+			$place = 'article';
+		}
+
+		if ( '' === $label && '' === $slot_id ) {
+			continue;
+		}
+
+		$out[] = array(
+			'label'       => $label,
+			'slot_id'     => $slot_id,
+			'format'      => $format,
+			'full_width'  => ! empty( $row['full_width'] ) && ogc_sanitize_checkbox( $row['full_width'] ),
+			'placement'   => $place,
+			'hide_mobile' => ! empty( $row['hide_mobile'] ) && ogc_sanitize_checkbox( $row['hide_mobile'] ),
+			'hide_tablet' => ! empty( $row['hide_tablet'] ) && ogc_sanitize_checkbox( $row['hide_tablet'] ),
+		);
+	}
+
+	return wp_json_encode( $out );
+}
+
+/**
+ * Sanitize advertiser ads JSON.
+ *
+ * @param mixed $value Raw JSON.
+ * @return string Normalized JSON.
+ */
+function ogc_sanitize_custom_ads_json( $value ) {
+	$rows   = ogc_decode_json_list( $value );
+	$out    = array();
+	$sizes  = ogc_custom_ad_size_choices();
+	$places = ogc_ads_placement_choices();
+
+	foreach ( array_slice( $rows, 0, 12 ) as $row ) {
+		if ( ! is_array( $row ) ) {
+			continue;
+		}
+
+		$label = isset( $row['label'] ) ? sanitize_text_field( $row['label'] ) : '';
+		$type  = isset( $row['type'] ) && 'code' === $row['type'] ? 'code' : 'image';
+		$image = ogc_sanitize_image_url( isset( $row['image'] ) ? $row['image'] : '' );
+		$url   = ogc_sanitize_relative_or_absolute_url( isset( $row['url'] ) ? $row['url'] : '' );
+		$code  = ogc_sanitize_ad_code( isset( $row['code'] ) ? $row['code'] : '' );
+		$size  = isset( $row['size'] ) ? sanitize_key( $row['size'] ) : 'medium_rectangle';
+		$place = isset( $row['placement'] ) ? sanitize_key( $row['placement'] ) : 'article';
+
+		if ( ! isset( $sizes[ $size ] ) ) {
+			$size = 'medium_rectangle';
+		}
+		if ( ! isset( $places[ $place ] ) ) {
+			$place = 'article';
+		}
+
+		$dims = ogc_custom_ad_size_dimensions( $size );
+		if ( $dims ) {
+			$width  = $dims[0];
+			$height = $dims[1];
+		} else {
+			$width  = isset( $row['width'] ) ? max( 1, min( 2000, (int) $row['width'] ) ) : 300;
+			$height = isset( $row['height'] ) ? max( 1, min( 2000, (int) $row['height'] ) ) : 250;
+		}
+
+		$has_content = ( 'code' === $type && '' !== trim( $code ) ) || ( 'image' === $type && '' !== $image );
+		if ( '' === $label && ! $has_content ) {
+			continue;
+		}
+
+		$out[] = array(
+			'label'       => $label,
+			'type'        => $type,
+			'image'       => $image,
+			'url'         => $url,
+			'code'        => $code,
+			'size'        => $size,
+			'width'       => $width,
+			'height'      => $height,
+			'lazy'        => ! array_key_exists( 'lazy', $row ) || ! empty( $row['lazy'] ),
+			'placement'   => $place,
+			'hide_mobile' => ! empty( $row['hide_mobile'] ) && ogc_sanitize_checkbox( $row['hide_mobile'] ),
+			'hide_tablet' => ! empty( $row['hide_tablet'] ) && ogc_sanitize_checkbox( $row['hide_tablet'] ),
 		);
 	}
 
@@ -1719,6 +1993,39 @@ function ogc_get_social_url( $network ) {
 
 	$url = (string) ogc_mod( $key );
 	return $url ? esc_url( $url ) : '';
+}
+
+/**
+ * Custom social links from the Footer repeater (beyond the four fixed networks).
+ *
+ * @return array<int, array{label:string,url:string,icon:string}>
+ */
+function ogc_get_custom_social_links() {
+	$rows = ogc_decode_json_list( ogc_mod( 'ogc_social_custom' ) );
+	$out  = array();
+	$icons = ogc_social_custom_icon_choices();
+
+	foreach ( array_slice( $rows, 0, 8 ) as $row ) {
+		if ( ! is_array( $row ) ) {
+			continue;
+		}
+		$label = isset( $row['label'] ) ? sanitize_text_field( (string) $row['label'] ) : '';
+		$url   = isset( $row['url'] ) ? esc_url( (string) $row['url'] ) : '';
+		$icon  = sanitize_key( isset( $row['icon'] ) ? $row['icon'] : 'link' );
+		if ( ! isset( $icons[ $icon ] ) ) {
+			$icon = 'link';
+		}
+		if ( '' === $url ) {
+			continue;
+		}
+		$out[] = array(
+			'label' => $label ? $label : __( 'Social link', 'ogc-newfinity' ),
+			'url'   => $url,
+			'icon'  => $icon,
+		);
+	}
+
+	return $out;
 }
 
 /**
@@ -1884,26 +2191,41 @@ function ogc_get_footer_copyright() {
 }
 
 /**
- * Ad slot configuration keyed by slot key.
+ * AdSense publisher client ID, or empty when unset/invalid.
  *
- * @return array<string, array{key:string, enabled:bool, type:string, image:string, url:string, code:string}>
+ * @return string
  */
-function ogc_get_ads_config() {
-	$rows = ogc_decode_json_list( ogc_mod( 'ogc_ads_config_json' ) );
+function ogc_get_adsense_client_id() {
+	return ogc_sanitize_adsense_client_id( ogc_mod( 'ogc_adsense_client_id' ) );
+}
+
+/**
+ * Normalized AdSense manual units (list order = priority).
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function ogc_get_adsense_slots() {
+	$rows = ogc_decode_json_list( ogc_mod( 'ogc_adsense_slots_json' ) );
 	$out  = array();
 
 	foreach ( $rows as $row ) {
-		if ( ! is_array( $row ) || empty( $row['key'] ) ) {
+		if ( ! is_array( $row ) ) {
 			continue;
 		}
-		$key         = sanitize_key( $row['key'] );
-		$out[ $key ] = array(
-			'key'     => $key,
-			'enabled' => ! empty( $row['enabled'] ),
-			'type'    => isset( $row['type'] ) && 'code' === $row['type'] ? 'code' : 'image',
-			'image'   => isset( $row['image'] ) ? (string) $row['image'] : '',
-			'url'     => isset( $row['url'] ) ? ogc_resolve_url( $row['url'] ) : '',
-			'code'    => isset( $row['code'] ) ? (string) $row['code'] : '',
+		$slot_id = isset( $row['slot_id'] ) ? preg_replace( '/\D/', '', (string) $row['slot_id'] ) : '';
+		if ( '' === $slot_id ) {
+			continue;
+		}
+
+		$out[] = array(
+			'source'      => 'adsense',
+			'label'       => isset( $row['label'] ) ? (string) $row['label'] : '',
+			'slot_id'     => $slot_id,
+			'format'      => isset( $row['format'] ) ? sanitize_key( $row['format'] ) : 'auto',
+			'full_width'  => ! empty( $row['full_width'] ),
+			'placement'   => isset( $row['placement'] ) ? sanitize_key( $row['placement'] ) : 'article',
+			'hide_mobile' => ! empty( $row['hide_mobile'] ),
+			'hide_tablet' => ! empty( $row['hide_tablet'] ),
 		);
 	}
 
@@ -1911,24 +2233,95 @@ function ogc_get_ads_config() {
 }
 
 /**
- * A single ad slot, or null when the slot is missing or switched off.
+ * Normalized advertiser creatives (list order = priority).
  *
- * @param string $slot_key Slot key (e.g. sidebar, inline).
- * @return array<string, mixed>|null
+ * @return array<int, array<string, mixed>>
  */
-function ogc_get_ad_slot( $slot_key ) {
+function ogc_get_custom_ads() {
+	$rows = ogc_decode_json_list( ogc_mod( 'ogc_custom_ads_json' ) );
+	$out  = array();
+
+	foreach ( $rows as $row ) {
+		if ( ! is_array( $row ) ) {
+			continue;
+		}
+
+		$type  = isset( $row['type'] ) && 'code' === $row['type'] ? 'code' : 'image';
+		$image = isset( $row['image'] ) ? (string) $row['image'] : '';
+		$code  = isset( $row['code'] ) ? (string) $row['code'] : '';
+		$size  = isset( $row['size'] ) ? sanitize_key( $row['size'] ) : 'medium_rectangle';
+
+		if ( 'image' === $type && '' === $image ) {
+			continue;
+		}
+		if ( 'code' === $type && '' === trim( $code ) ) {
+			continue;
+		}
+
+		$dims = ogc_custom_ad_size_dimensions( $size );
+		if ( $dims ) {
+			$width  = $dims[0];
+			$height = $dims[1];
+		} else {
+			$width  = isset( $row['width'] ) ? (int) $row['width'] : 300;
+			$height = isset( $row['height'] ) ? (int) $row['height'] : 250;
+		}
+
+		$out[] = array(
+			'source'      => 'custom',
+			'label'       => isset( $row['label'] ) ? (string) $row['label'] : '',
+			'type'        => $type,
+			'image'       => $image,
+			'url'         => isset( $row['url'] ) ? ogc_resolve_url( $row['url'] ) : '',
+			'code'        => $code,
+			'size'        => $size,
+			'width'       => $width,
+			'height'      => $height,
+			'lazy'        => ! isset( $row['lazy'] ) || ! empty( $row['lazy'] ),
+			'placement'   => isset( $row['placement'] ) ? sanitize_key( $row['placement'] ) : 'article',
+			'hide_mobile' => ! empty( $row['hide_mobile'] ),
+			'hide_tablet' => ! empty( $row['hide_tablet'] ),
+		);
+	}
+
+	return $out;
+}
+
+/**
+ * Ad slots eligible for a placement, capped by the global limit (priority order).
+ *
+ * Priority: AdSense units first (list order), then advertiser creatives (list order).
+ *
+ * @param string $placement article|listing.
+ * @return array<int, array<string, mixed>>
+ */
+function ogc_get_ads_for_placement( $placement ) {
 	if ( ! ogc_mod( 'ogc_ads_enabled' ) ) {
-		return null;
+		return array();
 	}
 
-	$slots    = ogc_get_ads_config();
-	$slot_key = sanitize_key( $slot_key );
-
-	if ( empty( $slots[ $slot_key ] ) || ! $slots[ $slot_key ]['enabled'] ) {
-		return null;
+	$placement = sanitize_key( $placement );
+	if ( ! in_array( $placement, array( 'article', 'listing' ), true ) ) {
+		return array();
 	}
 
-	return $slots[ $slot_key ];
+	$limit = ( 'article' === $placement )
+		? (int) ogc_mod( 'ogc_ads_per_article' )
+		: (int) ogc_mod( 'ogc_ads_per_widget_area' );
+
+	$limit = max( 0, $limit );
+	if ( $limit < 1 ) {
+		return array();
+	}
+
+	$merged = array();
+	foreach ( array_merge( ogc_get_adsense_slots(), ogc_get_custom_ads() ) as $slot ) {
+		if ( isset( $slot['placement'] ) && $placement === $slot['placement'] ) {
+			$merged[] = $slot;
+		}
+	}
+
+	return array_slice( $merged, 0, $limit );
 }
 
 /**
@@ -2605,33 +2998,49 @@ function ogc_theme_options_admin_assets() {
 		'ogc-admin-theme-options',
 		'ogcThemeOptions',
 		array(
-			'presets'   => ogc_color_presets(),
-			'navLabels' => $nav_labels,
-			'nonce'     => wp_create_nonce( 'ogc_theme_options_ui' ),
-			'strings'   => array(
-				'chooseImage'    => __( 'Choose image', 'ogc-newfinity' ),
-				'useImage'       => __( 'Use this image', 'ogc-newfinity' ),
-				'replaceImage'   => __( 'Replace', 'ogc-newfinity' ),
-				'removeImage'    => __( 'Remove', 'ogc-newfinity' ),
-				'addColumn'      => __( 'Add column', 'ogc-newfinity' ),
-				'removeColumn'   => __( 'Remove column', 'ogc-newfinity' ),
-				'addLink'        => __( 'Add link', 'ogc-newfinity' ),
-				'remove'         => __( 'Remove', 'ogc-newfinity' ),
-				'columnTitle'    => __( 'Column title', 'ogc-newfinity' ),
-				'linkLabel'      => __( 'Label', 'ogc-newfinity' ),
-				'linkUrl'        => __( 'URL', 'ogc-newfinity' ),
-				'addSlot'        => __( 'Add ad slot', 'ogc-newfinity' ),
-				'slotKey'        => __( 'Slot key', 'ogc-newfinity' ),
-				'slotEnabled'    => __( 'Enabled', 'ogc-newfinity' ),
-				'slotType'       => __( 'Type', 'ogc-newfinity' ),
-				'slotImage'      => __( 'Image', 'ogc-newfinity' ),
-				'slotCode'       => __( 'Embed code', 'ogc-newfinity' ),
-				'slotLinkUrl'    => __( 'Click-through URL', 'ogc-newfinity' ),
-				'visible'        => __( 'Visible', 'ogc-newfinity' ),
+			'presets'     => ogc_color_presets(),
+			'navLabels'   => $nav_labels,
+			'socialIcons' => ogc_social_custom_icon_choices(),
+			'adPlacements'=> ogc_ads_placement_choices(),
+			'adFormats'   => ogc_adsense_format_choices(),
+			'adSizes'     => ogc_custom_ad_size_choices(),
+			'nonce'       => wp_create_nonce( 'ogc_theme_options_ui' ),
+			'strings'     => array(
+				'chooseImage'     => __( 'Choose image', 'ogc-newfinity' ),
+				'useImage'        => __( 'Use this image', 'ogc-newfinity' ),
+				'replaceImage'    => __( 'Replace', 'ogc-newfinity' ),
+				'removeImage'     => __( 'Remove', 'ogc-newfinity' ),
+				'addColumn'       => __( 'Add column', 'ogc-newfinity' ),
+				'removeColumn'    => __( 'Remove column', 'ogc-newfinity' ),
+				'addLink'         => __( 'Add link', 'ogc-newfinity' ),
+				'remove'          => __( 'Remove', 'ogc-newfinity' ),
+				'columnTitle'     => __( 'Column title', 'ogc-newfinity' ),
+				'linkLabel'       => __( 'Label', 'ogc-newfinity' ),
+				'linkUrl'         => __( 'URL', 'ogc-newfinity' ),
+				'platformLabel'   => __( 'Platform', 'ogc-newfinity' ),
+				'iconLabel'       => __( 'Icon', 'ogc-newfinity' ),
+				'addSlot'         => __( 'Add ad unit', 'ogc-newfinity' ),
+				'addCustomAd'     => __( 'Add advertisement', 'ogc-newfinity' ),
+				'slotLabel'       => __( 'Slot name', 'ogc-newfinity' ),
+				'slotId'          => __( 'Ad slot ID', 'ogc-newfinity' ),
+				'slotFormat'      => __( 'Ad format', 'ogc-newfinity' ),
+				'slotFullWidth'   => __( 'Full-width responsive', 'ogc-newfinity' ),
+				'slotPlacement'   => __( 'Placement', 'ogc-newfinity' ),
+				'slotHideMobile'  => __( 'Hide on mobile', 'ogc-newfinity' ),
+				'slotHideTablet'  => __( 'Hide on tablet', 'ogc-newfinity' ),
+				'slotType'        => __( 'Type', 'ogc-newfinity' ),
+				'slotImage'       => __( 'Image URL', 'ogc-newfinity' ),
+				'slotCode'        => __( 'Embed code', 'ogc-newfinity' ),
+				'slotLinkUrl'     => __( 'Click-through URL', 'ogc-newfinity' ),
+				'slotSize'        => __( 'Ad size', 'ogc-newfinity' ),
+				'slotWidth'       => __( 'Width (px)', 'ogc-newfinity' ),
+				'slotHeight'      => __( 'Height (px)', 'ogc-newfinity' ),
+				'slotLazy'        => __( 'Lazy load', 'ogc-newfinity' ),
+				'visible'         => __( 'Visible', 'ogc-newfinity' ),
 				'confirmResetAll' => __( 'Reset every OGC NewFinity theme option back to its default? This cannot be undone.', 'ogc-newfinity' ),
 				'confirmResetTab' => __( 'Reset the options on this tab back to their defaults?', 'ogc-newfinity' ),
-				'unsaved'        => __( 'You have unsaved theme option changes.', 'ogc-newfinity' ),
-				'dragHandle'     => __( 'Drag to reorder', 'ogc-newfinity' ),
+				'unsaved'         => __( 'You have unsaved theme option changes.', 'ogc-newfinity' ),
+				'dragHandle'      => __( 'Drag to reorder', 'ogc-newfinity' ),
 			),
 		)
 	);
@@ -2741,8 +3150,12 @@ function ogc_render_theme_options_page() {
 
 						<div class="ogc-opt__fields">
 							<?php
-							foreach ( $tab['fields'] as $field ) {
-								ogc_render_option_field( $field );
+							if ( 'ads' === $tab_id ) {
+								ogc_render_ads_tab_fields( $tab['fields'] );
+							} else {
+								foreach ( $tab['fields'] as $field ) {
+									ogc_render_option_field( $field );
+								}
 							}
 							?>
 						</div>
@@ -2913,6 +3326,60 @@ function ogc_field_attrs( $attrs, $allow ) {
 }
 
 /**
+ * Render Ads tab fields with Google / Advertisers sub-tabs and shared limits.
+ *
+ * @param array<int, array<string, mixed>> $fields Schema fields for the ads tab.
+ */
+function ogc_render_ads_tab_fields( $fields ) {
+	$groups = array(
+		'shared_top'  => array(),
+		'google'      => array(),
+		'advertisers' => array(),
+		'shared'      => array(),
+	);
+
+	foreach ( $fields as $field ) {
+		$sub = isset( $field['subtab'] ) ? $field['subtab'] : 'shared';
+		if ( ! isset( $groups[ $sub ] ) ) {
+			$sub = 'shared';
+		}
+		$groups[ $sub ][] = $field;
+	}
+
+	foreach ( $groups['shared_top'] as $field ) {
+		ogc_render_option_field( $field );
+	}
+	?>
+	<div class="ogc-opt__subtabs" data-ads-subtabs role="tablist" aria-label="<?php esc_attr_e( 'Ad sources', 'ogc-newfinity' ); ?>">
+		<button type="button" class="ogc-opt__subtab is-active" data-ads-subtab="google" role="tab" aria-selected="true">
+			<?php esc_html_e( 'Google ads', 'ogc-newfinity' ); ?>
+		</button>
+		<button type="button" class="ogc-opt__subtab" data-ads-subtab="advertisers" role="tab" aria-selected="false">
+			<?php esc_html_e( "Advertisers' advertisements", 'ogc-newfinity' ); ?>
+		</button>
+	</div>
+
+	<div class="ogc-opt__subpanel is-active" data-ads-subpanel="google" role="tabpanel">
+		<?php foreach ( $groups['google'] as $field ) : ?>
+			<?php ogc_render_option_field( $field ); ?>
+		<?php endforeach; ?>
+	</div>
+
+	<div class="ogc-opt__subpanel" data-ads-subpanel="advertisers" role="tabpanel" hidden>
+		<?php foreach ( $groups['advertisers'] as $field ) : ?>
+			<?php ogc_render_option_field( $field ); ?>
+		<?php endforeach; ?>
+	</div>
+
+	<div class="ogc-opt__ads-shared">
+		<?php foreach ( $groups['shared'] as $field ) : ?>
+			<?php ogc_render_option_field( $field ); ?>
+		<?php endforeach; ?>
+	</div>
+	<?php
+}
+
+/**
  * Render the label + tooltip cell shared by most controls.
  *
  * @param array<string, mixed> $field Field definition.
@@ -3060,7 +3527,9 @@ function ogc_render_option_field( $field ) {
 
 				case 'nav_order':
 				case 'footer_columns':
-				case 'ads_config':
+				case 'social_custom':
+				case 'adsense_slots':
+				case 'custom_ads':
 					printf(
 						'<div class="ogc-opt__builder" data-builder="%1$s" data-input="%2$s"></div>'
 						. '<input type="hidden" id="%2$s" name="%2$s" value="%3$s">'

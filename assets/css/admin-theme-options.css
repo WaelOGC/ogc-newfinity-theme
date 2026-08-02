@@ -601,6 +601,58 @@
 	max-width: 720px;
 }
 
+/* Ads Manager sub-tabs */
+
+.ogc-opt__subtabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 8px 0 18px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--opt-line);
+}
+
+.ogc-opt__subtab {
+	appearance: none;
+	border: 1px solid var(--opt-line);
+	border-radius: 999px;
+	background: var(--opt-panel);
+	color: var(--opt-muted);
+	font: inherit;
+	font-size: 13px;
+	font-weight: 600;
+	padding: 8px 14px;
+	cursor: pointer;
+	transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.ogc-opt__subtab:hover {
+	border-color: var(--opt-accent);
+	color: var(--opt-accent);
+}
+
+.ogc-opt__subtab.is-active {
+	border-color: var(--opt-accent);
+	color: #0a0a0a;
+	background: var(--opt-accent);
+}
+
+.ogc-opt__subpanel[hidden] {
+	display: none !important;
+}
+
+.ogc-opt__ads-shared {
+	margin-top: 22px;
+	padding-top: 18px;
+	border-top: 1px solid var(--opt-line);
+}
+
+.ogc-opt__field-inline--wrap {
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px 16px;
+}
+
 .ogc-opt__rows {
 	display: grid;
 	gap: 8px;
@@ -672,13 +724,23 @@
 	margin-bottom: 8px;
 }
 
-.ogc-opt__linkrow input {
+.ogc-opt__linkrow--social {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(7.5rem, 0.85fr) auto;
+}
+
+.ogc-opt__linkrow input,
+.ogc-opt__linkrow select {
 	padding: 6px 10px;
 	border: 1px solid var(--opt-line);
 	border-radius: 8px;
 	background: var(--opt-panel-2);
 	color: var(--opt-text);
 	font-size: 12.5px;
+}
+
+.ogc-opt__linkrow select {
+	min-width: 0;
+	cursor: pointer;
 }
 
 .ogc-opt__row-remove {

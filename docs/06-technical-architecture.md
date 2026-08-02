@@ -33,6 +33,7 @@ ogc-newfinity/
 │   ├── theme-setup.php        → add_theme_support, menus, image sizes
 │   ├── enqueue.php            → wp_enqueue_scripts hook logic
 │   ├── theme-options.php      → Branded Theme Options admin + getters + CSS vars — see doc 04
+│   ├── ads.php                → AdSense loader, placement gates, article/listing injection — see doc 04
 │   ├── customizer-bridge.php  → Live-preview Customizer (hero/header/footer/colors/buttons/fonts; same theme_mods)
 │   ├── ai-chat-widget.php     → Gemini API REST endpoint + widget render — see doc 05
 │   └── template-tags.php      → reusable helper functions (card renderers, badge renderer, etc.)
@@ -40,7 +41,7 @@ ogc-newfinity/
 │   ├── hero-split.php         → reusable split-hero layout (badge + headline + underline + right column)
 │   ├── card-feature.php       → reusable feature/info card
 │   ├── card-service.php       → reusable service card
-│   ├── ad-slot.php            → Ads Manager slots (sidebar / inline) — see doc 04
+│   ├── ad-slot.php            → AdSense / advertiser slot markup — see doc 04
 │   └── cta-band.php           → reusable CTA section
 └── screenshot.png             → theme screenshot for WP admin theme picker
 ```

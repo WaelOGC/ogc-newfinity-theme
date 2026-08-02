@@ -2,7 +2,7 @@
  * OGC NewFinity — Theme Options admin panel behaviour.
  *
  * Tabs, colour syncing, media pickers, colour presets, and the JSON-backed
- * builders for navigation order, footer columns, and ad slots.
+ * builders for navigation order, footer columns, custom social links, and ad slots.
  */
 (function () {
 	'use strict';
@@ -99,6 +99,36 @@
 	if (window.location.hash) {
 		activateTab(window.location.hash.replace('#', ''), false);
 	}
+
+	/* -------------------------------------------------------- Ads sub-tabs */
+
+	root.addEventListener('click', function (event) {
+		var button = event.target.closest('[data-ads-subtab]');
+		if (!button) {
+			return;
+		}
+
+		event.preventDefault();
+		var wrap = button.closest('[data-ads-subtabs]');
+		if (!wrap) {
+			return;
+		}
+
+		var panelRoot = wrap.parentElement;
+		var id = button.dataset.adsSubtab;
+
+		Array.prototype.forEach.call(wrap.querySelectorAll('[data-ads-subtab]'), function (tab) {
+			var active = tab.dataset.adsSubtab === id;
+			tab.classList.toggle('is-active', active);
+			tab.setAttribute('aria-selected', active ? 'true' : 'false');
+		});
+
+		Array.prototype.forEach.call(panelRoot.querySelectorAll('[data-ads-subpanel]'), function (panel) {
+			var active = panel.dataset.adsSubpanel === id;
+			panel.classList.toggle('is-active', active);
+			panel.hidden = !active;
+		});
+	});
 
 	/* -------------------------------------------------------------- Colors */
 
@@ -273,8 +303,12 @@
 				renderNavOrder();
 			} else if (type === 'footer_columns') {
 				renderFooterColumns();
-			} else if (type === 'ads_config') {
-				renderAdsConfig();
+			} else if (type === 'social_custom') {
+				renderSocialCustom();
+			} else if (type === 'adsense_slots') {
+				renderAdsenseSlots();
+			} else if (type === 'custom_ads') {
+				renderCustomAds();
 			}
 		}
 
@@ -429,31 +463,253 @@
 			container.appendChild(addColumn);
 		}
 
-		/* ------------------------------------------------------- Ad slots */
+		/* ----------------------------------------------- Custom social links */
 
-		function renderAdsConfig() {
+		function renderSocialCustom() {
+			var icons = data.socialIcons || {
+				link: 'Link (generic)',
+				x: 'X',
+				linkedin: 'LinkedIn',
+				github: 'GitHub',
+				discord: 'Discord'
+			};
+
+			if (!Array.isArray(state)) {
+				state = [];
+			}
+
+			var list = el('div', 'ogc-opt__rows');
+
+			state.forEach(function (row, index) {
+				var linkRow = el('div', 'ogc-opt__linkrow ogc-opt__linkrow--social');
+
+				var label = input('text', row.label || '', strings.platformLabel || 'Platform');
+				label.addEventListener('input', function () {
+					state[index].label = label.value;
+					commit();
+				});
+
+				var url = input('text', row.url || '', strings.linkUrl || 'URL');
+				url.setAttribute('inputmode', 'url');
+				url.setAttribute('autocomplete', 'url');
+				url.addEventListener('input', function () {
+					state[index].url = url.value;
+					commit();
+				});
+
+				var icon = document.createElement('select');
+				icon.className = 'ogc-opt__select';
+				icon.setAttribute('aria-label', strings.iconLabel || 'Icon');
+				Object.keys(icons).forEach(function (key) {
+					var opt = document.createElement('option');
+					opt.value = key;
+					opt.textContent = icons[key];
+					if ((row.icon || 'link') === key) {
+						opt.selected = true;
+					}
+					icon.appendChild(opt);
+				});
+				icon.addEventListener('change', function () {
+					state[index].icon = icon.value;
+					commit();
+				});
+
+				var removeLink = el('button', 'ogc-opt__row-remove', '×');
+				removeLink.type = 'button';
+				removeLink.title = strings.remove || 'Remove';
+				removeLink.addEventListener('click', function () {
+					state.splice(index, 1);
+					rerender();
+				});
+
+				linkRow.appendChild(label);
+				linkRow.appendChild(url);
+				linkRow.appendChild(icon);
+				linkRow.appendChild(removeLink);
+				list.appendChild(linkRow);
+			});
+
+			container.appendChild(list);
+
+			var addLink = el('button', 'ogc-opt__btn ogc-opt__btn--ghost', strings.addLink || 'Add link');
+			addLink.type = 'button';
+			addLink.addEventListener('click', function () {
+				if (state.length >= 8) {
+					return;
+				}
+				state.push({ label: '', url: '', icon: 'link' });
+				rerender();
+			});
+			container.appendChild(addLink);
+		}
+
+		/* ------------------------------------------------------- AdSense units */
+
+		function appendSelect(parent, optionsMap, current, onChange, ariaLabel) {
+			var select = document.createElement('select');
+			select.className = 'ogc-opt__select';
+			if (ariaLabel) {
+				select.setAttribute('aria-label', ariaLabel);
+			}
+			Object.keys(optionsMap).forEach(function (key) {
+				var option = document.createElement('option');
+				option.value = key;
+				option.textContent = optionsMap[key];
+				option.selected = current === key;
+				select.appendChild(option);
+			});
+			select.addEventListener('change', function () {
+				onChange(select.value);
+			});
+			parent.appendChild(select);
+			return select;
+		}
+
+		function appendSwitch(parent, checked, labelText, onChange) {
+			var wrap = el('label', 'ogc-opt__switch');
+			var checkbox = input('checkbox');
+			checkbox.checked = !!checked;
+			checkbox.addEventListener('change', function () {
+				onChange(checkbox.checked);
+			});
+			wrap.appendChild(checkbox);
+			wrap.appendChild(el('span', 'ogc-opt__switch-track'));
+			wrap.appendChild(el('span', 'ogc-opt__switch-text', labelText));
+			parent.appendChild(wrap);
+			return wrap;
+		}
+
+		function renderAdsenseSlots() {
+			var formats = data.adFormats || {
+				auto: 'Auto',
+				horizontal: 'Horizontal',
+				vertical: 'Vertical',
+				rectangle: 'Rectangle',
+				inarticle: 'In-article'
+			};
+			var placements = data.adPlacements || {
+				article: 'Inside article body',
+				listing: 'Between blog listing posts'
+			};
+
+			if (!Array.isArray(state)) {
+				state = [];
+			}
+
 			state.forEach(function (slot, index) {
 				var card = el('div', 'ogc-opt__card');
 
 				var head = el('div', 'ogc-opt__card-head');
-				var key = input('text', slot.key, strings.slotKey || 'Slot key');
-				key.addEventListener('input', function () {
-					state[index].key = key.value;
+				var label = input('text', slot.label || '', strings.slotLabel || 'Slot name');
+				label.addEventListener('input', function () {
+					state[index].label = label.value;
 					commit();
 				});
-				head.appendChild(key);
+				head.appendChild(label);
 
-				var enabled = el('label', 'ogc-opt__switch');
-				var checkbox = input('checkbox');
-				checkbox.checked = !!slot.enabled;
-				checkbox.addEventListener('change', function () {
-					state[index].enabled = checkbox.checked;
+				var removeSlot = el('button', 'ogc-opt__row-remove', '×');
+				removeSlot.type = 'button';
+				removeSlot.title = strings.remove || 'Remove';
+				removeSlot.addEventListener('click', function () {
+					state.splice(index, 1);
+					rerender();
+				});
+				head.appendChild(removeSlot);
+				card.appendChild(head);
+
+				var idRow = el('div', 'ogc-opt__field-inline');
+				idRow.appendChild(el('span', null, strings.slotId || 'Ad slot ID'));
+				var slotId = input('text', slot.slot_id || '', '1234567890');
+				slotId.addEventListener('input', function () {
+					state[index].slot_id = slotId.value;
 					commit();
 				});
-				enabled.appendChild(checkbox);
-				enabled.appendChild(el('span', 'ogc-opt__switch-track'));
-				enabled.appendChild(el('span', 'ogc-opt__switch-text', strings.slotEnabled || 'Enabled'));
-				head.appendChild(enabled);
+				idRow.appendChild(slotId);
+				card.appendChild(idRow);
+
+				var formatRow = el('div', 'ogc-opt__field-inline');
+				formatRow.appendChild(el('span', null, strings.slotFormat || 'Ad format'));
+				appendSelect(formatRow, formats, slot.format || 'auto', function (value) {
+					state[index].format = value;
+					commit();
+				}, strings.slotFormat || 'Ad format');
+				card.appendChild(formatRow);
+
+				var placeRow = el('div', 'ogc-opt__field-inline');
+				placeRow.appendChild(el('span', null, strings.slotPlacement || 'Placement'));
+				appendSelect(placeRow, placements, slot.placement || 'article', function (value) {
+					state[index].placement = value;
+					commit();
+				}, strings.slotPlacement || 'Placement');
+				card.appendChild(placeRow);
+
+				var toggles = el('div', 'ogc-opt__field-inline ogc-opt__field-inline--wrap');
+				appendSwitch(toggles, !!slot.full_width, strings.slotFullWidth || 'Full-width responsive', function (checked) {
+					state[index].full_width = checked;
+					commit();
+				});
+				appendSwitch(toggles, !!slot.hide_mobile, strings.slotHideMobile || 'Hide on mobile', function (checked) {
+					state[index].hide_mobile = checked;
+					commit();
+				});
+				appendSwitch(toggles, !!slot.hide_tablet, strings.slotHideTablet || 'Hide on tablet', function (checked) {
+					state[index].hide_tablet = checked;
+					commit();
+				});
+				card.appendChild(toggles);
+
+				container.appendChild(card);
+			});
+
+			var addSlot = el('button', 'ogc-opt__btn', strings.addSlot || 'Add ad unit');
+			addSlot.type = 'button';
+			addSlot.addEventListener('click', function () {
+				if (state.length >= 12) {
+					return;
+				}
+				state.push({
+					label: '',
+					slot_id: '',
+					format: 'auto',
+					full_width: true,
+					placement: 'article',
+					hide_mobile: false,
+					hide_tablet: false
+				});
+				rerender();
+			});
+			container.appendChild(addSlot);
+		}
+
+		/* ----------------------------------------------- Advertiser creatives */
+
+		function renderCustomAds() {
+			var placements = data.adPlacements || {
+				article: 'Inside article body',
+				listing: 'Between blog listing posts'
+			};
+			var sizes = data.adSizes || {
+				leaderboard: 'Leaderboard 728×90',
+				medium_rectangle: 'Medium Rectangle 300×250',
+				skyscraper: 'Skyscraper 160×600',
+				mobile_banner: 'Mobile Banner 320×50',
+				custom: 'Custom'
+			};
+
+			if (!Array.isArray(state)) {
+				state = [];
+			}
+
+			state.forEach(function (slot, index) {
+				var card = el('div', 'ogc-opt__card');
+
+				var head = el('div', 'ogc-opt__card-head');
+				var label = input('text', slot.label || '', strings.slotLabel || 'Slot name');
+				label.addEventListener('input', function () {
+					state[index].label = label.value;
+					commit();
+				});
+				head.appendChild(label);
 
 				var removeSlot = el('button', 'ogc-opt__row-remove', '×');
 				removeSlot.type = 'button';
@@ -467,19 +723,13 @@
 
 				var typeRow = el('div', 'ogc-opt__field-inline');
 				typeRow.appendChild(el('span', null, strings.slotType || 'Type'));
-				var select = document.createElement('select');
-				[['image', strings.slotImage || 'Image'], ['code', strings.slotCode || 'Embed code']].forEach(function (pair) {
-					var option = document.createElement('option');
-					option.value = pair[0];
-					option.textContent = pair[1];
-					option.selected = slot.type === pair[0];
-					select.appendChild(option);
-				});
-				select.addEventListener('change', function () {
-					state[index].type = select.value;
+				appendSelect(typeRow, {
+					image: 'Image',
+					code: 'Code'
+				}, slot.type === 'code' ? 'code' : 'image', function (value) {
+					state[index].type = value;
 					rerender();
-				});
-				typeRow.appendChild(select);
+				}, strings.slotType || 'Type');
 				card.appendChild(typeRow);
 
 				if (slot.type === 'code') {
@@ -487,6 +737,7 @@
 					codeRow.appendChild(el('span', null, strings.slotCode || 'Embed code'));
 					var code = document.createElement('textarea');
 					code.rows = 5;
+					code.className = 'ogc-opt__textarea ogc-opt__textarea--code';
 					code.value = slot.code || '';
 					code.addEventListener('input', function () {
 						state[index].code = code.value;
@@ -496,8 +747,8 @@
 					card.appendChild(codeRow);
 				} else {
 					var imageRow = el('div', 'ogc-opt__field-inline');
-					imageRow.appendChild(el('span', null, strings.slotImage || 'Image'));
-					var image = input('text', slot.image, 'https://');
+					imageRow.appendChild(el('span', null, strings.slotImage || 'Image URL'));
+					var image = input('text', slot.image || '', 'https://');
 					image.addEventListener('input', function () {
 						state[index].image = image.value;
 						commit();
@@ -507,7 +758,7 @@
 
 					var urlRow = el('div', 'ogc-opt__field-inline');
 					urlRow.appendChild(el('span', null, strings.slotLinkUrl || 'Click-through URL'));
-					var url = input('text', slot.url, 'https://');
+					var url = input('text', slot.url || '', 'https://');
 					url.addEventListener('input', function () {
 						state[index].url = url.value;
 						commit();
@@ -516,13 +767,85 @@
 					card.appendChild(urlRow);
 				}
 
+				var sizeRow = el('div', 'ogc-opt__field-inline');
+				sizeRow.appendChild(el('span', null, strings.slotSize || 'Ad size'));
+				appendSelect(sizeRow, sizes, slot.size || 'medium_rectangle', function (value) {
+					state[index].size = value;
+					rerender();
+				}, strings.slotSize || 'Ad size');
+				card.appendChild(sizeRow);
+
+				if ((slot.size || 'medium_rectangle') === 'custom') {
+					var dimRow = el('div', 'ogc-opt__field-inline');
+					var width = input('number', String(slot.width || 300), '');
+					width.min = '1';
+					width.max = '2000';
+					width.setAttribute('aria-label', strings.slotWidth || 'Width (px)');
+					width.addEventListener('input', function () {
+						state[index].width = parseInt(width.value, 10) || 300;
+						commit();
+					});
+					var height = input('number', String(slot.height || 250), '');
+					height.min = '1';
+					height.max = '2000';
+					height.setAttribute('aria-label', strings.slotHeight || 'Height (px)');
+					height.addEventListener('input', function () {
+						state[index].height = parseInt(height.value, 10) || 250;
+						commit();
+					});
+					dimRow.appendChild(el('span', null, strings.slotWidth || 'Width'));
+					dimRow.appendChild(width);
+					dimRow.appendChild(el('span', null, strings.slotHeight || 'Height'));
+					dimRow.appendChild(height);
+					card.appendChild(dimRow);
+				}
+
+				var placeRow = el('div', 'ogc-opt__field-inline');
+				placeRow.appendChild(el('span', null, strings.slotPlacement || 'Placement'));
+				appendSelect(placeRow, placements, slot.placement || 'article', function (value) {
+					state[index].placement = value;
+					commit();
+				}, strings.slotPlacement || 'Placement');
+				card.appendChild(placeRow);
+
+				var toggles = el('div', 'ogc-opt__field-inline ogc-opt__field-inline--wrap');
+				appendSwitch(toggles, slot.lazy !== false, strings.slotLazy || 'Lazy load', function (checked) {
+					state[index].lazy = checked;
+					commit();
+				});
+				appendSwitch(toggles, !!slot.hide_mobile, strings.slotHideMobile || 'Hide on mobile', function (checked) {
+					state[index].hide_mobile = checked;
+					commit();
+				});
+				appendSwitch(toggles, !!slot.hide_tablet, strings.slotHideTablet || 'Hide on tablet', function (checked) {
+					state[index].hide_tablet = checked;
+					commit();
+				});
+				card.appendChild(toggles);
+
 				container.appendChild(card);
 			});
 
-			var addSlot = el('button', 'ogc-opt__btn', strings.addSlot || 'Add ad slot');
+			var addSlot = el('button', 'ogc-opt__btn', strings.addCustomAd || 'Add advertisement');
 			addSlot.type = 'button';
 			addSlot.addEventListener('click', function () {
-				state.push({ key: '', enabled: false, type: 'image', image: '', url: '', code: '' });
+				if (state.length >= 12) {
+					return;
+				}
+				state.push({
+					label: '',
+					type: 'image',
+					image: '',
+					url: '',
+					code: '',
+					size: 'medium_rectangle',
+					width: 300,
+					height: 250,
+					lazy: true,
+					placement: 'article',
+					hide_mobile: false,
+					hide_tablet: false
+				});
 				rerender();
 			});
 			container.appendChild(addSlot);

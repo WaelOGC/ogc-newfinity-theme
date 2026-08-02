@@ -276,9 +276,33 @@ function ogc_render_blog_grid( $category_slug = '', $page = 1, $per_page = 9, $q
 
 	if ( $query->have_posts() ) {
 		echo '<div class="ogc-glass-grid ogc-blog-grid">';
+
+		$listing_ads   = array();
+		$ads_interval  = 0;
+		$ad_cursor     = 0;
+		$post_index    = 0;
+
+		if ( function_exists( 'ogc_ads_can_show_listing' ) && ogc_ads_can_show_listing()
+			&& function_exists( 'ogc_get_ads_for_placement' ) ) {
+			$listing_ads = ogc_get_ads_for_placement( 'listing' );
+			$post_count  = (int) $query->post_count;
+			if ( ! empty( $listing_ads ) && $post_count > 1 ) {
+				$ads_interval = max( 1, (int) floor( $post_count / ( count( $listing_ads ) + 1 ) ) );
+			}
+		}
+
 		while ( $query->have_posts() ) {
 			$query->the_post();
+			$post_index++;
 			get_template_part( 'template-parts/blog', 'post-card' );
+
+			if ( $ads_interval > 0 && $ad_cursor < count( $listing_ads )
+				&& 0 === ( $post_index % $ads_interval )
+				&& $post_index < (int) $query->post_count ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup from escaped template part.
+				echo ogc_get_ad_slot_html( $listing_ads[ $ad_cursor ] );
+				$ad_cursor++;
+			}
 		}
 		echo '</div>';
 		if ( $owns_query ) {
@@ -553,86 +577,6 @@ function ogc_ajax_like_post() {
 }
 add_action( 'wp_ajax_ogc_like_post', 'ogc_ajax_like_post' );
 add_action( 'wp_ajax_nopriv_ogc_like_post', 'ogc_ajax_like_post' );
-
-/* --------------------------------------------------------------------------
-   In-content mobile ad slots
-   -------------------------------------------------------------------------- */
-
-/**
- * Insert 3 mobile-only ad placeholders through single-post content (~25/50/75%).
- *
- * @param string $content Post content HTML.
- * @return string
- */
-function ogc_insert_mobile_ad_slots( $content ) {
-	if ( is_admin() || ! is_singular( 'post' ) || ! in_the_loop() || ! is_main_query() ) {
-		return $content;
-	}
-
-	if ( false === stripos( $content, '</p>' ) ) {
-		return $content;
-	}
-
-	$parts = preg_split( '/(<\/p>)/i', $content, -1, PREG_SPLIT_DELIM_CAPTURE );
-	if ( ! is_array( $parts ) || count( $parts ) < 2 ) {
-		return $content;
-	}
-
-	$p_indices = array();
-	foreach ( $parts as $i => $chunk ) {
-		if ( preg_match( '/^<\/p>$/i', $chunk ) ) {
-			$p_indices[] = $i;
-		}
-	}
-
-	$p_count = count( $p_indices );
-	if ( $p_count < 1 ) {
-		return $content;
-	}
-
-	if ( 1 === $p_count ) {
-		$targets = array( 0 );
-	} elseif ( 2 === $p_count ) {
-		$targets = array( 0, 1 );
-	} elseif ( 3 === $p_count ) {
-		$targets = array( 0, 1, 2 );
-	} else {
-		$targets = array_unique(
-			array(
-				max( 0, (int) floor( $p_count * 0.25 ) - 1 ),
-				max( 0, (int) floor( $p_count * 0.50 ) - 1 ),
-				max( 0, (int) floor( $p_count * 0.75 ) - 1 ),
-			)
-		);
-		sort( $targets );
-	}
-
-	ob_start();
-	get_template_part(
-		'template-parts/ad',
-		'slot',
-		array( 'variant' => 'inline' )
-	);
-	$slot = (string) ob_get_clean();
-
-	$insert_after = array();
-	foreach ( $targets as $ti ) {
-		if ( isset( $p_indices[ $ti ] ) ) {
-			$insert_after[ $p_indices[ $ti ] ] = true;
-		}
-	}
-
-	$out = '';
-	foreach ( $parts as $i => $chunk ) {
-		$out .= $chunk;
-		if ( isset( $insert_after[ $i ] ) ) {
-			$out .= $slot;
-		}
-	}
-
-	return $out;
-}
-add_filter( 'the_content', 'ogc_insert_mobile_ad_slots', 12 );
 
 /* --------------------------------------------------------------------------
    Comments — moderation, pagination, link blocking, list markup
