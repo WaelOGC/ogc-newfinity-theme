@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** Theme version — bump when shipping asset cache-busts. */
-define( 'OGC_THEME_VERSION', '1.22.0' );
+define( 'OGC_THEME_VERSION', '1.23.0' );
 
 /** Absolute path to the theme root. */
 define( 'OGC_THEME_DIR', get_template_directory() );
@@ -28,6 +28,7 @@ require_once OGC_THEME_DIR . '/inc/seed-articles.php';
 require_once OGC_THEME_DIR . '/inc/seed-legal.php';
 require_once OGC_THEME_DIR . '/inc/widgets.php';
 require_once OGC_THEME_DIR . '/inc/theme-options.php';
+require_once OGC_THEME_DIR . '/inc/customizer-bridge.php';
 require_once OGC_THEME_DIR . '/inc/enqueue.php';
 require_once OGC_THEME_DIR . '/inc/seed-content.php';
 require_once OGC_THEME_DIR . '/inc/form-helpers.php';

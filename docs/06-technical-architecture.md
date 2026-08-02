@@ -33,6 +33,7 @@ ogc-newfinity/
 │   ├── theme-setup.php        → add_theme_support, menus, image sizes
 │   ├── enqueue.php            → wp_enqueue_scripts hook logic
 │   ├── theme-options.php      → Branded Theme Options admin + getters + CSS vars — see doc 04
+│   ├── customizer-bridge.php  → Live-preview Customizer panel for hero bg essentials (same theme_mods)
 │   ├── ai-chat-widget.php     → Gemini API REST endpoint + widget render — see doc 05
 │   └── template-tags.php      → reusable helper functions (card renderers, badge renderer, etc.)
 ├── template-parts/

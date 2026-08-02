@@ -140,20 +140,32 @@ Primary buttons: `.ogc-btn`. Outline: `.ogc-btn-outline`. Effects use body class
 | Key | Type | Default | Read by |
 |---|---|---|---|
 | `ogc_logo_light` | image | `''` | `ogc_get_logo_light_url()` |
-| `ogc_hero_bg_home` | image | `''` | `ogc_render_hero_bg( 'home' )` |
-| `ogc_hero_bg_about` | image | `''` | `about` |
-| `ogc_hero_bg_services` | image | `''` | `services` |
-| `ogc_hero_bg_mission` | image | `''` | `mission` |
+| `ogc_hero_bg_{page}` | image | `''` | `ogc_render_hero_bg( $page )` — pages: home, about, services, mission |
+| `ogc_hero_bg_fit_{page}` | select | `cover` | cover / contain / custom → `--ogc-hero-bg-size-{page}` |
+| `ogc_hero_bg_width_{page}` | text (px/%) | `100%` | used when fit=`custom` |
+| `ogc_hero_bg_height_{page}` | text (px/%/auto) | `auto` | used when fit=`custom` |
+| `ogc_hero_bg_position_{page}` | select | `center` | `--ogc-hero-bg-position-{page}` |
+| `ogc_hero_bg_repeat_{page}` | select | `no-repeat` | `--ogc-hero-bg-repeat-{page}` |
+| `ogc_hero_bg_border_width_{page}` | number (px) | `0` | border on `.ogc-hero-bg--{page}` |
+| `ogc_hero_bg_border_color_{page}` | color | `#FFD27A` | |
+| `ogc_hero_bg_border_style_{page}` | select | `solid` | solid / dashed / dotted / double |
+| `ogc_hero_bg_border_radius_{page}` | range 0–50 | `0` | px |
+| `ogc_hero_bg_blur_{page}` | range 0–20 | `0` | px → CSS `filter` |
+| `ogc_hero_bg_grayscale_{page}` | range 0–100 | `0` | % → CSS `filter` |
+| `ogc_hero_bg_overlay_color_{page}` | color | `''` | empty = no overlay |
+| `ogc_hero_bg_overlay_opacity_{page}` | range 0–100 | `0` | only when overlay color set |
+| `ogc_hero_bg_brightness_{page}` | range 50–150 | `100` | % |
+| `ogc_hero_bg_contrast_{page}` | range 50–150 | `100` | % |
+| `ogc_hero_bg_animation_{page}` | select | `none` | none / parallax / fade-in / ken-burns (`data-hero-anim`); off under `prefers-reduced-motion` and `body.ogc-motion-reduced-by-admin` |
 
 Empty hero image = no extra layer (WebGL/canvas heroes unchanged). Favicon = WP Site Icon; theme bundled files are fallback only.
+
+**Customizer bridge** (`inc/customizer-bridge.php`): panel **OGC Hero Backgrounds** exposes image, opacity, position, and overlay color only (same theme_mod keys) for live preview. Full controls stay in OGC NewFinity → Images. Link in each section: “Edit all hero background options →”.
 
 ### Pages
 | Key | Type | Default | Read by |
 |---|---|---|---|
-| `ogc_hero_bg_opacity_home` | range | `35` | Inline opacity on home hero bg layer |
-| `ogc_hero_bg_opacity_about` | range | `35` | about |
-| `ogc_hero_bg_opacity_services` | range | `35` | services |
-| `ogc_hero_bg_opacity_mission` | range | `35` | mission |
+| `ogc_hero_bg_opacity_{page}` | range | `35` | Layer opacity (separate from overlay opacity) — home / about / services / mission |
 
 ### Posts
 | Key | Type | Default | Read by |

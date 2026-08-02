@@ -369,22 +369,188 @@ function ogc_theme_options_schema() {
 		'mission'  => __( 'Mission', 'ogc-newfinity' ),
 	);
 
-	$hero_image_fields = array();
+	$hero_fit_options = array(
+		'cover'   => __( 'Cover', 'ogc-newfinity' ),
+		'contain' => __( 'Contain', 'ogc-newfinity' ),
+		'custom'  => __( 'Custom size', 'ogc-newfinity' ),
+	);
+	$hero_position_options = array(
+		'center'       => __( 'Center', 'ogc-newfinity' ),
+		'top'          => __( 'Top', 'ogc-newfinity' ),
+		'bottom'       => __( 'Bottom', 'ogc-newfinity' ),
+		'left'         => __( 'Left', 'ogc-newfinity' ),
+		'right'        => __( 'Right', 'ogc-newfinity' ),
+		'top-left'     => __( 'Top left', 'ogc-newfinity' ),
+		'top-right'    => __( 'Top right', 'ogc-newfinity' ),
+		'bottom-left'  => __( 'Bottom left', 'ogc-newfinity' ),
+		'bottom-right' => __( 'Bottom right', 'ogc-newfinity' ),
+	);
+	$hero_repeat_options = array(
+		'no-repeat' => __( 'No repeat', 'ogc-newfinity' ),
+		'repeat'    => __( 'Repeat', 'ogc-newfinity' ),
+		'repeat-x'  => __( 'Repeat X', 'ogc-newfinity' ),
+		'repeat-y'  => __( 'Repeat Y', 'ogc-newfinity' ),
+	);
+	$hero_border_style_options = array(
+		'solid'  => __( 'Solid', 'ogc-newfinity' ),
+		'dashed' => __( 'Dashed', 'ogc-newfinity' ),
+		'dotted' => __( 'Dotted', 'ogc-newfinity' ),
+		'double' => __( 'Double', 'ogc-newfinity' ),
+	);
+	$hero_anim_options = array(
+		'none'      => __( 'None', 'ogc-newfinity' ),
+		'parallax'  => __( 'Parallax drift', 'ogc-newfinity' ),
+		'fade-in'   => __( 'Fade in', 'ogc-newfinity' ),
+		'ken-burns' => __( 'Ken Burns', 'ogc-newfinity' ),
+	);
+
+	$hero_image_fields   = array();
 	$hero_opacity_fields = array();
 	foreach ( $hero_pages as $page_key => $page_label ) {
 		$hero_image_fields[] = array(
-			'key'     => 'ogc_hero_bg_' . $page_key,
-			'type'    => 'image',
+			'key'     => 'ogc_hero_page_heading_' . $page_key,
+			'type'    => 'heading',
 			/* translators: %s: page name. */
 			'label'   => sprintf( __( '%s hero background', 'ogc-newfinity' ), $page_label ),
+			'tooltip' => __( 'Additive layer behind the existing hero canvas. Leave the image empty to keep the WebGL hero untouched.', 'ogc-newfinity' ),
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_' . $page_key,
+			'type'    => 'image',
+			'label'   => __( 'Background image', 'ogc-newfinity' ),
 			'tooltip' => __( 'Additive layer behind the existing hero canvas. Leave empty to keep the WebGL hero untouched.', 'ogc-newfinity' ),
 		);
+
+		/* Size & Position */
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_fit_' . $page_key,
+			'type'    => 'select',
+			'label'   => __( 'Image fit', 'ogc-newfinity' ),
+			'default' => 'cover',
+			'options' => $hero_fit_options,
+		);
+		$hero_image_fields[] = array(
+			'key'      => 'ogc_hero_bg_width_' . $page_key,
+			'type'     => 'text',
+			'label'    => __( 'Custom width', 'ogc-newfinity' ),
+			'tooltip'  => __( 'Only used when Image fit is Custom. Accepts px or % (e.g. 100% or 800px).', 'ogc-newfinity' ),
+			'default'  => '100%',
+			'sanitize' => 'ogc_sanitize_css_length',
+			'attrs'    => array( 'placeholder' => '100%' ),
+		);
+		$hero_image_fields[] = array(
+			'key'      => 'ogc_hero_bg_height_' . $page_key,
+			'type'     => 'text',
+			'label'    => __( 'Custom height', 'ogc-newfinity' ),
+			'tooltip'  => __( 'Only used when Image fit is Custom. Accepts px or % (e.g. auto or 600px).', 'ogc-newfinity' ),
+			'default'  => 'auto',
+			'sanitize' => 'ogc_sanitize_css_length',
+			'attrs'    => array( 'placeholder' => 'auto' ),
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_position_' . $page_key,
+			'type'    => 'select',
+			'label'   => __( 'Position', 'ogc-newfinity' ),
+			'default' => 'center',
+			'options' => $hero_position_options,
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_repeat_' . $page_key,
+			'type'    => 'select',
+			'label'   => __( 'Repeat', 'ogc-newfinity' ),
+			'default' => 'no-repeat',
+			'options' => $hero_repeat_options,
+		);
+
+		/* Border */
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_border_width_' . $page_key,
+			'type'    => 'number',
+			'label'   => __( 'Border width', 'ogc-newfinity' ),
+			'default' => 0,
+			'attrs'   => array( 'min' => 0, 'max' => 40, 'step' => 1, 'unit' => 'px' ),
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_border_color_' . $page_key,
+			'type'    => 'color',
+			'label'   => __( 'Border color', 'ogc-newfinity' ),
+			'default' => OGC_DEFAULT_COLOR_ACCENT_START,
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_border_style_' . $page_key,
+			'type'    => 'select',
+			'label'   => __( 'Border style', 'ogc-newfinity' ),
+			'default' => 'solid',
+			'options' => $hero_border_style_options,
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_border_radius_' . $page_key,
+			'type'    => 'range',
+			'label'   => __( 'Border radius', 'ogc-newfinity' ),
+			'default' => 0,
+			'attrs'   => array( 'min' => 0, 'max' => 50, 'step' => 1, 'unit' => 'px' ),
+		);
+
+		/* Effects */
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_blur_' . $page_key,
+			'type'    => 'range',
+			'label'   => __( 'Blur', 'ogc-newfinity' ),
+			'default' => 0,
+			'attrs'   => array( 'min' => 0, 'max' => 20, 'step' => 1, 'unit' => 'px' ),
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_grayscale_' . $page_key,
+			'type'    => 'range',
+			'label'   => __( 'Grayscale', 'ogc-newfinity' ),
+			'default' => 0,
+			'attrs'   => array( 'min' => 0, 'max' => 100, 'step' => 1, 'unit' => '%' ),
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_overlay_color_' . $page_key,
+			'type'    => 'color',
+			'label'   => __( 'Overlay color', 'ogc-newfinity' ),
+			'tooltip' => __( 'Leave empty for no overlay. Opacity below only applies when a color is set.', 'ogc-newfinity' ),
+			'default' => '',
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_overlay_opacity_' . $page_key,
+			'type'    => 'range',
+			'label'   => __( 'Overlay opacity', 'ogc-newfinity' ),
+			'default' => 0,
+			'attrs'   => array( 'min' => 0, 'max' => 100, 'step' => 1, 'unit' => '%' ),
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_brightness_' . $page_key,
+			'type'    => 'range',
+			'label'   => __( 'Brightness', 'ogc-newfinity' ),
+			'default' => 100,
+			'attrs'   => array( 'min' => 50, 'max' => 150, 'step' => 1, 'unit' => '%' ),
+		);
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_contrast_' . $page_key,
+			'type'    => 'range',
+			'label'   => __( 'Contrast', 'ogc-newfinity' ),
+			'default' => 100,
+			'attrs'   => array( 'min' => 50, 'max' => 150, 'step' => 1, 'unit' => '%' ),
+		);
+
+		/* Animation */
+		$hero_image_fields[] = array(
+			'key'     => 'ogc_hero_bg_animation_' . $page_key,
+			'type'    => 'select',
+			'label'   => __( 'Animation', 'ogc-newfinity' ),
+			'tooltip' => __( 'Disabled automatically when reduced-motion is preferred or orbit animation is turned off in Buttons & Effects.', 'ogc-newfinity' ),
+			'default' => 'none',
+			'options' => $hero_anim_options,
+		);
+
 		$hero_opacity_fields[] = array(
 			'key'     => 'ogc_hero_bg_opacity_' . $page_key,
 			'type'    => 'range',
 			/* translators: %s: page name. */
 			'label'   => sprintf( __( '%s hero background opacity', 'ogc-newfinity' ), $page_label ),
-			'tooltip' => __( 'Only applies when a hero background image is set for this page.', 'ogc-newfinity' ),
+			'tooltip' => __( 'Only applies when a hero background image is set for this page. Separate from overlay opacity.', 'ogc-newfinity' ),
 			'default' => 35,
 			'attrs'   => array( 'min' => 0, 'max' => 100, 'step' => 1, 'unit' => '%' ),
 		);
@@ -1231,6 +1397,27 @@ function ogc_sanitize_hex_color( $value ) {
 }
 
 /**
+ * Sanitize a CSS length: bare number (→ px), Npx, N%, or "auto".
+ *
+ * @param mixed $value Submitted value.
+ * @return string
+ */
+function ogc_sanitize_css_length( $value ) {
+	$value = trim( (string) $value );
+	if ( '' === $value ) {
+		return '';
+	}
+	if ( 0 === strcasecmp( $value, 'auto' ) ) {
+		return 'auto';
+	}
+	if ( preg_match( '/^(\d+(?:\.\d+)?)(px|%)?$/i', $value, $m ) ) {
+		$unit = isset( $m[2] ) && '' !== $m[2] ? strtolower( $m[2] ) : 'px';
+		return $m[1] . $unit;
+	}
+	return '';
+}
+
+/**
  * Sanitize a float-ish number.
  *
  * @param mixed $value Submitted value.
@@ -1777,21 +1964,83 @@ function ogc_get_hero_bg_opacity( $page_key ) {
 }
 
 /**
+ * Map a hero position select value to a CSS background-position keyword pair.
+ *
+ * @param string $position Select value.
+ * @return string
+ */
+function ogc_hero_bg_position_css( $position ) {
+	$map = array(
+		'center'       => 'center center',
+		'top'          => 'center top',
+		'bottom'       => 'center bottom',
+		'left'         => 'left center',
+		'right'        => 'right center',
+		'top-left'     => 'left top',
+		'top-right'    => 'right top',
+		'bottom-left'  => 'left bottom',
+		'bottom-right' => 'right bottom',
+	);
+	$position = sanitize_key( $position );
+	return isset( $map[ $position ] ) ? $map[ $position ] : 'center center';
+}
+
+/**
+ * Resolve background-size from fit + optional custom width/height.
+ *
+ * @param string $page_key Page key.
+ * @return string
+ */
+function ogc_hero_bg_size_css( $page_key ) {
+	$fit = (string) ogc_mod( "ogc_hero_bg_fit_{$page_key}" );
+	if ( 'contain' === $fit ) {
+		return 'contain';
+	}
+	if ( 'custom' === $fit ) {
+		$w = (string) ogc_mod( "ogc_hero_bg_width_{$page_key}" );
+		$h = (string) ogc_mod( "ogc_hero_bg_height_{$page_key}" );
+		$w = '' !== $w ? $w : '100%';
+		$h = '' !== $h ? $h : 'auto';
+		return $w . ' ' . $h;
+	}
+	return 'cover';
+}
+
+/**
  * Echo an optional additive hero background layer (behind existing canvas/content).
+ *
+ * Visual knobs (size, position, border, filters, overlay, animation) are driven by
+ * CSS custom properties + classes emitted in ogc_theme_options_css() — only the
+ * image URL and animation data-attribute are printed here.
  *
  * @param string $page_key One of: home, about, services, mission.
  */
 function ogc_render_hero_bg( $page_key ) {
-	$url = ogc_get_hero_bg_url( $page_key );
+	$page_key = sanitize_key( $page_key );
+	$url      = ogc_get_hero_bg_url( $page_key );
 	if ( ! $url ) {
 		return;
 	}
 
+	$anim = sanitize_key( (string) ogc_mod( "ogc_hero_bg_animation_{$page_key}" ) );
+	if ( ! in_array( $anim, array( 'none', 'parallax', 'fade-in', 'ken-burns' ), true ) ) {
+		$anim = 'none';
+	}
+
+	$overlay_color = (string) ogc_mod( "ogc_hero_bg_overlay_color_{$page_key}" );
+	$has_overlay   = '' !== $overlay_color && (int) ogc_mod( "ogc_hero_bg_overlay_opacity_{$page_key}" ) > 0;
+
 	printf(
-		'<div class="ogc-hero-bg" style="background-image:url(%1$s);opacity:%2$s;" aria-hidden="true"></div>',
-		esc_url( $url ),
-		esc_attr( ogc_css_num( ogc_get_hero_bg_opacity( $page_key ) ) )
+		'<div class="ogc-hero-bg ogc-hero-bg--%1$s" data-hero-anim="%2$s" aria-hidden="true">'
+		. '<span class="ogc-hero-bg__image" style="background-image:url(%3$s);"></span>',
+		esc_attr( $page_key ),
+		esc_attr( $anim ),
+		esc_url( $url )
 	);
+	if ( $has_overlay ) {
+		echo '<span class="ogc-hero-bg__overlay"></span>';
+	}
+	echo '</div>';
 }
 
 /**
@@ -2057,7 +2306,34 @@ function ogc_theme_options_css() {
 	);
 
 	foreach ( array( 'home', 'about', 'services', 'mission' ) as $page_key ) {
-		$tokens[ '--ogc-hero-bg-opacity-' . $page_key ] = ogc_css_num( ogc_get_hero_bg_opacity( $page_key ) );
+		$prefix = '--ogc-hero-bg-';
+		$bw     = max( 0, (int) ogc_mod( "ogc_hero_bg_border_width_{$page_key}" ) );
+		$br     = max( 0, (int) ogc_mod( "ogc_hero_bg_border_radius_{$page_key}" ) );
+		$blur   = max( 0, (int) ogc_mod( "ogc_hero_bg_blur_{$page_key}" ) );
+		$gray   = max( 0, min( 100, (int) ogc_mod( "ogc_hero_bg_grayscale_{$page_key}" ) ) );
+		$bright = max( 50, min( 150, (int) ogc_mod( "ogc_hero_bg_brightness_{$page_key}" ) ) );
+		$contrast = max( 50, min( 150, (int) ogc_mod( "ogc_hero_bg_contrast_{$page_key}" ) ) );
+		$border_color  = (string) ogc_mod( "ogc_hero_bg_border_color_{$page_key}" );
+		$overlay_color = (string) ogc_mod( "ogc_hero_bg_overlay_color_{$page_key}" );
+		$overlay_op    = max( 0, min( 100, (int) ogc_mod( "ogc_hero_bg_overlay_opacity_{$page_key}" ) ) ) / 100;
+
+		$tokens[ $prefix . 'opacity-' . $page_key ]       = ogc_css_num( ogc_get_hero_bg_opacity( $page_key ) );
+		$tokens[ $prefix . 'size-' . $page_key ]          = ogc_hero_bg_size_css( $page_key );
+		$tokens[ $prefix . 'position-' . $page_key ]      = ogc_hero_bg_position_css( (string) ogc_mod( "ogc_hero_bg_position_{$page_key}" ) );
+		$tokens[ $prefix . 'repeat-' . $page_key ]        = sanitize_key( (string) ogc_mod( "ogc_hero_bg_repeat_{$page_key}" ) );
+		$tokens[ $prefix . 'border-width-' . $page_key ]  = $bw . 'px';
+		$tokens[ $prefix . 'border-color-' . $page_key ]  = $border_color ? $border_color : 'transparent';
+		$tokens[ $prefix . 'border-style-' . $page_key ]  = sanitize_key( (string) ogc_mod( "ogc_hero_bg_border_style_{$page_key}" ) );
+		$tokens[ $prefix . 'border-radius-' . $page_key ] = $br . 'px';
+		$tokens[ $prefix . 'filter-' . $page_key ]        = sprintf(
+			'blur(%dpx) grayscale(%d%%) brightness(%d%%) contrast(%d%%)',
+			$blur,
+			$gray,
+			$bright,
+			$contrast
+		);
+		$tokens[ $prefix . 'overlay-color-' . $page_key ]   = $overlay_color ? $overlay_color : 'transparent';
+		$tokens[ $prefix . 'overlay-opacity-' . $page_key ] = ogc_css_num( $overlay_op );
 	}
 
 	$lines = '';
