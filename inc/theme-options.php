@@ -2838,14 +2838,130 @@ function ogc_maintenance_mode_redirect() {
 		$message = ogc_option_default( 'ogc_maintenance_mode_message' );
 	}
 
-	wp_die(
-		wp_kses_post( wpautop( $message ) ),
-		esc_html( get_bloginfo( 'name' ) ),
-		array(
-			'response'  => 503,
-			'back_link' => false,
-		)
-	);
+	$site_name = get_bloginfo( 'name' );
+	$logo_url  = ogc_get_custom_logo_url();
+
+	status_header( 503 );
+	header( 'Retry-After: 3600' );
+	nocache_headers();
+
+	?><!DOCTYPE html>
+<html lang="<?php echo esc_attr( get_bloginfo( 'language' ) ); ?>">
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="noindex,nofollow">
+	<title><?php echo esc_html( $site_name ); ?></title>
+	<style>
+		:root {
+			--bg-primary: #0A0A0A;
+			--bg-panel: #141414;
+			--border-accent: #FFD27A;
+			--text-primary: #F5F5F5;
+			--text-secondary: #C9C9C9;
+			--ogc-brand-rgb: 255, 210, 122;
+			--ogc-radius: 12px;
+			--font-heading: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+			--font-body: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+		}
+
+		*,
+		*::before,
+		*::after {
+			box-sizing: border-box;
+		}
+
+		html {
+			font-size: 16px;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 1.5rem;
+			background-color: var(--bg-primary);
+			color: var(--text-primary);
+			font-family: var(--font-body);
+			line-height: 1.6;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		.ogc-maintenance {
+			width: 100%;
+			max-width: 32rem;
+			padding: 1.5rem;
+			border-radius: var(--ogc-radius);
+			background: rgba(20, 20, 20, 0.2);
+			border: 1px solid rgba(var(--ogc-brand-rgb), 0.15);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+			box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+			text-align: center;
+		}
+
+		.ogc-maintenance__logo {
+			display: block;
+			max-width: 160px;
+			width: auto;
+			height: auto;
+			margin: 0 auto 1.25rem;
+		}
+
+		.ogc-maintenance__title {
+			margin: 0 0 1rem;
+			font-family: var(--font-heading);
+			font-size: 1.5rem;
+			font-weight: 700;
+			letter-spacing: -0.02em;
+			color: var(--border-accent);
+		}
+
+		.ogc-maintenance__message {
+			margin: 0;
+			color: var(--text-secondary);
+			font-size: 1rem;
+		}
+
+		.ogc-maintenance__message > *:first-child {
+			margin-top: 0;
+		}
+
+		.ogc-maintenance__message > *:last-child {
+			margin-bottom: 0;
+		}
+
+		@media (max-width: 599px) {
+			.ogc-maintenance {
+				padding: 1.15rem;
+				backdrop-filter: blur(7px);
+				-webkit-backdrop-filter: blur(7px);
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="ogc-maintenance" role="main">
+		<?php if ( $logo_url ) : ?>
+			<img
+				class="ogc-maintenance__logo"
+				src="<?php echo esc_url( $logo_url ); ?>"
+				alt="<?php echo esc_attr( $site_name ); ?>"
+			>
+		<?php else : ?>
+			<h1 class="ogc-maintenance__title"><?php echo esc_html( $site_name ); ?></h1>
+		<?php endif; ?>
+
+		<div class="ogc-maintenance__message">
+			<?php echo wp_kses_post( wpautop( $message ) ); ?>
+		</div>
+	</main>
+</body>
+</html>
+	<?php
+	exit;
 }
 add_action( 'template_redirect', 'ogc_maintenance_mode_redirect' );
 
