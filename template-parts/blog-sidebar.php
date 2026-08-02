@@ -1,6 +1,6 @@
 <?php
 /**
- * Blog sidebar — recent posts, categories, ad slot, newsletter.
+ * Blog sidebar — recent posts, categories, newsletter.
  * Used on single posts and the blog archive (desktop/tablet only via CSS).
  *
  * @package OGC_NewFinity
@@ -80,22 +80,18 @@ $categories = ogc_blog_categories();
 			</ul>
 		</section>
 
-		<section class="glass-card ogc-sidebar-widget ogc-sidebar-widget--ad">
-			<?php
-			get_template_part(
-				'template-parts/ad',
-				'slot',
-				array( 'variant' => 'sidebar' )
-			);
-			?>
-		</section>
-
 		<section class="glass-card ogc-sidebar-widget ogc-sidebar-widget--newsletter">
 			<h2 class="ogc-sidebar-widget__title"><?php esc_html_e( 'Newsletter', 'ogc-newfinity' ); ?></h2>
 			<p class="ogc-sidebar-widget__text">
 				<?php esc_html_e( 'Get occasional updates from the team — no spam.', 'ogc-newfinity' ); ?>
 			</p>
-			<?php /* TODO: connect to email provider */ ?>
+			<?php
+			/*
+			 * Newsletter subscriber capture is out of theme scope — owned by the future Amy Agent
+			 * plugin (see docs/09-amy-agent-plugin-scope.md, item 3). Do not wire this to a third-party
+			 * ESP or local DB from the theme.
+			 */
+			?>
 			<form class="ogc-newsletter-form" action="#" method="post" onsubmit="return false;">
 				<label class="screen-reader-text" for="ogc-newsletter-email">
 					<?php esc_html_e( 'Email address', 'ogc-newfinity' ); ?>
@@ -108,9 +104,10 @@ $categories = ogc_blog_categories();
 					placeholder="<?php esc_attr_e( 'you@example.com', 'ogc-newfinity' ); ?>"
 					required
 					autocomplete="email"
+					disabled
 				>
-				<button type="submit" class="ogc-btn ogc-btn--sm ogc-newsletter-form__btn">
-					<?php esc_html_e( 'Subscribe', 'ogc-newfinity' ); ?>
+				<button type="submit" class="ogc-btn ogc-btn--sm ogc-newsletter-form__btn" disabled>
+					<?php esc_html_e( 'Coming Soon', 'ogc-newfinity' ); ?>
 				</button>
 			</form>
 		</section>

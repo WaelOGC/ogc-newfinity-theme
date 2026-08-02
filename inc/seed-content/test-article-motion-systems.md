@@ -1,16 +1,14 @@
-# Motion Systems That Communicate, Not Distract
+# Consistency Is a Feature, Not a Constraint
 
 **Category:** Design & Experience  
 **Audience:** Product Designers, Frontend Engineers, Brand Leads, UX Leads
 
 ---
 
-Motion on a marketing site or product UI should clarify hierarchy, confirm state changes, and give the interface a sense of physical continuity. When every card fades, slides, and pulses independently, motion stops being communication and becomes noise — especially on slower devices where competing animations hurt perceived performance.
+Design systems often get framed as something that slows teams down — one more layer between an idea and the screen. In practice, the opposite is true: a well-maintained system is what lets a small team ship fast without every screen looking like it was designed by a different person.
 
-A motion system starts with a small set of durations, easings, and distances tied to intent: enter, exit, emphasis, and feedback. Those tokens belong in the design system alongside color and type, so designers and engineers share the same vocabulary.
+## Tokens Before Components
 
-## Intent Before Ornament
+Before building component libraries, define the underlying decisions — spacing scale, type ramp, color roles, elevation. Components built on top of undefined tokens tend to drift; every new screen invents its own spacing "because it looked right." A token-first approach means a single change at the source propagates everywhere, instead of triggering a manual sweep across the product.
 
-Ask what the user needs to notice. Page transitions can soften context switches. Micro-interactions should confirm that a control responded. Hero sequences can establish brand presence once — not on every scroll tick.
-
-Prefer reduced-motion fallbacks that preserve meaning without the animation. Accessibility is not a separate track; it is part of the system definition. When motion is intentional, sparse, and tokenized, the interface feels premium without looking busy — and the same rules scale cleanly from landing pages to dense product workflows.
+Treat the design system as a living product with its own backlog, not a one-time deliverable — it should evolve with the same discipline as the codebase it serves.

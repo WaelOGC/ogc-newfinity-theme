@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Bump this version string EVERY time any file in inc/seed-content/ changes, or edits will not sync.
-define( 'OGC_ARTICLES_SEED_VERSION', '1.10.0' );
+define( 'OGC_ARTICLES_SEED_VERSION', '1.11.0' );
 
 /**
  * Convert article markdown (subset) into post HTML.
@@ -382,32 +382,34 @@ function ogc_seed_article_definitions() {
 			'seed_key' => 'article-ai-driven-web',
 			'author'   => 'Wael Safan',
 		),
-		// TEMPORARY test content for design/pagination preview — remove before real launch.
 		array(
-			'title'    => 'Designing Stable API Contracts for Growing Products',
-			'slug'     => 'designing-stable-api-contracts-for-growing-products',
+			'title'    => 'Choosing the Right Database Strategy Before You Scale',
+			'slug'     => 'choosing-the-right-database-strategy-before-you-scale',
 			'category' => 'build-development',
-			'excerpt'  => 'How additive versioning, clear deprecation windows, and shared OpenAPI ownership keep APIs evolvable without breaking client teams.',
+			'excerpt'  => 'Why write/read separation and documented data-architecture decisions early prevent painful migrations once a product outgrows its original schema.',
 			'source'   => 'inc/seed-content/test-article-api-contracts.md',
-			'seed_key' => 'test-article-api-contracts',
+			'seed_key' => 'article-database-strategy',
+			'legacy_seed_key' => 'test-article-api-contracts',
 			'author'   => 'Wael Safan',
 		),
 		array(
-			'title'    => 'Motion Systems That Communicate, Not Distract',
-			'slug'     => 'motion-systems-that-communicate-not-distract',
+			'title'    => 'Consistency Is a Feature, Not a Constraint',
+			'slug'     => 'consistency-is-a-feature-not-a-constraint',
 			'category' => 'design-experience',
-			'excerpt'  => 'A practical take on motion tokens, intent-driven animation, and reduced-motion fallbacks that keep interfaces premium without visual noise.',
+			'excerpt'  => 'Why token-first design systems, not one-off component libraries, are what let small teams ship fast without visual drift.',
 			'source'   => 'inc/seed-content/test-article-motion-systems.md',
-			'seed_key' => 'test-article-motion-systems',
+			'seed_key' => 'article-design-consistency',
+			'legacy_seed_key' => 'test-article-motion-systems',
 			'author'   => 'Wael Safan',
 		),
 		array(
-			'title'    => 'Building Evaluation Loops Into AI Features',
-			'slug'     => 'building-evaluation-loops-into-ai-features',
+			'title'    => 'Why AI Features Need Product Owners, Not Just Prompts',
+			'slug'     => 'why-ai-features-need-product-owners-not-just-prompts',
 			'category' => 'ai-innovation',
-			'excerpt'  => 'Why golden-set evals, production sampling, and regression harnesses turn LLM demos into features that survive model upgrades.',
+			'excerpt'  => 'Why AI-powered features need clear ownership, success metrics, and drift review after model updates — not just a prompt that felt good in testing.',
 			'source'   => 'inc/seed-content/test-article-ai-eval-loops.md',
-			'seed_key' => 'test-article-ai-eval-loops',
+			'seed_key' => 'article-ai-ownership',
+			'legacy_seed_key' => 'test-article-ai-eval-loops',
 			'author'   => 'Wael Safan',
 		),
 	);
@@ -428,6 +430,26 @@ function ogc_find_seeded_article_id( $article ) {
 				'post_status'            => 'any',
 				'meta_key'               => '_ogc_seed_key',
 				'meta_value'             => $seed_key,
+				'posts_per_page'         => 1,
+				'fields'                 => 'ids',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+		if ( ! empty( $query->posts[0] ) ) {
+			return (int) $query->posts[0];
+		}
+	}
+
+	$legacy_seed_key = isset( $article['legacy_seed_key'] ) ? (string) $article['legacy_seed_key'] : '';
+	if ( $legacy_seed_key ) {
+		$query = new WP_Query(
+			array(
+				'post_type'              => 'post',
+				'post_status'            => 'any',
+				'meta_key'               => '_ogc_seed_key',
+				'meta_value'             => $legacy_seed_key,
 				'posts_per_page'         => 1,
 				'fields'                 => 'ids',
 				'no_found_rows'          => true,
