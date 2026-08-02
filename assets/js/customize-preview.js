@@ -13,8 +13,6 @@
 	}
 
 	var cfg = window.ogcHeroPreview || {};
-	var pages = cfg.pages || ['home', 'about', 'services', 'mission'];
-	var positions = cfg.positions || {};
 	var speeds = cfg.speeds || { fast: 120, normal: 220, slow: 380 };
 	var transitions = cfg.transitions || { fast: 150, normal: 250, slow: 400 };
 	var root = document.documentElement;
@@ -30,21 +28,8 @@
 		shadowOpacity: null,
 		brandRgb: null,
 		headerHex: null,
-		headerOpacity: null,
-		hero: {}
+		headerOpacity: null
 	};
-
-	pages.forEach(function (page) {
-		state.hero[page] = {
-			fit: null,
-			width: null,
-			height: null,
-			blur: null,
-			grayscale: null,
-			brightness: null,
-			contrast: null
-		};
-	});
 
 	function setVar(name, value) {
 		if (value === undefined || value === null) {
@@ -101,43 +86,6 @@
 			default:
 				return '0 8px 24px rgba(' + shadowRgb + ', ' + opacity + ')';
 		}
-	}
-
-	function ensureOverlay(page) {
-		var layer = document.querySelector('.ogc-hero-bg--' + page);
-		if (!layer) {
-			return null;
-		}
-		var overlay = layer.querySelector('.ogc-hero-bg__overlay');
-		if (!overlay) {
-			overlay = document.createElement('span');
-			overlay.className = 'ogc-hero-bg__overlay';
-			layer.appendChild(overlay);
-		}
-		return overlay;
-	}
-
-	function heroSizeCss(page) {
-		var h = state.hero[page];
-		if (h.fit === 'contain') {
-			return 'contain';
-		}
-		if (h.fit === 'custom') {
-			return (h.width || '100%') + ' ' + (h.height || 'auto');
-		}
-		return 'cover';
-	}
-
-	function updateHeroFilter(page) {
-		var h = state.hero[page];
-		var blur = clamp(parseInt(h.blur, 10) || 0, 0, 40);
-		var gray = clamp(parseInt(h.grayscale, 10) || 0, 0, 100);
-		var bright = clamp(parseInt(h.brightness, 10) || 100, 50, 150);
-		var contrast = clamp(parseInt(h.contrast, 10) || 100, 50, 150);
-		setVar(
-			'--ogc-hero-bg-filter-' + page,
-			'blur(' + blur + 'px) grayscale(' + gray + '%) brightness(' + bright + '%) contrast(' + contrast + '%)'
-		);
 	}
 
 	function updateAccentGradient() {
@@ -228,80 +176,6 @@
 			fn(setting.get());
 		});
 	}
-
-	/* ------------------------------------------------------------------ Hero */
-	pages.forEach(function (page) {
-		bind('ogc_hero_bg_opacity_' + page, function (value) {
-			setVar('--ogc-hero-bg-opacity-' + page, clamp(parseInt(value, 10) || 0, 0, 100) / 100);
-		});
-
-		bind('ogc_hero_bg_fit_' + page, function (value) {
-			state.hero[page].fit = value;
-			setVar('--ogc-hero-bg-size-' + page, heroSizeCss(page));
-		});
-
-		bind('ogc_hero_bg_width_' + page, function (value) {
-			state.hero[page].width = value || '100%';
-			setVar('--ogc-hero-bg-size-' + page, heroSizeCss(page));
-		});
-
-		bind('ogc_hero_bg_height_' + page, function (value) {
-			state.hero[page].height = value || 'auto';
-			setVar('--ogc-hero-bg-size-' + page, heroSizeCss(page));
-		});
-
-		bind('ogc_hero_bg_position_' + page, function (value) {
-			setVar('--ogc-hero-bg-position-' + page, positions[value] || 'center center');
-		});
-
-		bind('ogc_hero_bg_repeat_' + page, function (value) {
-			setVar('--ogc-hero-bg-repeat-' + page, value || 'no-repeat');
-		});
-
-		bind('ogc_hero_bg_border_width_' + page, function (value) {
-			setVar('--ogc-hero-bg-border-width-' + page, clamp(parseInt(value, 10) || 0, 0, 40) + 'px');
-		});
-
-		bind('ogc_hero_bg_border_color_' + page, function (value) {
-			setVar('--ogc-hero-bg-border-color-' + page, value || 'transparent');
-		});
-
-		bind('ogc_hero_bg_border_style_' + page, function (value) {
-			setVar('--ogc-hero-bg-border-style-' + page, value || 'none');
-		});
-
-		bind('ogc_hero_bg_border_radius_' + page, function (value) {
-			setVar('--ogc-hero-bg-border-radius-' + page, clamp(parseInt(value, 10) || 0, 0, 200) + 'px');
-		});
-
-		['blur', 'grayscale', 'brightness', 'contrast'].forEach(function (key) {
-			bind('ogc_hero_bg_' + key + '_' + page, function (value) {
-				state.hero[page][key] = value;
-				updateHeroFilter(page);
-			});
-		});
-
-		bind('ogc_hero_bg_overlay_color_' + page, function (value) {
-			setVar('--ogc-hero-bg-overlay-color-' + page, value || 'transparent');
-			if (value) {
-				ensureOverlay(page);
-			}
-		});
-
-		bind('ogc_hero_bg_overlay_opacity_' + page, function (value) {
-			setVar('--ogc-hero-bg-overlay-opacity-' + page, clamp(parseInt(value, 10) || 0, 0, 100) / 100);
-			if ((parseInt(value, 10) || 0) > 0) {
-				ensureOverlay(page);
-			}
-		});
-
-		bind('ogc_hero_bg_animation_' + page, function (value) {
-			var layer = document.querySelector('.ogc-hero-bg--' + page);
-			if (layer) {
-				layer.setAttribute('data-hero-anim', value || 'none');
-			}
-		});
-	});
 
 	/* ---------------------------------------------------------------- Header */
 	bind('ogc_header_bg_color', function (value) {

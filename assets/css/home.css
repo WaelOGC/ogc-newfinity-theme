@@ -180,6 +180,12 @@ body.ogc-motion-reduced-by-admin .hero-shimmer {
 	z-index: 0;
 	pointer-events: none;
 	overflow: hidden;
+	opacity: var(--ogc-hero-bg-opacity, 0.35);
+	border-width: var(--ogc-hero-bg-border-width, 0);
+	border-style: var(--ogc-hero-bg-border-style, solid);
+	border-color: var(--ogc-hero-bg-border-color, transparent);
+	border-radius: var(--ogc-hero-bg-border-radius, 0);
+	box-shadow: var(--ogc-hero-bg-box-shadow, none);
 }
 
 .ogc-hero-bg__image,
@@ -187,98 +193,19 @@ body.ogc-motion-reduced-by-admin .hero-shimmer {
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
+	border-radius: inherit;
 }
 
 .ogc-hero-bg__image {
-	background-position: center;
-	background-size: cover;
-	background-repeat: no-repeat;
+	background-position: var(--ogc-hero-bg-position, center center);
+	background-size: var(--ogc-hero-bg-size, cover);
+	background-repeat: var(--ogc-hero-bg-repeat, no-repeat);
+	filter: var(--ogc-hero-bg-filter, none);
 }
 
 .ogc-hero-bg__overlay {
-	background-color: transparent;
-	opacity: 0;
-}
-
-/* Per-page tokens from ogc_theme_options_css() */
-.ogc-hero-bg--home {
-	opacity: var(--ogc-hero-bg-opacity-home, 0.35);
-	border-width: var(--ogc-hero-bg-border-width-home, 0);
-	border-style: var(--ogc-hero-bg-border-style-home, solid);
-	border-color: var(--ogc-hero-bg-border-color-home, transparent);
-	border-radius: var(--ogc-hero-bg-border-radius-home, 0);
-}
-.ogc-hero-bg--home > .ogc-hero-bg__image {
-	background-size: var(--ogc-hero-bg-size-home, cover);
-	background-position: var(--ogc-hero-bg-position-home, center center);
-	background-repeat: var(--ogc-hero-bg-repeat-home, no-repeat);
-	filter: var(--ogc-hero-bg-filter-home, none);
-	border-radius: inherit;
-}
-.ogc-hero-bg--home > .ogc-hero-bg__overlay {
-	background-color: var(--ogc-hero-bg-overlay-color-home, transparent);
-	opacity: var(--ogc-hero-bg-overlay-opacity-home, 0);
-	border-radius: inherit;
-}
-
-.ogc-hero-bg--about {
-	opacity: var(--ogc-hero-bg-opacity-about, 0.35);
-	border-width: var(--ogc-hero-bg-border-width-about, 0);
-	border-style: var(--ogc-hero-bg-border-style-about, solid);
-	border-color: var(--ogc-hero-bg-border-color-about, transparent);
-	border-radius: var(--ogc-hero-bg-border-radius-about, 0);
-}
-.ogc-hero-bg--about > .ogc-hero-bg__image {
-	background-size: var(--ogc-hero-bg-size-about, cover);
-	background-position: var(--ogc-hero-bg-position-about, center center);
-	background-repeat: var(--ogc-hero-bg-repeat-about, no-repeat);
-	filter: var(--ogc-hero-bg-filter-about, none);
-	border-radius: inherit;
-}
-.ogc-hero-bg--about > .ogc-hero-bg__overlay {
-	background-color: var(--ogc-hero-bg-overlay-color-about, transparent);
-	opacity: var(--ogc-hero-bg-overlay-opacity-about, 0);
-	border-radius: inherit;
-}
-
-.ogc-hero-bg--services {
-	opacity: var(--ogc-hero-bg-opacity-services, 0.35);
-	border-width: var(--ogc-hero-bg-border-width-services, 0);
-	border-style: var(--ogc-hero-bg-border-style-services, solid);
-	border-color: var(--ogc-hero-bg-border-color-services, transparent);
-	border-radius: var(--ogc-hero-bg-border-radius-services, 0);
-}
-.ogc-hero-bg--services > .ogc-hero-bg__image {
-	background-size: var(--ogc-hero-bg-size-services, cover);
-	background-position: var(--ogc-hero-bg-position-services, center center);
-	background-repeat: var(--ogc-hero-bg-repeat-services, no-repeat);
-	filter: var(--ogc-hero-bg-filter-services, none);
-	border-radius: inherit;
-}
-.ogc-hero-bg--services > .ogc-hero-bg__overlay {
-	background-color: var(--ogc-hero-bg-overlay-color-services, transparent);
-	opacity: var(--ogc-hero-bg-overlay-opacity-services, 0);
-	border-radius: inherit;
-}
-
-.ogc-hero-bg--mission {
-	opacity: var(--ogc-hero-bg-opacity-mission, 0.35);
-	border-width: var(--ogc-hero-bg-border-width-mission, 0);
-	border-style: var(--ogc-hero-bg-border-style-mission, solid);
-	border-color: var(--ogc-hero-bg-border-color-mission, transparent);
-	border-radius: var(--ogc-hero-bg-border-radius-mission, 0);
-}
-.ogc-hero-bg--mission > .ogc-hero-bg__image {
-	background-size: var(--ogc-hero-bg-size-mission, cover);
-	background-position: var(--ogc-hero-bg-position-mission, center center);
-	background-repeat: var(--ogc-hero-bg-repeat-mission, no-repeat);
-	filter: var(--ogc-hero-bg-filter-mission, none);
-	border-radius: inherit;
-}
-.ogc-hero-bg--mission > .ogc-hero-bg__overlay {
-	background-color: var(--ogc-hero-bg-overlay-color-mission, transparent);
-	opacity: var(--ogc-hero-bg-overlay-opacity-mission, 0);
-	border-radius: inherit;
+	background-color: var(--ogc-hero-bg-overlay-color, transparent);
+	opacity: var(--ogc-hero-bg-overlay-opacity, 0);
 }
 
 /* Animations — gated by data-hero-anim; disabled under reduced motion */
@@ -296,11 +223,6 @@ body.ogc-motion-reduced-by-admin .hero-shimmer {
 	0%   { background-position: 40% 50%; }
 	100% { background-position: 60% 45%; }
 }
-
-.ogc-hero-bg--home[data-hero-anim='fade-in'] { --ogc-hero-fade-to: var(--ogc-hero-bg-opacity-home, 0.35); }
-.ogc-hero-bg--about[data-hero-anim='fade-in'] { --ogc-hero-fade-to: var(--ogc-hero-bg-opacity-about, 0.35); }
-.ogc-hero-bg--services[data-hero-anim='fade-in'] { --ogc-hero-fade-to: var(--ogc-hero-bg-opacity-services, 0.35); }
-.ogc-hero-bg--mission[data-hero-anim='fade-in'] { --ogc-hero-fade-to: var(--ogc-hero-bg-opacity-mission, 0.35); }
 
 .ogc-hero-bg[data-hero-anim='fade-in'] {
 	animation: ogc-hero-fade-in 1.2s ease-out both;
@@ -330,7 +252,8 @@ body.ogc-motion-reduced-by-admin .ogc-hero-bg[data-hero-anim] > .ogc-hero-bg__im
 }
 
 .ogc-home-hero > *:not(.ogc-hero-bg),
-.ogc-split-hero > *:not(.ogc-hero-bg) {
+.ogc-split-hero > *:not(.ogc-hero-bg),
+.ogc-page-hero > *:not(.ogc-hero-bg) {
 	position: relative;
 	z-index: 1;
 }
@@ -342,6 +265,15 @@ body.ogc-motion-reduced-by-admin .ogc-hero-bg[data-hero-anim] > .ogc-hero-bg__im
 	line-height: 1.7;
 	color: var(--ogc-text-muted);
 	text-wrap: pretty;
+}
+
+.ogc-home-hero .ogc-page-hero__subtitle {
+	margin: 0 0 1rem;
+	font-family: var(--ogc-font-body);
+	font-size: 1.125rem;
+	line-height: 1.5;
+	font-weight: 500;
+	color: var(--ogc-text-primary);
 }
 
 .ogc-home-hero__actions {

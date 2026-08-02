@@ -29,6 +29,8 @@ require_once OGC_THEME_DIR . '/inc/seed-legal.php';
 require_once OGC_THEME_DIR . '/inc/seed-coming-soon.php';
 require_once OGC_THEME_DIR . '/inc/widgets.php';
 require_once OGC_THEME_DIR . '/inc/theme-options.php';
+require_once OGC_THEME_DIR . '/inc/migrate-hero-bg-to-postmeta.php';
+require_once OGC_THEME_DIR . '/inc/meta-box-page-settings.php';
 require_once OGC_THEME_DIR . '/inc/ads.php';
 require_once OGC_THEME_DIR . '/inc/customizer-bridge.php';
 require_once OGC_THEME_DIR . '/inc/enqueue.php';

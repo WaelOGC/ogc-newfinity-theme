@@ -25,6 +25,7 @@
    -------------------------------------------------------------------------- */
 
 .ogc-page-hero {
+	position: relative;
 	padding-top: 1.5rem;
 	max-width: 46rem;
 }
@@ -40,6 +41,16 @@
 	text-wrap: balance;
 }
 
+.ogc-page-hero__subtitle {
+	margin: -0.5rem 0 1rem;
+	font-family: var(--ogc-font-body);
+	font-size: 1.125rem;
+	line-height: 1.5;
+	font-weight: 500;
+	color: var(--ogc-text-primary);
+	text-wrap: pretty;
+}
+
 .ogc-page-hero__lead {
 	margin: 0;
 	font-family: var(--ogc-font-body);
@@ -47,6 +58,62 @@
 	line-height: 1.7;
 	color: var(--ogc-text-muted);
 	text-wrap: pretty;
+}
+
+.ogc-page--generic > .ogc-page-hero {
+	max-width: 46rem;
+	padding-top: 1.5rem;
+	padding-bottom: 0.5rem;
+}
+
+.ogc-page-featured {
+	margin: 0 0 1.5rem;
+}
+
+.ogc-page-featured img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 0.5rem;
+}
+
+.ogc-page-body--with-widgets {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 2rem;
+	align-items: start;
+}
+
+@media (min-width: 960px) {
+	.ogc-page-body--with-widgets {
+		grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+	}
+}
+
+.ogc-page-widget-area {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+.ogc-page-layout--full-width-contained .ogc-page-content,
+.ogc-page-layout--full-width-contained .ogc-page-body {
+	max-width: 72rem;
+	margin-inline: auto;
+	width: 100%;
+}
+
+.ogc-page-layout--full-width-stretched .ogc-page-content,
+.ogc-page-layout--full-width-stretched .ogc-page-body {
+	max-width: none;
+	width: 100%;
+}
+
+.ogc-page-layout--boxed .ogc-page-content,
+.ogc-page-layout--boxed .ogc-page-body {
+	max-width: 42rem;
+	margin-inline: auto;
+	width: 100%;
 }
 
 @media (max-width: 599px) {

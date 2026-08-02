@@ -12,8 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$site_name = get_bloginfo( 'name' );
-$fonts_url = function_exists( 'ogc_get_google_fonts_url' ) ? ogc_get_google_fonts_url() : '';
+$site_name  = get_bloginfo( 'name' );
+$fonts_url  = function_exists( 'ogc_get_google_fonts_url' ) ? ogc_get_google_fonts_url() : '';
+$theme_uri  = defined( 'OGC_THEME_URI' ) ? OGC_THEME_URI : get_template_directory_uri();
+$nebula_url = $theme_uri . '/assets/images/backgrounds/space-nebula-depth.webp';
 ?><!DOCTYPE html>
 <html lang="<?php echo esc_attr( get_bloginfo( 'language' ) ); ?>">
 <head>
@@ -45,6 +47,19 @@ $fonts_url = function_exists( 'ogc_get_google_fonts_url' ) ? ogc_get_google_font
 			box-sizing: border-box;
 		}
 
+		.screen-reader-text {
+			border: 0;
+			clip: rect(1px, 1px, 1px, 1px);
+			clip-path: inset(50%);
+			height: 1px;
+			margin: -1px;
+			overflow: hidden;
+			padding: 0;
+			position: absolute;
+			width: 1px;
+			word-wrap: normal !important;
+		}
+
 		html {
 			font-size: 16px;
 		}
@@ -63,9 +78,46 @@ $fonts_url = function_exists( 'ogc_get_google_fonts_url' ) ? ogc_get_google_font
 			line-height: 1.6;
 			-webkit-font-smoothing: antialiased;
 			text-align: center;
+			position: relative;
+		}
+
+		.ogc-coming-soon__bg {
+			position: fixed;
+			inset: 0;
+			z-index: 0;
+			overflow: hidden;
+			pointer-events: none;
+			background-color: #0A0A0A;
+		}
+
+		.ogc-coming-soon__bg-fallback {
+			position: absolute;
+			inset: 0;
+			z-index: 0;
+			background:
+				radial-gradient(
+					ellipse 70% 55% at 50% 40%,
+					color-mix(in srgb, #1a1208 40%, transparent) 0%,
+					transparent 60%
+				),
+				#0A0A0A;
+		}
+
+		.ogc-coming-soon__bg-nebula {
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			background-image: url("<?php echo esc_url( $nebula_url ); ?>");
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			opacity: 0.1;
+			pointer-events: none;
 		}
 
 		.ogc-coming-soon {
+			position: relative;
+			z-index: 1;
 			width: 100%;
 			max-width: 36rem;
 			margin: 0 auto;
@@ -228,6 +280,10 @@ $fonts_url = function_exists( 'ogc_get_google_fonts_url' ) ? ogc_get_google_font
 	</style>
 </head>
 <body>
+	<div class="ogc-coming-soon__bg" aria-hidden="true">
+		<div class="ogc-coming-soon__bg-fallback"></div>
+		<div class="ogc-coming-soon__bg-nebula"></div>
+	</div>
 	<main class="ogc-coming-soon" role="main">
 		<div class="ogc-coming-soon__content">
 			<?php

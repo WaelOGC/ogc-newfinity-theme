@@ -5,6 +5,16 @@
  * @package OGC_NewFinity
  */
 
+if ( is_singular( 'page' ) && function_exists( 'ogc_page_should_hide' ) && ogc_page_should_hide( 'footer' ) ) :
+	?>
+	</main><!-- #ogc-content -->
+	<?php wp_footer(); ?>
+	</body>
+	</html>
+	<?php
+	return;
+endif;
+
 $ogc_footer_logo   = function_exists( 'ogc_get_footer_logo_url' ) ? ogc_get_footer_logo_url() : '';
 $ogc_footer_logo_w = max( 16, (int) get_theme_mod( 'ogc_footer_logo_width', 54 ) );
 

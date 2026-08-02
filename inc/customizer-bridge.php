@@ -352,69 +352,6 @@ function ogc_customize_control_meta( $wp_customize ) {
 function ogc_customize_bridge_register( $wp_customize ) {
 	ogc_customize_bridge_register_control_classes();
 
-	$pages = array(
-		'home'     => __( 'Home', 'ogc-newfinity' ),
-		'about'    => __( 'About', 'ogc-newfinity' ),
-		'services' => __( 'Services', 'ogc-newfinity' ),
-		'mission'  => __( 'Mission', 'ogc-newfinity' ),
-	);
-
-	/* ============================================================ Hero BGs */
-	$wp_customize->add_panel(
-		'ogc_hero_backgrounds',
-		array(
-			'title'       => __( 'OGC Hero Backgrounds', 'ogc-newfinity' ),
-			'description' => __( 'Live preview for hero background images. Same settings as OGC NewFinity → Images / Pages.', 'ogc-newfinity' ),
-			'priority'    => 40,
-		)
-	);
-
-	foreach ( $pages as $page_key => $page_label ) {
-		$section = 'ogc_hero_bg_section_' . $page_key;
-		$wp_customize->add_section(
-			$section,
-			array(
-				'title'       => sprintf(
-					/* translators: %s: page name. */
-					__( '%s hero', 'ogc-newfinity' ),
-					$page_label
-				),
-				'panel'       => 'ogc_hero_backgrounds',
-				'description' => ogc_customize_section_desc( 'images', __( 'Edit all hero background options →', 'ogc-newfinity' ) ),
-			)
-		);
-
-		$p = 10;
-		ogc_customize_add_group( $wp_customize, $section, 'image', __( 'Image', 'ogc-newfinity' ), $p++, true );
-		ogc_customize_add_schema_field( $wp_customize, 'ogc_hero_bg_' . $page_key, $section, 'image', $p++ );
-
-		ogc_customize_add_group( $wp_customize, $section, 'size', __( 'Size & Position', 'ogc-newfinity' ), $p++, false );
-		foreach ( array( 'fit', 'width', 'height', 'position', 'repeat' ) as $slug ) {
-			ogc_customize_add_schema_field( $wp_customize, "ogc_hero_bg_{$slug}_{$page_key}", $section, 'size', $p++ );
-		}
-
-		ogc_customize_add_group( $wp_customize, $section, 'border', __( 'Border', 'ogc-newfinity' ), $p++, false );
-		foreach ( array( 'border_width', 'border_color', 'border_style', 'border_radius' ) as $slug ) {
-			ogc_customize_add_schema_field( $wp_customize, "ogc_hero_bg_{$slug}_{$page_key}", $section, 'border', $p++ );
-		}
-
-		ogc_customize_add_group( $wp_customize, $section, 'effects', __( 'Effects', 'ogc-newfinity' ), $p++, false );
-		foreach ( array( 'blur', 'grayscale', 'overlay_color', 'overlay_opacity', 'brightness', 'contrast' ) as $slug ) {
-			ogc_customize_add_schema_field( $wp_customize, "ogc_hero_bg_{$slug}_{$page_key}", $section, 'effects', $p++ );
-		}
-
-		ogc_customize_add_group( $wp_customize, $section, 'animation', __( 'Animation', 'ogc-newfinity' ), $p++, false );
-		ogc_customize_add_schema_field( $wp_customize, 'ogc_hero_bg_animation_' . $page_key, $section, 'animation', $p++ );
-		ogc_customize_add_schema_field(
-			$wp_customize,
-			'ogc_hero_bg_opacity_' . $page_key,
-			$section,
-			'animation',
-			$p++,
-			array( 'label' => __( 'Layer opacity', 'ogc-newfinity' ) )
-		);
-	}
-
 	/* ============================================================== Header */
 	$wp_customize->add_section(
 		'ogc_cz_header',
@@ -605,19 +542,7 @@ function ogc_customize_bridge_preview_init() {
 		'ogc-customize-preview',
 		'ogcHeroPreview',
 		array(
-			'pages'     => array( 'home', 'about', 'services', 'mission' ),
-			'positions' => array(
-				'center'       => 'center center',
-				'top'          => 'center top',
-				'bottom'       => 'center bottom',
-				'left'         => 'left center',
-				'right'        => 'right center',
-				'top-left'     => 'left top',
-				'top-right'    => 'right top',
-				'bottom-left'  => 'left bottom',
-				'bottom-right' => 'right bottom',
-			),
-			'speeds'    => array(
+			'speeds'      => array(
 				'fast'   => 120,
 				'normal' => 220,
 				'slow'   => 350,

@@ -70,18 +70,28 @@ $how_we_work = array(
 		'text'  => "We don't disappear after launch. Post-launch support is part of how we work, not an upsell you have to ask for.",
 	),
 );
+
+$ogc_page_id      = (int) get_queried_object_id();
+$ogc_layout_class = ogc_get_page_layout_class( $ogc_page_id );
+$ogc_show_widgets = ogc_page_enable_widget_area( $ogc_page_id ) && ! ogc_page_should_hide( 'widget_area', $ogc_page_id );
 ?>
 
-<article class="ogc-page ogc-page--services">
+<article class="ogc-page ogc-page--services<?php echo $ogc_layout_class ? ' ' . esc_attr( $ogc_layout_class ) : ''; ?><?php echo $ogc_show_widgets ? ' ogc-page--has-widgets' : ''; ?>">
 
 	<section class="ogc-page-hero ogc-split-hero" aria-labelledby="ogc-services-hero-heading">
-		<?php ogc_render_hero_bg( 'services' ); ?>
+		<?php ogc_render_hero_bg( $ogc_page_id ); ?>
 		<div class="ogc-split-hero__copy">
 			<p class="ogc-badge"><?php esc_html_e( 'OGC NEWFINITY', 'ogc-newfinity' ); ?></p>
-			<h1 id="ogc-services-hero-heading" class="ogc-page-hero__title">
-				<?php esc_html_e( 'Our', 'ogc-newfinity' ); ?>
-				<span class="hero-shimmer"><?php esc_html_e( 'Services', 'ogc-newfinity' ); ?></span>
-			</h1>
+			<?php if ( ! ogc_page_should_hide( 'title', $ogc_page_id ) ) : ?>
+				<h1 id="ogc-services-hero-heading" class="ogc-page-hero__title">
+					<?php esc_html_e( 'Our', 'ogc-newfinity' ); ?>
+					<span class="hero-shimmer"><?php esc_html_e( 'Services', 'ogc-newfinity' ); ?></span>
+				</h1>
+			<?php endif; ?>
+			<?php $ogc_subtitle = ogc_get_page_subtitle( $ogc_page_id ); ?>
+			<?php if ( $ogc_subtitle ) : ?>
+				<p class="ogc-page-hero__subtitle"><?php echo esc_html( $ogc_subtitle ); ?></p>
+			<?php endif; ?>
 			<p class="ogc-page-hero__lead">
 				<?php
 				esc_html_e(
@@ -95,6 +105,11 @@ $how_we_work = array(
 			<?php get_template_part( 'template-parts/hero', 'code-screen' ); ?>
 		</div>
 	</section>
+
+	<?php if ( $ogc_show_widgets ) : ?>
+		<div class="ogc-page-body ogc-page-body--with-widgets">
+			<div class="ogc-page-body__main">
+	<?php endif; ?>
 
 	<section class="ogc-page-services" aria-labelledby="ogc-services-grid-heading">
 		<h2 id="ogc-services-grid-heading" class="screen-reader-text">
@@ -164,6 +179,12 @@ $how_we_work = array(
 			</a>
 		</div>
 	</section>
+
+	<?php if ( $ogc_show_widgets ) : ?>
+			</div>
+			<?php get_template_part( 'template-parts/page', 'widget-area' ); ?>
+		</div>
+	<?php endif; ?>
 
 </article>
 

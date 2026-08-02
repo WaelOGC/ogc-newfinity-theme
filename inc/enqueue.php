@@ -85,7 +85,7 @@ function ogc_enqueue_assets() {
 	$is_legal_page = is_page( array( 'privacy-policy', 'terms-and-conditions', 'cookie-policy', 'refund-policy' ) );
 
 	$needs_home_chrome = is_front_page()
-		|| is_page( array( 'about-ogc-newfinity', 'services', 'our-mission', 'support', 'contact', 'submit-idea' ) )
+		|| is_page()
 		|| $is_legal_page
 		|| ogc_is_blog_surface();
 
@@ -98,7 +98,7 @@ function ogc_enqueue_assets() {
 		);
 	}
 
-	if ( is_page( array( 'about-ogc-newfinity', 'services', 'our-mission', 'support', 'contact', 'submit-idea' ) ) || $is_legal_page || ogc_is_blog_surface() ) {
+	if ( ( is_page() && ! is_front_page() ) || $is_legal_page || ogc_is_blog_surface() ) {
 		wp_enqueue_style(
 			'ogc-pages',
 			OGC_THEME_URI . '/assets/css/pages.css',
