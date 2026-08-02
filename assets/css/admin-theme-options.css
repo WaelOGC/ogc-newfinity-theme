@@ -332,6 +332,11 @@
 	padding-right: 32px;
 }
 
+.ogc-opt__select option {
+	background: var(--opt-panel);
+	color: var(--opt-text);
+}
+
 .ogc-opt__textarea {
 	max-width: 640px;
 	resize: vertical;
