@@ -264,6 +264,14 @@ function ogc_page_settings_hero_fields() {
 		'fade-in'   => __( 'Fade in', 'ogc-newfinity' ),
 		'ken-burns' => __( 'Ken Burns', 'ogc-newfinity' ),
 	);
+	$blend_mode_options = array(
+		'normal'     => __( 'Normal', 'ogc-newfinity' ),
+		'multiply'   => __( 'Multiply', 'ogc-newfinity' ),
+		'screen'     => __( 'Screen', 'ogc-newfinity' ),
+		'overlay'    => __( 'Overlay', 'ogc-newfinity' ),
+		'soft-light' => __( 'Soft Light', 'ogc-newfinity' ),
+		'luminosity' => __( 'Luminosity', 'ogc-newfinity' ),
+	);
 
 	$fields = array(
 		'_ogc_hero_bg_image'           => array(
@@ -388,6 +396,37 @@ function ogc_page_settings_hero_fields() {
 			'attrs'    => array( 'min' => 50, 'max' => 150, 'step' => 1, 'unit' => '%' ),
 			'sanitize' => 'ogc_sanitize_int',
 		),
+		'_ogc_hero_bg_saturation'      => array(
+			'type'     => 'range',
+			'label'    => __( 'Saturation', 'ogc-newfinity' ),
+			'default'  => 100,
+			'attrs'    => array( 'min' => 0, 'max' => 200, 'step' => 1, 'unit' => '%' ),
+			'sanitize' => 'ogc_sanitize_int',
+		),
+		'_ogc_hero_bg_noise'           => array(
+			'type'     => 'range',
+			'label'    => __( 'Noise', 'ogc-newfinity' ),
+			'tooltip'  => __( 'Adds a subtle grain texture over the background image.', 'ogc-newfinity' ),
+			'default'  => 0,
+			'attrs'    => array( 'min' => 0, 'max' => 100, 'step' => 1, 'unit' => '%' ),
+			'sanitize' => 'ogc_sanitize_int',
+		),
+		'_ogc_hero_bg_vignette'        => array(
+			'type'     => 'range',
+			'label'    => __( 'Vignette', 'ogc-newfinity' ),
+			'tooltip'  => __( 'Darkens the edges of the background image toward the center.', 'ogc-newfinity' ),
+			'default'  => 0,
+			'attrs'    => array( 'min' => 0, 'max' => 100, 'step' => 1, 'unit' => '%' ),
+			'sanitize' => 'ogc_sanitize_int',
+		),
+		'_ogc_hero_bg_blend_mode'      => array(
+			'type'     => 'select',
+			'label'    => __( 'Blend Mode', 'ogc-newfinity' ),
+			'tooltip'  => __( 'Controls how the overlay color blends with the background image.', 'ogc-newfinity' ),
+			'default'  => 'normal',
+			'options'  => $blend_mode_options,
+			'sanitize' => 'sanitize_text_field',
+		),
 		'_ogc_hero_bg_animation'       => array(
 			'type'     => 'select',
 			'label'    => __( 'Animation', 'ogc-newfinity' ),
@@ -494,12 +533,20 @@ function ogc_page_settings_get_meta( $post_id, $key, $default = '' ) {
  * @param string $title    Card title.
  * @param string $summary  Optional one-line status shown when collapsed.
  * @param bool   $open     Whether the card starts expanded.
+ * @param string $icon     Optional dashicons class for nested hero cards.
+ * @param int    $number   Optional ordinal badge (nested hero cards only).
  */
-function ogc_page_settings_card_open( $id, $title, $summary = '', $open = false ) {
+function ogc_page_settings_card_open( $id, $title, $summary = '', $open = false, $icon = '', $number = 0 ) {
 	?>
 	<details class="ogc-ps-card" id="ogc-ps-card-<?php echo esc_attr( $id ); ?>" data-card="<?php echo esc_attr( $id ); ?>"<?php echo $open ? ' open' : ''; ?>>
 		<summary class="ogc-ps-card__summary">
 			<span class="ogc-ps-card__chevron" aria-hidden="true"></span>
+			<?php if ( $number > 0 ) : ?>
+				<span class="ogc-ps-card__badge-num"><?php echo (int) $number; ?></span>
+				<?php if ( $icon ) : ?>
+					<span class="dashicons <?php echo esc_attr( $icon ); ?> ogc-ps-card__icon" aria-hidden="true"></span>
+				<?php endif; ?>
+			<?php endif; ?>
 			<span class="ogc-ps-card__title"><?php echo esc_html( $title ); ?></span>
 			<?php if ( '' !== $summary ) : ?>
 				<span class="ogc-ps-card__badge"><?php echo esc_html( $summary ); ?></span>
@@ -527,6 +574,25 @@ function ogc_page_settings_render_hero_group( $post_id, $hero, $keys ) {
 	foreach ( $keys as $key ) {
 		if ( ! isset( $hero[ $key ] ) ) {
 			continue;
+		}
+		if ( '_ogc_hero_bg_overlay_color' === $key ) {
+			$overlay_set = '' !== (string) ogc_page_settings_get_meta( $post_id, '_ogc_hero_bg_overlay_color', '' );
+			?>
+			<div class="ogc-page-settings__row ogc-page-settings__row--toggle">
+				<label class="ogc-page-settings__check ogc-ps-toggle-row">
+					<span class="ogc-ps-toggle">
+						<input
+							type="checkbox"
+							id="ogc-ps-overlay-enable"
+							data-default-color="<?php echo esc_attr( OGC_DEFAULT_COLOR_ACCENT_START ); ?>"
+							<?php checked( $overlay_set ); ?>
+						>
+						<span class="ogc-ps-toggle__track"></span>
+					</span>
+					<span><?php esc_html_e( 'Enable overlay', 'ogc-newfinity' ); ?></span>
+				</label>
+			</div>
+			<?php
 		}
 		$value = ogc_page_settings_get_meta( $post_id, $key, $hero[ $key ]['default'] );
 		ogc_page_settings_render_field( $key, $hero[ $key ], $value );
@@ -584,11 +650,11 @@ function ogc_render_page_settings_meta_box( $post ) {
 			<p class="ogc-page-settings__intro"><?php esc_html_e( 'Additive layer behind the existing hero canvas. Leave the image empty to keep the WebGL hero untouched.', 'ogc-newfinity' ); ?></p>
 
 			<div class="ogc-ps-card-stack">
-				<?php ogc_page_settings_card_open( 'hero-image', __( 'Image', 'ogc-newfinity' ), '', true ); ?>
+				<?php ogc_page_settings_card_open( 'hero-image', __( 'Image', 'ogc-newfinity' ), '', true, 'dashicons-format-image', 1 ); ?>
 					<?php ogc_page_settings_render_hero_group( $post_id, $hero, array( '_ogc_hero_bg_image' ) ); ?>
 				<?php ogc_page_settings_card_close(); ?>
 
-				<?php ogc_page_settings_card_open( 'hero-size', __( 'Size & Position', 'ogc-newfinity' ) ); ?>
+				<?php ogc_page_settings_card_open( 'hero-size', __( 'Size & Position', 'ogc-newfinity' ), '', false, 'dashicons-editor-expand', 2 ); ?>
 					<?php
 					ogc_page_settings_render_hero_group(
 						$post_id,
@@ -604,11 +670,11 @@ function ogc_render_page_settings_meta_box( $post ) {
 					?>
 				<?php ogc_page_settings_card_close(); ?>
 
-				<?php ogc_page_settings_card_open( 'hero-border', __( 'Border', 'ogc-newfinity' ) ); ?>
+				<?php ogc_page_settings_card_open( 'hero-border', __( 'Border', 'ogc-newfinity' ), '', false, 'dashicons-admin-appearance', 3 ); ?>
 					<?php ogc_page_settings_render_border_panel( $post_id ); ?>
 				<?php ogc_page_settings_card_close(); ?>
 
-				<?php ogc_page_settings_card_open( 'hero-effects', __( 'Effects', 'ogc-newfinity' ) ); ?>
+				<?php ogc_page_settings_card_open( 'hero-effects', __( 'Effects', 'ogc-newfinity' ), '', false, 'dashicons-art', 4 ); ?>
 					<?php
 					ogc_page_settings_render_hero_group(
 						$post_id,
@@ -618,14 +684,18 @@ function ogc_render_page_settings_meta_box( $post ) {
 							'_ogc_hero_bg_grayscale',
 							'_ogc_hero_bg_overlay_color',
 							'_ogc_hero_bg_overlay_opacity',
+							'_ogc_hero_bg_blend_mode',
 							'_ogc_hero_bg_brightness',
 							'_ogc_hero_bg_contrast',
+							'_ogc_hero_bg_saturation',
+							'_ogc_hero_bg_noise',
+							'_ogc_hero_bg_vignette',
 						)
 					);
 					?>
 				<?php ogc_page_settings_card_close(); ?>
 
-				<?php ogc_page_settings_card_open( 'hero-animation', __( 'Animation & Opacity', 'ogc-newfinity' ) ); ?>
+				<?php ogc_page_settings_card_open( 'hero-animation', __( 'Animation & Opacity', 'ogc-newfinity' ), '', false, 'dashicons-controls-play', 5 ); ?>
 					<?php
 					ogc_page_settings_render_hero_group(
 						$post_id,
@@ -727,13 +797,17 @@ function ogc_page_settings_render_border_panel( $post_id ) {
 		<div class="ogc-ps-border__row">
 			<span class="ogc-ps-border__label"><?php esc_html_e( 'Border Type', 'ogc-newfinity' ); ?></span>
 			<div class="ogc-ps-border__control">
-				<select id="_ogc_hero_bg_border_style" name="_ogc_hero_bg_border_style" class="ogc-ps-border__select" data-border-type>
+				<div class="ogc-ps-segmented" role="group" aria-label="<?php esc_attr_e( 'Border Type', 'ogc-newfinity' ); ?>">
 					<?php foreach ( $style_options as $opt_value => $opt_label ) : ?>
-						<option value="<?php echo esc_attr( $opt_value ); ?>" <?php selected( $style, $opt_value ); ?>>
-							<?php echo esc_html( $opt_label ); ?>
-						</option>
+						<button
+							type="button"
+							class="ogc-ps-segmented__btn<?php echo ( $style === $opt_value ) ? ' is-active' : ''; ?>"
+							data-border-type-btn
+							data-value="<?php echo esc_attr( $opt_value ); ?>"
+						><?php echo esc_html( $opt_label ); ?></button>
 					<?php endforeach; ?>
-				</select>
+					<input type="hidden" id="_ogc_hero_bg_border_style" name="_ogc_hero_bg_border_style" value="<?php echo esc_attr( $style ); ?>" data-border-type>
+				</div>
 			</div>
 		</div>
 
@@ -929,7 +1003,8 @@ function ogc_page_settings_render_field( $key, $field, $value ) {
 							<img src="<?php echo esc_url( $value ); ?>" alt="">
 						</div>
 						<div class="ogc-page-settings__image-actions">
-							<button type="button" class="button" data-image-select><?php esc_html_e( 'Choose image', 'ogc-newfinity' ); ?></button>
+							<button type="button" class="button button-primary" data-image-select<?php echo $value ? ' hidden' : ''; ?>><?php esc_html_e( 'Choose image', 'ogc-newfinity' ); ?></button>
+							<button type="button" class="button" data-image-replace<?php echo $value ? '' : ' hidden'; ?>><?php esc_html_e( 'Replace', 'ogc-newfinity' ); ?></button>
 							<button type="button" class="button" data-image-remove<?php echo $value ? '' : ' hidden'; ?>><?php esc_html_e( 'Remove', 'ogc-newfinity' ); ?></button>
 						</div>
 					</div>

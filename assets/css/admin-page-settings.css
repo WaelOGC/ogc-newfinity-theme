@@ -2,6 +2,11 @@
  * OGC Page Settings meta box — accordion cards (Page editor).
  */
 
+:root {
+	--ogc-ps-accent-start: #F7931E;
+	--ogc-ps-accent-end: #FFB238;
+}
+
 .ogc-page-settings {
 	margin: 0;
 	display: flex;
@@ -106,17 +111,46 @@
 }
 
 .ogc-ps-card-stack > .ogc-ps-card {
-	border-radius: 4px;
+	border-radius: 8px;
+	border-color: #e8e0d2;
 	background: #fcfcfc;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.ogc-ps-card-stack > .ogc-ps-card[open] {
+	border-color: var(--ogc-ps-accent-start);
+	box-shadow: 0 2px 8px rgba(247, 147, 30, 0.12);
 }
 
 .ogc-ps-card-stack > .ogc-ps-card > .ogc-ps-card__summary {
 	padding: 0.5rem 0.7rem;
 	background: #f6f7f7;
+	gap: 0.6rem;
 }
 
 .ogc-ps-card-stack > .ogc-ps-card[open] > .ogc-ps-card__summary {
 	background: #fcfcfc;
+}
+
+.ogc-ps-card__badge-num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.4rem;
+	height: 1.4rem;
+	border-radius: 50%;
+	flex: 0 0 auto;
+	background: linear-gradient(135deg, var(--ogc-ps-accent-start), var(--ogc-ps-accent-end));
+	color: #1d1204;
+	font-size: 11px;
+	font-weight: 700;
+}
+
+.ogc-ps-card__icon {
+	color: var(--ogc-ps-accent-start);
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
 }
 
 .ogc-ps-card-stack > .ogc-ps-card > .ogc-ps-card__body {
@@ -217,20 +251,25 @@
 
 .ogc-page-settings__image-preview {
 	margin-bottom: 0.5rem;
-	max-width: 200px;
+	max-width: 100%;
+	border-radius: 8px;
+	overflow: hidden;
 }
 
 .ogc-page-settings__image-preview img {
 	display: block;
 	width: 100%;
 	height: auto;
-	border-radius: 2px;
-	border: 1px solid #dcdcde;
+	aspect-ratio: 16 / 7;
+	object-fit: cover;
+	border-radius: 0;
+	border: 0;
 }
 
 .ogc-page-settings__image-actions {
 	display: flex;
 	gap: 0.5rem;
+	flex-wrap: wrap;
 }
 
 /* ---- Elementor-style Border panel ---- */
@@ -433,4 +472,107 @@
 
 .ogc-ps-border__dependent[hidden] {
 	display: none !important;
+}
+
+/* ---- Hero-only overlay toggle ---- */
+
+#ogc-ps-card-hero .ogc-ps-toggle {
+	position: relative;
+	display: inline-block;
+	width: 2.25rem;
+	height: 1.25rem;
+	flex: 0 0 auto;
+}
+
+#ogc-ps-card-hero .ogc-ps-toggle input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+#ogc-ps-card-hero .ogc-ps-toggle__track {
+	position: absolute;
+	inset: 0;
+	background: #d6d2c4;
+	border-radius: 999px;
+	transition: background 0.15s ease;
+}
+
+#ogc-ps-card-hero .ogc-ps-toggle__track::before {
+	content: '';
+	position: absolute;
+	width: 1rem;
+	height: 1rem;
+	left: 0.125rem;
+	top: 0.125rem;
+	background: #fff;
+	border-radius: 50%;
+	transition: transform 0.15s ease;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+#ogc-ps-card-hero .ogc-ps-toggle input:checked + .ogc-ps-toggle__track {
+	background: linear-gradient(135deg, var(--ogc-ps-accent-start), var(--ogc-ps-accent-end));
+}
+
+#ogc-ps-card-hero .ogc-ps-toggle input:checked + .ogc-ps-toggle__track::before {
+	transform: translateX(1rem);
+}
+
+#ogc-ps-card-hero .ogc-ps-toggle-row {
+	gap: 0.65rem;
+}
+
+/* ---- Effects card 2-column range grid ---- */
+
+#ogc-ps-card-hero-effects .ogc-ps-card__body {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.8rem;
+}
+
+#ogc-ps-card-hero-effects .ogc-page-settings__row--range {
+	display: inline-flex;
+	flex-direction: column;
+	width: calc(50% - 0.4rem);
+	margin-bottom: 0;
+}
+
+#ogc-ps-card-hero-effects .ogc-page-settings__row--color,
+#ogc-ps-card-hero-effects .ogc-page-settings__row--select,
+#ogc-ps-card-hero-effects .ogc-page-settings__row--toggle,
+#ogc-ps-card-hero-effects [data-field="_ogc_hero_bg_overlay_opacity"] {
+	width: 100%;
+	margin-bottom: 0;
+}
+
+/* ---- Segmented Border Type ---- */
+
+.ogc-ps-segmented {
+	display: inline-flex;
+	border: 1px solid #d6d2c4;
+	border-radius: 6px;
+	overflow: hidden;
+	flex-wrap: wrap;
+	max-width: 100%;
+}
+
+.ogc-ps-segmented__btn {
+	padding: 0.35rem 0.65rem;
+	border: none;
+	background: #fff;
+	font-size: 12px;
+	cursor: pointer;
+	border-right: 1px solid #d6d2c4;
+	color: #1d2327;
+}
+
+.ogc-ps-segmented__btn:last-of-type {
+	border-right: none;
+}
+
+.ogc-ps-segmented__btn.is-active {
+	background: linear-gradient(135deg, var(--ogc-ps-accent-start), var(--ogc-ps-accent-end));
+	color: #1d1204;
+	font-weight: 600;
 }

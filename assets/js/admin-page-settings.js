@@ -54,15 +54,19 @@
 		});
 	}
 
+	function syncImageButtons($field, hasValue) {
+		$field.find('[data-image-select]').prop('hidden', !!hasValue);
+		$field.find('[data-image-replace]').prop('hidden', !hasValue);
+		$field.find('[data-image-remove]').prop('hidden', !hasValue);
+		$field.find('.ogc-page-settings__image-preview').prop('hidden', !hasValue);
+	}
+
 	function bindImage($root) {
 		var frame;
-		$root.on('click', '[data-image-select]', function (e) {
-			e.preventDefault();
-			var $field = $(this).closest('[data-image-field]');
-			var $input = $field.find('input[type="hidden"]');
-			var $preview = $field.find('.ogc-page-settings__image-preview');
-			var $remove = $field.find('[data-image-remove]');
+		var $activeField = null;
 
+		function openMedia($field) {
+			$activeField = $field;
 			if (frame) {
 				frame.open();
 				return;
@@ -75,25 +79,34 @@
 			});
 
 			frame.on('select', function () {
+				if (!$activeField || !$activeField.length) {
+					return;
+				}
 				var attachment = frame.state().get('selection').first().toJSON();
 				var url = attachment.url || '';
+				var $input = $activeField.find('input[type="hidden"]');
+				var $preview = $activeField.find('.ogc-page-settings__image-preview');
 				$input.val(url);
 				if (url) {
 					$preview.find('img').attr('src', url);
-					$preview.prop('hidden', false);
-					$remove.prop('hidden', false);
 				}
+				syncImageButtons($activeField, !!url);
 			});
 
 			frame.open();
+		}
+
+		$root.on('click', '[data-image-select], [data-image-replace]', function (e) {
+			e.preventDefault();
+			openMedia($(this).closest('[data-image-field]'));
 		});
 
 		$root.on('click', '[data-image-remove]', function (e) {
 			e.preventDefault();
 			var $field = $(this).closest('[data-image-field]');
 			$field.find('input[type="hidden"]').val('');
-			$field.find('.ogc-page-settings__image-preview').prop('hidden', true).find('img').attr('src', '');
-			$(this).prop('hidden', true);
+			$field.find('.ogc-page-settings__image-preview').find('img').attr('src', '');
+			syncImageButtons($field, false);
 		});
 	}
 
@@ -142,7 +155,15 @@
 			$panel.find('[data-border-dependent]').prop('hidden', !show);
 		}
 
-		$panel.on('change', '[data-border-type]', syncBorderType);
+		$panel.on('click', '[data-border-type-btn]', function (e) {
+			e.preventDefault();
+			var value = $(this).attr('data-value');
+			$panel.find('[data-border-type-btn]').removeClass('is-active');
+			$(this).addClass('is-active');
+			$panel.find('[data-border-type]').val(value);
+			syncBorderType();
+		});
+
 		syncBorderType();
 
 		$panel.find('[data-dimensions]').each(function () {
@@ -179,6 +200,42 @@
 		});
 	}
 
+	function bindOverlayToggle($root) {
+		var $toggle = $root.find('#ogc-ps-overlay-enable');
+		if (!$toggle.length) {
+			return;
+		}
+
+		var $colorRow = $root.find('[data-field="_ogc_hero_bg_overlay_color"]');
+		var $opacityRow = $root.find('[data-field="_ogc_hero_bg_overlay_opacity"]');
+		var $blendRow = $root.find('[data-field="_ogc_hero_bg_blend_mode"]');
+		var $colorText = $root.find('#_ogc_hero_bg_overlay_color');
+		var $colorSwatch = $root.find('.ogc-page-settings__color-swatch[data-sync="_ogc_hero_bg_overlay_color"]');
+		var defaultColor = $toggle.attr('data-default-color') || '#F7931E';
+
+		function syncOverlayRows() {
+			var on = $toggle.is(':checked');
+			$colorRow.prop('hidden', !on);
+			$opacityRow.prop('hidden', !on);
+			$blendRow.prop('hidden', !on);
+		}
+
+		$toggle.on('change', function () {
+			var on = $toggle.is(':checked');
+			if (on) {
+				if (!$colorText.val()) {
+					$colorText.val(defaultColor);
+					$colorSwatch.val(defaultColor);
+				}
+			} else {
+				$colorText.val('');
+			}
+			syncOverlayRows();
+		});
+
+		syncOverlayRows();
+	}
+
 	$(function () {
 		var $root = $('#ogc-page-settings');
 		if (!$root.length) {
@@ -190,6 +247,7 @@
 		bindImage($root);
 		bindAccordions($root);
 		bindBorderPanel($root);
+		bindOverlayToggle($root);
 		syncFitVisibility($root);
 		syncWidgetHide($root);
 

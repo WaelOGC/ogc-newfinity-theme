@@ -2260,6 +2260,13 @@ function ogc_render_hero_bg( $post_id = null ) {
 	$gray     = max( 0, min( 100, (int) ogc_get_hero_bg_meta( $post_id, '_ogc_hero_bg_grayscale', 0 ) ) );
 	$bright   = max( 50, min( 150, (int) ogc_get_hero_bg_meta( $post_id, '_ogc_hero_bg_brightness', 100 ) ) );
 	$contrast = max( 50, min( 150, (int) ogc_get_hero_bg_meta( $post_id, '_ogc_hero_bg_contrast', 100 ) ) );
+	$sat      = max( 0, min( 200, (int) ogc_get_hero_bg_meta( $post_id, '_ogc_hero_bg_saturation', 100 ) ) );
+	$noise    = max( 0, min( 100, (int) ogc_get_hero_bg_meta( $post_id, '_ogc_hero_bg_noise', 0 ) ) );
+	$vignette = max( 0, min( 100, (int) ogc_get_hero_bg_meta( $post_id, '_ogc_hero_bg_vignette', 0 ) ) );
+	$blend    = sanitize_key( (string) ogc_get_hero_bg_meta( $post_id, '_ogc_hero_bg_blend_mode', 'normal' ) );
+	if ( ! in_array( $blend, array( 'normal', 'multiply', 'screen', 'overlay', 'soft-light', 'luminosity' ), true ) ) {
+		$blend = 'normal';
+	}
 	$border_color = (string) ogc_get_hero_bg_meta( $post_id, '_ogc_hero_bg_border_color', OGC_DEFAULT_COLOR_ACCENT_START );
 	$border_style = sanitize_key( (string) ogc_get_hero_bg_meta( $post_id, '_ogc_hero_bg_border_style', 'default' ) );
 	if ( in_array( $border_style, array( 'default', 'none', '' ), true ) ) {
@@ -2272,7 +2279,7 @@ function ogc_render_hero_bg( $post_id = null ) {
 		: 'none';
 
 	$style = sprintf(
-		'--ogc-hero-bg-opacity:%1$s;--ogc-hero-bg-size:%2$s;--ogc-hero-bg-position:%3$s;--ogc-hero-bg-repeat:%4$s;--ogc-hero-bg-border-width:%5$s;--ogc-hero-bg-border-color:%6$s;--ogc-hero-bg-border-style:%7$s;--ogc-hero-bg-border-radius:%8$s;--ogc-hero-bg-box-shadow:%9$s;--ogc-hero-bg-filter:%10$s;--ogc-hero-bg-overlay-color:%11$s;--ogc-hero-bg-overlay-opacity:%12$s;--ogc-hero-fade-to:%1$s;',
+		'--ogc-hero-bg-opacity:%1$s;--ogc-hero-bg-size:%2$s;--ogc-hero-bg-position:%3$s;--ogc-hero-bg-repeat:%4$s;--ogc-hero-bg-border-width:%5$s;--ogc-hero-bg-border-color:%6$s;--ogc-hero-bg-border-style:%7$s;--ogc-hero-bg-border-radius:%8$s;--ogc-hero-bg-box-shadow:%9$s;--ogc-hero-bg-filter:%10$s;--ogc-hero-bg-overlay-color:%11$s;--ogc-hero-bg-overlay-opacity:%12$s;--ogc-hero-bg-blend-mode:%13$s;--ogc-hero-bg-noise-opacity:%14$s;--ogc-hero-bg-vignette-opacity:%15$s;--ogc-hero-fade-to:%1$s;',
 		esc_attr( function_exists( 'ogc_css_num' ) ? ogc_css_num( $opacity ) : (string) $opacity ),
 		esc_attr( ogc_hero_bg_size_css( $post_id ) ),
 		esc_attr( ogc_hero_bg_position_css( $post_id ) ),
@@ -2282,9 +2289,12 @@ function ogc_render_hero_bg( $post_id = null ) {
 		esc_attr( $border_style ),
 		esc_attr( ogc_page_settings_sides_css( $br_sides ) ),
 		esc_attr( $shadow ),
-		esc_attr( sprintf( 'blur(%dpx) grayscale(%d%%) brightness(%d%%) contrast(%d%%)', $blur, $gray, $bright, $contrast ) ),
+		esc_attr( sprintf( 'blur(%dpx) grayscale(%d%%) brightness(%d%%) contrast(%d%%) saturate(%d%%)', $blur, $gray, $bright, $contrast, $sat ) ),
 		esc_attr( $overlay_color ? $overlay_color : 'transparent' ),
-		esc_attr( function_exists( 'ogc_css_num' ) ? ogc_css_num( $overlay_op / 100 ) : (string) ( $overlay_op / 100 ) )
+		esc_attr( function_exists( 'ogc_css_num' ) ? ogc_css_num( $overlay_op / 100 ) : (string) ( $overlay_op / 100 ) ),
+		esc_attr( $blend ),
+		esc_attr( function_exists( 'ogc_css_num' ) ? ogc_css_num( $noise / 100 ) : (string) ( $noise / 100 ) ),
+		esc_attr( function_exists( 'ogc_css_num' ) ? ogc_css_num( $vignette / 100 ) : (string) ( $vignette / 100 ) )
 	);
 
 	printf(
@@ -2296,6 +2306,12 @@ function ogc_render_hero_bg( $post_id = null ) {
 	);
 	if ( $has_overlay ) {
 		echo '<span class="ogc-hero-bg__overlay"></span>';
+	}
+	if ( $vignette > 0 ) {
+		echo '<span class="ogc-hero-bg__vignette"></span>';
+	}
+	if ( $noise > 0 ) {
+		echo '<span class="ogc-hero-bg__noise"></span>';
 	}
 	echo '</div>';
 }
