@@ -160,7 +160,18 @@ Primary buttons: `.ogc-btn`. Outline: `.ogc-btn-outline`. Effects use body class
 
 Empty hero image = no extra layer (WebGL/canvas heroes unchanged). Favicon = WP Site Icon; theme bundled files are fallback only.
 
-**Customizer bridge** (`inc/customizer-bridge.php`): panel **OGC Hero Backgrounds** exposes image, opacity, position, and overlay color only (same theme_mod keys) for live preview. Full controls stay in OGC NewFinity → Images. Link in each section: “Edit all hero background options →”.
+**Customizer bridge** (`inc/customizer-bridge.php` + `assets/js/customize-preview.js` + `assets/js/customize-controls.js`): Appearance → Customize exposes the same theme_mod keys as the dashboard for live preview — **no duplicate storage**.
+
+| Customizer UI | Dashboard tab | Notes |
+|---|---|---|
+| Panel **OGC Hero Backgrounds** (Home / About / Services / Mission) | Images (+ Pages opacity) | Collapsible groups: Image, Size & Position, Border, Effects, Animation. Images use `refresh`; other fields `postMessage`. |
+| **OGC Header** | Header | Logo (refresh), bar colors/opacity/sticky (`postMessage`). |
+| **OGC Footer** | Footer | Logo (refresh), width/bg/tagline (`postMessage`), link columns builder with label + URL inputs (`refresh`; same `ogc_footer_columns_json`). |
+| **OGC Colors** | Colors | Full palette, button gradient, shadow (`postMessage`). |
+| **OGC Buttons & Motion** | Buttons | Shape, primary/outline hover, states, orbit toggle, swoosh (`postMessage` + body classes). |
+| **OGC Fonts** | Fonts | Heading/body families (`refresh` for Google Fonts reload), base size (`postMessage`). |
+
+Each section links back to its OGC NewFinity tab. Field tooltips from the schema render as clickable `(?)` icons (not permanent helper text). Collapsible groups mirror the dashboard’s bold section headings.
 
 ### Pages
 | Key | Type | Default | Read by |
