@@ -692,6 +692,13 @@ function ogc_theme_options_schema() {
 					'default' => false,
 				),
 				array(
+					'key'      => 'ogc_maintenance_mode_heading',
+					'type'     => 'text',
+					'label'    => __( 'Maintenance heading', 'ogc-newfinity' ),
+					'default'  => __( 'Something new is coming together', 'ogc-newfinity' ),
+					'sanitize' => 'sanitize_text_field',
+				),
+				array(
 					'key'      => 'ogc_maintenance_mode_message',
 					'type'     => 'textarea',
 					'label'    => __( 'Maintenance message', 'ogc-newfinity' ),
@@ -2838,8 +2845,35 @@ function ogc_maintenance_mode_redirect() {
 		$message = ogc_option_default( 'ogc_maintenance_mode_message' );
 	}
 
-	$site_name = get_bloginfo( 'name' );
-	$logo_url  = ogc_get_custom_logo_url();
+	$heading = (string) ogc_mod( 'ogc_maintenance_mode_heading' );
+	if ( '' === $heading ) {
+		$heading = ogc_option_default( 'ogc_maintenance_mode_heading' );
+	}
+
+	$site_name   = get_bloginfo( 'name' );
+	$logo_url    = ogc_get_custom_logo_url();
+	$location    = ogc_get_location_text();
+	$contact     = ogc_get_contact_email();
+	$copyright   = ogc_get_footer_copyright();
+	$fonts_url   = ogc_get_google_fonts_url();
+	$socials     = array(
+		'x'        => __( 'OGC NewFinity on X', 'ogc-newfinity' ),
+		'linkedin' => __( 'OGC NewFinity on LinkedIn', 'ogc-newfinity' ),
+		'github'   => __( 'OGC NewFinity on GitHub', 'ogc-newfinity' ),
+		'discord'  => __( 'OGC NewFinity on Discord', 'ogc-newfinity' ),
+	);
+	$custom_socials = function_exists( 'ogc_get_custom_social_links' ) ? ogc_get_custom_social_links() : array();
+
+	$has_socials = false;
+	foreach ( $socials as $network => $label ) {
+		if ( ogc_get_social_url( $network ) ) {
+			$has_socials = true;
+			break;
+		}
+	}
+	if ( ! $has_socials && ! empty( $custom_socials ) ) {
+		$has_socials = true;
+	}
 
 	status_header( 503 );
 	header( 'Retry-After: 3600' );
@@ -2852,15 +2886,22 @@ function ogc_maintenance_mode_redirect() {
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="noindex,nofollow">
 	<title><?php echo esc_html( $site_name ); ?></title>
+	<?php if ( $fonts_url ) : ?>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link rel="stylesheet" href="<?php echo esc_url( $fonts_url ); ?>">
+	<?php endif; ?>
 	<style>
 		:root {
 			--bg-primary: #0A0A0A;
-			--bg-panel: #141414;
 			--border-accent: #FFD27A;
+			--accent-gradient-start: #FFD27A;
+			--accent-gradient-end: #FFEAC2;
 			--text-primary: #F5F5F5;
 			--text-secondary: #C9C9C9;
+			--text-on-accent: #1A1200;
 			--ogc-brand-rgb: 255, 210, 122;
-			--ogc-radius: 12px;
+			--ogc-brand-hover-rgb: 255, 234, 194;
 			--font-heading: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
 			--font-body: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 		}
@@ -2879,49 +2920,115 @@ function ogc_maintenance_mode_redirect() {
 			margin: 0;
 			min-height: 100vh;
 			display: flex;
+			flex-direction: column;
 			align-items: center;
-			justify-content: center;
-			padding: 1.5rem;
+			padding: 2rem 1.25rem 1.5rem;
+			background-color: #0A0A0A;
 			background-color: var(--bg-primary);
+			color: #F5F5F5;
 			color: var(--text-primary);
 			font-family: var(--font-body);
 			line-height: 1.6;
 			-webkit-font-smoothing: antialiased;
+			text-align: center;
+		}
+
+		.screen-reader-text {
+			border: 0;
+			clip: rect(1px, 1px, 1px, 1px);
+			clip-path: inset(50%);
+			height: 1px;
+			margin: -1px;
+			overflow: hidden;
+			padding: 0;
+			position: absolute;
+			width: 1px;
+			word-wrap: normal !important;
 		}
 
 		.ogc-maintenance {
 			width: 100%;
-			max-width: 32rem;
-			padding: 1.5rem;
-			border-radius: var(--ogc-radius);
-			background: rgba(20, 20, 20, 0.2);
-			border: 1px solid rgba(var(--ogc-brand-rgb), 0.15);
-			backdrop-filter: blur(10px);
-			-webkit-backdrop-filter: blur(10px);
-			box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
-			text-align: center;
+			max-width: 36rem;
+			margin: auto;
+			display: flex;
+			flex: 1 0 auto;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
 		}
 
-		.ogc-maintenance__logo {
+		.ogc-maintenance__badge {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 5.5rem;
+			height: 5.5rem;
+			margin: 0 0 1.5rem;
+			border-radius: 50%;
+			border: 1px solid #FFD27A;
+			border-color: var(--border-accent);
+			background: #141414;
+			overflow: hidden;
+			flex-shrink: 0;
+		}
+
+		.ogc-maintenance__badge img {
 			display: block;
-			max-width: 160px;
-			width: auto;
-			height: auto;
-			margin: 0 auto 1.25rem;
+			width: 68%;
+			height: 68%;
+			object-fit: contain;
 		}
 
-		.ogc-maintenance__title {
-			margin: 0 0 1rem;
+		.ogc-maintenance__badge-text {
 			font-family: var(--font-heading);
-			font-size: 1.5rem;
+			font-size: 1.15rem;
 			font-weight: 700;
-			letter-spacing: -0.02em;
+			letter-spacing: 0.08em;
+			color: #FFD27A;
 			color: var(--border-accent);
 		}
 
-		.ogc-maintenance__message {
-			margin: 0;
+		.ogc-maintenance__location {
+			margin: 0 0 1.25rem;
+			font-family: var(--font-body);
+			font-size: 0.75rem;
+			font-weight: 500;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			color: #C9C9C9;
 			color: var(--text-secondary);
+		}
+
+		.ogc-maintenance__heading {
+			margin: 0;
+			max-width: 18ch;
+			font-family: var(--font-heading);
+			font-size: clamp(1.85rem, 5vw, 2.75rem);
+			font-weight: 500;
+			font-style: italic;
+			letter-spacing: -0.02em;
+			line-height: 1.15;
+			color: #F5F5F5;
+			color: var(--text-primary);
+		}
+
+		.ogc-maintenance__rule {
+			display: block;
+			width: 3.5rem;
+			height: 3px;
+			margin: 1.25rem auto 1.5rem;
+			border: 0;
+			border-radius: 999px;
+			background: linear-gradient(90deg, #FFD27A, #FFEAC2);
+			background: linear-gradient(90deg, var(--accent-gradient-start), var(--accent-gradient-end));
+		}
+
+		.ogc-maintenance__message {
+			margin: 0 0 1.75rem;
+			max-width: 28rem;
+			color: #C9C9C9;
+			color: var(--text-secondary);
+			font-family: var(--font-body);
 			font-size: 1rem;
 		}
 
@@ -2933,31 +3040,173 @@ function ogc_maintenance_mode_redirect() {
 			margin-bottom: 0;
 		}
 
-		@media (max-width: 599px) {
-			.ogc-maintenance {
-				padding: 1.15rem;
-				backdrop-filter: blur(7px);
-				-webkit-backdrop-filter: blur(7px);
+		.ogc-maintenance__cta {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 2.75rem;
+			padding: 0.7rem 1.75rem;
+			border-radius: 999px;
+			border: 0;
+			background: linear-gradient(145deg, #FFD27A, #FFEAC2);
+			background: linear-gradient(145deg, var(--accent-gradient-start), var(--accent-gradient-end));
+			color: #1A1200;
+			color: var(--text-on-accent);
+			font-family: var(--font-heading);
+			font-size: 0.95rem;
+			font-weight: 600;
+			letter-spacing: 0.01em;
+			text-decoration: none;
+			transition: opacity 0.2s ease, transform 0.2s ease;
+		}
+
+		.ogc-maintenance__cta:hover,
+		.ogc-maintenance__cta:focus-visible {
+			opacity: 0.92;
+			transform: translateY(-1px);
+		}
+
+		.ogc-maintenance__cta:focus-visible {
+			outline: 2px solid #FFEAC2;
+			outline-offset: 3px;
+		}
+
+		.ogc-maintenance__social {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 0.65rem;
+			list-style: none;
+			margin: 1.75rem 0 0;
+			padding: 0;
+		}
+
+		.ogc-maintenance__social-link {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			border: 1px solid rgba(255, 210, 122, 0.5);
+			color: #FFD27A;
+			background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+			box-shadow:
+				inset 0 1px 0 rgba(255, 255, 255, 0.08),
+				0 2px 6px rgba(0, 0, 0, 0.4);
+			text-decoration: none;
+			transition:
+				box-shadow 0.2s ease,
+				transform 0.2s ease,
+				border-color 0.2s ease,
+				color 0.2s ease;
+		}
+
+		.ogc-maintenance__social-link:hover,
+		.ogc-maintenance__social-link:focus-visible {
+			color: #FFEAC2;
+			border-color: rgba(255, 234, 194, 0.9);
+			transform: translateY(-1px);
+		}
+
+		.ogc-maintenance__social-link:focus-visible {
+			outline: 2px solid #FFEAC2;
+			outline-offset: 2px;
+		}
+
+		.ogc-maintenance__social-link svg {
+			display: block;
+			width: 16px;
+			height: 16px;
+		}
+
+		.ogc-maintenance__copyright {
+			flex: 0 0 auto;
+			margin: 1.5rem 0 0;
+			padding-top: 0.5rem;
+			font-family: var(--font-body);
+			font-size: 0.75rem;
+			color: #C9C9C9;
+			color: var(--text-secondary);
+			opacity: 0.85;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.ogc-maintenance__cta,
+			.ogc-maintenance__social-link {
+				transition: none;
+			}
+
+			.ogc-maintenance__cta:hover,
+			.ogc-maintenance__cta:focus-visible,
+			.ogc-maintenance__social-link:hover,
+			.ogc-maintenance__social-link:focus-visible {
+				transform: none;
 			}
 		}
 	</style>
 </head>
 <body>
 	<main class="ogc-maintenance" role="main">
-		<?php if ( $logo_url ) : ?>
-			<img
-				class="ogc-maintenance__logo"
-				src="<?php echo esc_url( $logo_url ); ?>"
-				alt="<?php echo esc_attr( $site_name ); ?>"
-			>
-		<?php else : ?>
-			<h1 class="ogc-maintenance__title"><?php echo esc_html( $site_name ); ?></h1>
+		<div class="ogc-maintenance__badge">
+			<?php if ( $logo_url ) : ?>
+				<img
+					src="<?php echo esc_url( $logo_url ); ?>"
+					alt="<?php echo esc_attr( $site_name ); ?>"
+				>
+			<?php else : ?>
+				<span class="ogc-maintenance__badge-text">OGC</span>
+			<?php endif; ?>
+		</div>
+
+		<?php if ( $location ) : ?>
+			<p class="ogc-maintenance__location"><?php echo esc_html( $location ); ?></p>
 		<?php endif; ?>
+
+		<h1 class="ogc-maintenance__heading"><?php echo esc_html( $heading ); ?></h1>
+		<div class="ogc-maintenance__rule" aria-hidden="true"></div>
 
 		<div class="ogc-maintenance__message">
 			<?php echo wp_kses_post( wpautop( $message ) ); ?>
 		</div>
+
+		<?php if ( $contact ) : ?>
+			<a class="ogc-maintenance__cta" href="mailto:<?php echo esc_attr( $contact ); ?>">
+				<?php esc_html_e( 'Get in touch', 'ogc-newfinity' ); ?>
+			</a>
+		<?php endif; ?>
+
+		<?php if ( $has_socials ) : ?>
+			<ul class="ogc-maintenance__social" aria-label="<?php esc_attr_e( 'Social media', 'ogc-newfinity' ); ?>">
+				<?php
+				foreach ( $socials as $network => $label ) :
+					$url = ogc_get_social_url( $network );
+					if ( ! $url ) {
+						continue;
+					}
+					?>
+					<li>
+						<a class="ogc-maintenance__social-link" href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener noreferrer">
+							<span class="screen-reader-text"><?php echo esc_html( $label ); ?></span>
+							<?php ogc_social_icon( $network ); ?>
+						</a>
+					</li>
+				<?php endforeach; ?>
+				<?php foreach ( $custom_socials as $custom_social ) : ?>
+					<li>
+						<a class="ogc-maintenance__social-link" href="<?php echo esc_url( $custom_social['url'] ); ?>" target="_blank" rel="noopener noreferrer">
+							<span class="screen-reader-text"><?php echo esc_html( $custom_social['label'] ); ?></span>
+							<?php ogc_social_icon( $custom_social['icon'] ); ?>
+						</a>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
 	</main>
+
+	<?php if ( $copyright ) : ?>
+		<p class="ogc-maintenance__copyright"><?php echo esc_html( $copyright ); ?></p>
+	<?php endif; ?>
 </body>
 </html>
 	<?php
