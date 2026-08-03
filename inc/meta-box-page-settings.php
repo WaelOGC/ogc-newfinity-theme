@@ -533,7 +533,7 @@ function ogc_page_settings_get_meta( $post_id, $key, $default = '' ) {
  * @param string $title    Card title.
  * @param string $summary  Optional one-line status shown when collapsed.
  * @param bool   $open     Whether the card starts expanded.
- * @param string $icon     Optional dashicons class for nested hero cards.
+ * @param string $icon     Optional dashicons class.
  * @param int    $number   Optional ordinal badge (nested hero cards only).
  */
 function ogc_page_settings_card_open( $id, $title, $summary = '', $open = false, $icon = '', $number = 0 ) {
@@ -543,9 +543,9 @@ function ogc_page_settings_card_open( $id, $title, $summary = '', $open = false,
 			<span class="ogc-ps-card__chevron" aria-hidden="true"></span>
 			<?php if ( $number > 0 ) : ?>
 				<span class="ogc-ps-card__badge-num"><?php echo (int) $number; ?></span>
-				<?php if ( $icon ) : ?>
-					<span class="dashicons <?php echo esc_attr( $icon ); ?> ogc-ps-card__icon" aria-hidden="true"></span>
-				<?php endif; ?>
+			<?php endif; ?>
+			<?php if ( $icon ) : ?>
+				<span class="dashicons <?php echo esc_attr( $icon ); ?> ogc-ps-card__icon" aria-hidden="true"></span>
 			<?php endif; ?>
 			<span class="ogc-ps-card__title"><?php echo esc_html( $title ); ?></span>
 			<?php if ( '' !== $summary ) : ?>
@@ -646,7 +646,7 @@ function ogc_render_page_settings_meta_box( $post ) {
 	?>
 	<div class="ogc-page-settings" id="ogc-page-settings">
 
-		<?php ogc_page_settings_card_open( 'hero', __( 'Hero Background', 'ogc-newfinity' ), $hero_badge, (bool) $hero_image ); ?>
+		<?php ogc_page_settings_card_open( 'hero', __( 'Hero Background', 'ogc-newfinity' ), $hero_badge, (bool) $hero_image, 'dashicons-format-image' ); ?>
 			<p class="ogc-page-settings__intro"><?php esc_html_e( 'Additive layer behind the existing hero canvas. Leave the image empty to keep the WebGL hero untouched.', 'ogc-newfinity' ); ?></p>
 
 			<div class="ogc-ps-card-stack">
@@ -655,16 +655,26 @@ function ogc_render_page_settings_meta_box( $post ) {
 				<?php ogc_page_settings_card_close(); ?>
 
 				<?php ogc_page_settings_card_open( 'hero-size', __( 'Size & Position', 'ogc-newfinity' ), '', false, 'dashicons-editor-expand', 2 ); ?>
+					<div class="ogc-ps-size-tiles">
+						<?php
+						ogc_page_settings_render_hero_group(
+							$post_id,
+							$hero,
+							array(
+								'_ogc_hero_bg_fit',
+								'_ogc_hero_bg_position',
+								'_ogc_hero_bg_repeat',
+							)
+						);
+						?>
+					</div>
 					<?php
 					ogc_page_settings_render_hero_group(
 						$post_id,
 						$hero,
 						array(
-							'_ogc_hero_bg_fit',
 							'_ogc_hero_bg_width',
 							'_ogc_hero_bg_height',
-							'_ogc_hero_bg_position',
-							'_ogc_hero_bg_repeat',
 						)
 					);
 					?>
@@ -675,21 +685,31 @@ function ogc_render_page_settings_meta_box( $post ) {
 				<?php ogc_page_settings_card_close(); ?>
 
 				<?php ogc_page_settings_card_open( 'hero-effects', __( 'Effects', 'ogc-newfinity' ), '', false, 'dashicons-art', 4 ); ?>
+					<div class="ogc-ps-effects-tiles">
+						<?php
+						ogc_page_settings_render_hero_group(
+							$post_id,
+							$hero,
+							array(
+								'_ogc_hero_bg_blur',
+								'_ogc_hero_bg_grayscale',
+								'_ogc_hero_bg_noise',
+								'_ogc_hero_bg_vignette',
+							)
+						);
+						?>
+					</div>
 					<?php
 					ogc_page_settings_render_hero_group(
 						$post_id,
 						$hero,
 						array(
-							'_ogc_hero_bg_blur',
-							'_ogc_hero_bg_grayscale',
 							'_ogc_hero_bg_overlay_color',
 							'_ogc_hero_bg_overlay_opacity',
 							'_ogc_hero_bg_blend_mode',
 							'_ogc_hero_bg_brightness',
 							'_ogc_hero_bg_contrast',
 							'_ogc_hero_bg_saturation',
-							'_ogc_hero_bg_noise',
-							'_ogc_hero_bg_vignette',
 						)
 					);
 					?>
@@ -710,9 +730,9 @@ function ogc_render_page_settings_meta_box( $post ) {
 			</div>
 		<?php ogc_page_settings_card_close(); ?>
 
-		<?php ogc_page_settings_card_open( 'layout', __( 'Page Layout', 'ogc-newfinity' ), $layout_badge ); ?>
+		<?php ogc_page_settings_card_open( 'layout', __( 'Page Layout', 'ogc-newfinity' ), $layout_badge, false, 'dashicons-layout' ); ?>
 			<div class="ogc-page-settings__row">
-				<label class="ogc-page-settings__label" for="_ogc_page_layout"><?php esc_html_e( 'Layout', 'ogc-newfinity' ); ?></label>
+				<?php ogc_page_settings_render_label( '_ogc_page_layout', __( 'Layout', 'ogc-newfinity' ) ); ?>
 				<select id="_ogc_page_layout" name="_ogc_page_layout" class="ogc-page-settings__select">
 					<?php foreach ( $layout_choices as $opt_value => $opt_label ) : ?>
 						<option value="<?php echo esc_attr( $opt_value ); ?>" <?php selected( $layout, $opt_value ); ?>>
@@ -722,46 +742,73 @@ function ogc_render_page_settings_meta_box( $post ) {
 				</select>
 			</div>
 			<div class="ogc-page-settings__row">
-				<label class="ogc-page-settings__check">
-					<input type="checkbox" id="_ogc_page_enable_widget_area" name="_ogc_page_enable_widget_area" value="1" <?php checked( $enable_widgets, 1 ); ?>>
-					<span><?php esc_html_e( 'Enable Widget Area', 'ogc-newfinity' ); ?></span>
-				</label>
-				<p class="ogc-page-settings__help"><?php esc_html_e( 'Shows the theme’s Blog Sidebar widget area beside this page’s content. Add widgets under Appearance → Widgets.', 'ogc-newfinity' ); ?></p>
+				<div class="ogc-page-settings__label-row ogc-page-settings__label-row--toggle">
+					<label class="ogc-page-settings__check ogc-ps-toggle-row">
+						<span class="ogc-ps-toggle">
+							<input type="checkbox" id="_ogc_page_enable_widget_area" name="_ogc_page_enable_widget_area" value="1" <?php checked( $enable_widgets, 1 ); ?>>
+							<span class="ogc-ps-toggle__track"></span>
+						</span>
+						<span><?php esc_html_e( 'Enable Widget Area', 'ogc-newfinity' ); ?></span>
+					</label>
+					<?php
+					ogc_page_settings_render_tip(
+						__( 'Shows the theme’s Blog Sidebar widget area beside this page’s content. Add widgets under Appearance → Widgets.', 'ogc-newfinity' )
+					);
+					?>
+				</div>
 			</div>
 		<?php ogc_page_settings_card_close(); ?>
 
-		<?php ogc_page_settings_card_open( 'visibility', __( 'Visibility', 'ogc-newfinity' ), $visibility_badge ); ?>
+		<?php ogc_page_settings_card_open( 'visibility', __( 'Visibility', 'ogc-newfinity' ), $visibility_badge, false, 'dashicons-visibility' ); ?>
 			<div class="ogc-page-settings__checks">
 				<div class="ogc-page-settings__row">
-					<label class="ogc-page-settings__check">
-						<input type="checkbox" name="_ogc_hide_page_title" value="1" <?php checked( $hide_title, 1 ); ?>>
+					<label class="ogc-page-settings__check ogc-ps-toggle-row">
+						<span class="ogc-ps-toggle">
+							<input type="checkbox" name="_ogc_hide_page_title" value="1" <?php checked( $hide_title, 1 ); ?>>
+							<span class="ogc-ps-toggle__track"></span>
+						</span>
 						<span><?php esc_html_e( 'Hide Page Title', 'ogc-newfinity' ); ?></span>
 					</label>
 				</div>
 				<div class="ogc-page-settings__row">
-					<label class="ogc-page-settings__check">
-						<input type="checkbox" name="_ogc_hide_footer" value="1" <?php checked( $hide_footer, 1 ); ?>>
+					<label class="ogc-page-settings__check ogc-ps-toggle-row">
+						<span class="ogc-ps-toggle">
+							<input type="checkbox" name="_ogc_hide_footer" value="1" <?php checked( $hide_footer, 1 ); ?>>
+							<span class="ogc-ps-toggle__track"></span>
+						</span>
 						<span><?php esc_html_e( 'Hide Footer', 'ogc-newfinity' ); ?></span>
 					</label>
 				</div>
 				<div class="ogc-page-settings__row" id="ogc-ps-hide-widget-row">
-					<label class="ogc-page-settings__check">
-						<input type="checkbox" id="_ogc_hide_widget_area" name="_ogc_hide_widget_area" value="1" <?php checked( $hide_widgets, 1 ); ?> <?php disabled( ! $enable_widgets ); ?>>
+					<label class="ogc-page-settings__check ogc-ps-toggle-row">
+						<span class="ogc-ps-toggle">
+							<input type="checkbox" id="_ogc_hide_widget_area" name="_ogc_hide_widget_area" value="1" <?php checked( $hide_widgets, 1 ); ?> <?php disabled( ! $enable_widgets ); ?>>
+							<span class="ogc-ps-toggle__track"></span>
+						</span>
 						<span><?php esc_html_e( 'Hide Widget Area', 'ogc-newfinity' ); ?></span>
 					</label>
 				</div>
 				<div class="ogc-page-settings__row">
-					<label class="ogc-page-settings__check">
-						<input type="checkbox" name="_ogc_hide_featured_image" value="1" <?php checked( $hide_featured, 1 ); ?>>
+					<label class="ogc-page-settings__check ogc-ps-toggle-row">
+						<span class="ogc-ps-toggle">
+							<input type="checkbox" name="_ogc_hide_featured_image" value="1" <?php checked( $hide_featured, 1 ); ?>>
+							<span class="ogc-ps-toggle__track"></span>
+						</span>
 						<span><?php esc_html_e( 'Hide Featured Image', 'ogc-newfinity' ); ?></span>
 					</label>
 				</div>
 			</div>
 		<?php ogc_page_settings_card_close(); ?>
 
-		<?php ogc_page_settings_card_open( 'subtitle', __( 'Page Subtitle', 'ogc-newfinity' ), $subtitle_badge ); ?>
+		<?php ogc_page_settings_card_open( 'subtitle', __( 'Page Subtitle', 'ogc-newfinity' ), $subtitle_badge, false, 'dashicons-editor-textcolor' ); ?>
 			<div class="ogc-page-settings__row">
-				<label class="ogc-page-settings__label" for="_ogc_page_subtitle"><?php esc_html_e( 'Subtitle', 'ogc-newfinity' ); ?></label>
+				<?php
+				ogc_page_settings_render_label(
+					'_ogc_page_subtitle',
+					__( 'Subtitle', 'ogc-newfinity' ),
+					__( 'Displayed under the page title in the hero area. This is NOT the SEO meta description.', 'ogc-newfinity' )
+				);
+				?>
 				<input
 					type="text"
 					id="_ogc_page_subtitle"
@@ -770,7 +817,6 @@ function ogc_render_page_settings_meta_box( $post ) {
 					value="<?php echo esc_attr( $subtitle ); ?>"
 					maxlength="160"
 				>
-				<p class="ogc-page-settings__help"><?php esc_html_e( 'Displayed under the page title in the hero area. This is NOT the SEO meta description.', 'ogc-newfinity' ); ?></p>
 			</div>
 		<?php ogc_page_settings_card_close(); ?>
 
@@ -797,17 +843,19 @@ function ogc_page_settings_render_border_panel( $post_id ) {
 		<div class="ogc-ps-border__row">
 			<span class="ogc-ps-border__label"><?php esc_html_e( 'Border Type', 'ogc-newfinity' ); ?></span>
 			<div class="ogc-ps-border__control">
-				<div class="ogc-ps-segmented" role="group" aria-label="<?php esc_attr_e( 'Border Type', 'ogc-newfinity' ); ?>">
+				<select
+					id="_ogc_hero_bg_border_style"
+					name="_ogc_hero_bg_border_style"
+					class="ogc-page-settings__select ogc-ps-border__select"
+					data-border-type
+					aria-label="<?php esc_attr_e( 'Border Type', 'ogc-newfinity' ); ?>"
+				>
 					<?php foreach ( $style_options as $opt_value => $opt_label ) : ?>
-						<button
-							type="button"
-							class="ogc-ps-segmented__btn<?php echo ( $style === $opt_value ) ? ' is-active' : ''; ?>"
-							data-border-type-btn
-							data-value="<?php echo esc_attr( $opt_value ); ?>"
-						><?php echo esc_html( $opt_label ); ?></button>
+						<option value="<?php echo esc_attr( $opt_value ); ?>" <?php selected( $style, $opt_value ); ?>>
+							<?php echo esc_html( $opt_label ); ?>
+						</option>
 					<?php endforeach; ?>
-					<input type="hidden" id="_ogc_hero_bg_border_style" name="_ogc_hero_bg_border_style" value="<?php echo esc_attr( $style ); ?>" data-border-type>
-				</div>
+				</select>
 			</div>
 		</div>
 
@@ -971,6 +1019,47 @@ function ogc_page_settings_render_dimensions_control( $name, $label, $sides, $at
 }
 
 /**
+ * Render a clickable (?) tip next to a field label.
+ *
+ * @param string $text Tooltip body text.
+ */
+function ogc_page_settings_render_tip( $text ) {
+	$text = (string) $text;
+	if ( '' === $text ) {
+		return;
+	}
+	?>
+	<button
+		type="button"
+		class="ogc-ps-tip"
+		aria-expanded="false"
+		aria-label="<?php echo esc_attr( sprintf( /* translators: %s: truncated help text */ __( 'Help: %s', 'ogc-newfinity' ), wp_html_excerpt( $text, 80, '…' ) ) ); ?>"
+	>
+		<span class="ogc-ps-tip__mark" aria-hidden="true">?</span>
+		<span class="ogc-ps-tip__bubble" role="tooltip"><?php echo esc_html( $text ); ?></span>
+	</button>
+	<?php
+}
+
+/**
+ * Render a label row with optional (?) tip.
+ *
+ * @param string $for_id Input id for the label.
+ * @param string $label  Visible label text.
+ * @param string $tip    Optional tip text.
+ */
+function ogc_page_settings_render_label( $for_id, $label, $tip = '' ) {
+	?>
+	<div class="ogc-page-settings__label-row">
+		<label class="ogc-page-settings__label" for="<?php echo esc_attr( $for_id ); ?>">
+			<?php echo esc_html( $label ); ?>
+		</label>
+		<?php ogc_page_settings_render_tip( $tip ); ?>
+	</div>
+	<?php
+}
+
+/**
  * Render one hero field control.
  *
  * @param string               $key   Meta key / input name.
@@ -984,14 +1073,10 @@ function ogc_page_settings_render_field( $key, $field, $value ) {
 	if ( ! empty( $field['show_when_fit'] ) ) {
 		$row_attrs = ' data-show-when-fit="' . esc_attr( $field['show_when_fit'] ) . '"';
 	}
+	$tip = ! empty( $field['tooltip'] ) ? (string) $field['tooltip'] : '';
 	?>
 	<div class="ogc-page-settings__row ogc-page-settings__row--<?php echo esc_attr( $type ); ?>" data-field="<?php echo esc_attr( $key ); ?>"<?php echo $row_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-		<label class="ogc-page-settings__label" for="<?php echo esc_attr( $key ); ?>">
-			<?php echo esc_html( $field['label'] ); ?>
-		</label>
-		<?php if ( ! empty( $field['tooltip'] ) ) : ?>
-			<p class="ogc-page-settings__help"><?php echo esc_html( $field['tooltip'] ); ?></p>
-		<?php endif; ?>
+		<?php ogc_page_settings_render_label( $key, $field['label'], $tip ); ?>
 		<div class="ogc-page-settings__control">
 			<?php
 			switch ( $type ) {

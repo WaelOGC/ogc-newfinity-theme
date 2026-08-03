@@ -23,17 +23,45 @@
 	}
 
 	function bindRanges($root) {
-		$root.find('input[type="range"][data-range-output]').each(function () {
-			var $input = $(this);
+		$root.find('input[type="range"]').each(function () {
+			var input = this;
+			var $input = $(input);
 			var unit = '';
-			var $out = $('#' + $input.attr('data-range-output'));
-			var match = $out.text().match(/[^\d.-]+$/);
-			if (match) {
-				unit = match[0];
+			var outId = $input.attr('data-range-output');
+			var $out = outId ? $('#' + outId) : $();
+
+			if ($out.length) {
+				var match = $out.text().match(/[^\d.-]+$/);
+				if (match) {
+					unit = match[0];
+				}
 			}
-			$input.on('input change', function () {
-				$out.text($input.val() + unit);
-			});
+
+			function updateRange() {
+				var min = parseFloat(input.min);
+				var max = parseFloat(input.max);
+				var val = parseFloat(input.value);
+
+				if (isNaN(min)) {
+					min = 0;
+				}
+				if (isNaN(max) || max === min) {
+					max = min + 100;
+				}
+				if (isNaN(val)) {
+					val = min;
+				}
+
+				var pct = Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+				input.style.setProperty('--ogc-ps-range-fill', pct + '%');
+
+				if ($out.length) {
+					$out.text(input.value + unit);
+				}
+			}
+
+			$input.on('input change', updateRange);
+			updateRange();
 		});
 	}
 
@@ -155,14 +183,7 @@
 			$panel.find('[data-border-dependent]').prop('hidden', !show);
 		}
 
-		$panel.on('click', '[data-border-type-btn]', function (e) {
-			e.preventDefault();
-			var value = $(this).attr('data-value');
-			$panel.find('[data-border-type-btn]').removeClass('is-active');
-			$(this).addClass('is-active');
-			$panel.find('[data-border-type]').val(value);
-			syncBorderType();
-		});
+		$panel.on('change', '[data-border-type]', syncBorderType);
 
 		syncBorderType();
 
@@ -236,6 +257,61 @@
 		syncOverlayRows();
 	}
 
+	function bindTips($root) {
+		function closeTip($tip) {
+			$tip.attr('aria-expanded', 'false').removeClass('is-flip-down');
+		}
+
+		function closeAll(except) {
+			$root.find('.ogc-ps-tip[aria-expanded="true"]').each(function () {
+				if (except && this === except) {
+					return;
+				}
+				closeTip($(this));
+			});
+		}
+
+		function positionTip($tip) {
+			$tip.removeClass('is-flip-down');
+			var bubble = $tip.find('.ogc-ps-tip__bubble')[0];
+			if (!bubble) {
+				return;
+			}
+			var rect = bubble.getBoundingClientRect();
+			if (rect.top < 8) {
+				$tip.addClass('is-flip-down');
+			}
+		}
+
+		$root.on('click', '.ogc-ps-tip', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var tip = this;
+			var $tip = $(tip);
+			var open = $tip.attr('aria-expanded') === 'true';
+			closeAll(tip);
+			if (open) {
+				closeTip($tip);
+				return;
+			}
+			$tip.attr('aria-expanded', 'true');
+			positionTip($tip);
+		});
+
+		$(document).on('click.ogcPsTip', function (e) {
+			if ($(e.target).closest('.ogc-ps-tip').length) {
+				return;
+			}
+			closeAll();
+		});
+
+		$(document).on('keydown.ogcPsTip', function (e) {
+			if (e.key === 'Escape') {
+				closeAll();
+			}
+		});
+	}
+
 	$(function () {
 		var $root = $('#ogc-page-settings');
 		if (!$root.length) {
@@ -248,6 +324,7 @@
 		bindAccordions($root);
 		bindBorderPanel($root);
 		bindOverlayToggle($root);
+		bindTips($root);
 		syncFitVisibility($root);
 		syncWidgetHide($root);
 
