@@ -1,0 +1,268 @@
+/**
+ * OGC Elementor widgets — additive styles only.
+ * Reuses theme tokens; does not restyle core PHP templates.
+ */
+
+/* Large button size (theme only ships --sm) */
+.ogc-btn.ogc-btn--lg {
+	padding: 0.85rem 1.75rem;
+	font-size: 1rem;
+}
+
+.ogc-btn__icon {
+	display: inline-flex;
+	margin-inline-end: 0.45rem;
+	line-height: 0;
+}
+
+.ogc-btn__icon svg {
+	width: 1em;
+	height: 1em;
+}
+
+/* Feature card — glass-card + service-card typography rhythm */
+.ogc-feature-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	height: 100%;
+}
+
+.ogc-feature-card__icon {
+	font-size: 1.5rem;
+	line-height: 1;
+	color: var(--ogc-link-color);
+}
+
+.ogc-feature-card__title {
+	margin: 0;
+	font-family: var(--ogc-font-heading);
+	font-weight: 700;
+	font-size: 1.125rem;
+	line-height: 1.3;
+	color: var(--ogc-text-primary);
+}
+
+.ogc-feature-card__text {
+	margin: 0;
+	font-family: var(--ogc-font-body);
+	font-size: 0.9375rem;
+	line-height: 1.6;
+	color: var(--ogc-text-muted);
+}
+
+.ogc-feature-card--hover {
+	transition:
+		transform var(--ogc-transition-speed, 0.2s) ease,
+		border-color var(--ogc-transition-speed, 0.2s) ease,
+		box-shadow var(--ogc-transition-speed, 0.2s) ease;
+}
+
+.ogc-el-service-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.5rem;
+	color: var(--ogc-link-color);
+	margin-bottom: 0.5rem;
+}
+
+/* Split hero image */
+.ogc-el-split-hero__img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: var(--ogc-radius);
+}
+
+/* CTA band background layer */
+.ogc-el-cta-band {
+	position: relative;
+}
+
+.ogc-el-cta-band__overlay {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.ogc-el-cta-band .ogc-home-cta__inner {
+	position: relative;
+	z-index: 1;
+}
+
+/* Image effects */
+.ogc-el-image-effects {
+	margin: 0;
+}
+
+.ogc-el-image-effects__frame {
+	overflow: hidden;
+	border-radius: var(--ogc-radius);
+	border: 1px solid rgba(var(--ogc-brand-rgb), 0.25);
+}
+
+.ogc-el-image-effects__frame img {
+	display: block;
+	width: 100%;
+	height: auto;
+	transition: transform 0.45s ease, opacity 0.45s ease;
+}
+
+.ogc-el-image-effects--fade-in .ogc-el-image-effects__frame img {
+	animation: ogc-el-fade-in 0.7s ease both;
+}
+
+.ogc-el-image-effects--zoom-on-hover .ogc-el-image-effects__frame img:hover {
+	transform: scale(1.05);
+}
+
+.ogc-el-image-effects--reveal-on-scroll .ogc-el-image-effects__frame img {
+	opacity: 0;
+	transform: translateY(1.25rem);
+}
+
+.ogc-el-image-effects--reveal-on-scroll.is-revealed .ogc-el-image-effects__frame img {
+	opacity: 1;
+	transform: none;
+}
+
+.ogc-el-image-effects__caption {
+	margin: 0.65rem 0 0;
+	font-family: var(--ogc-font-body);
+	font-size: 0.875rem;
+	color: var(--ogc-text-muted);
+}
+
+@keyframes ogc-el-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* Slider */
+.ogc-el-slider {
+	position: relative;
+}
+
+.ogc-el-slider__track {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--ogc-radius);
+	border: 1px solid rgba(var(--ogc-brand-rgb), 0.25);
+	min-height: 12rem;
+}
+
+.ogc-el-slider__slide {
+	margin: 0;
+	display: none;
+}
+
+.ogc-el-slider__slide.is-active {
+	display: block;
+}
+
+.ogc-el-slider--fade .ogc-el-slider__slide.is-active {
+	animation: ogc-el-fade-in 0.45s ease both;
+}
+
+.ogc-el-slider--slide .ogc-el-slider__slide.is-active {
+	animation: ogc-el-slide-in 0.4s ease both;
+}
+
+.ogc-el-slider__slide img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.ogc-el-slider__caption {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: 0;
+	padding: 0.75rem 1rem;
+	background: linear-gradient(transparent, rgba(10, 10, 10, 0.85));
+	font-family: var(--ogc-font-body);
+	font-size: 0.875rem;
+}
+
+.ogc-el-slider__nav {
+	display: flex;
+	gap: 0.5rem;
+	justify-content: flex-end;
+	margin-top: 0.75rem;
+}
+
+.ogc-el-slider__prev,
+.ogc-el-slider__next {
+	min-width: 2.5rem;
+	padding-inline: 0.65rem;
+}
+
+.ogc-el-slider__dots {
+	display: flex;
+	gap: 0.4rem;
+	justify-content: center;
+	margin-top: 0.65rem;
+}
+
+.ogc-el-slider__dot {
+	width: 0.5rem;
+	height: 0.5rem;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(var(--ogc-brand-rgb), 0.35);
+	cursor: pointer;
+}
+
+.ogc-el-slider__dot.is-active {
+	background: var(--ogc-link-color);
+}
+
+@keyframes ogc-el-slide-in {
+	from {
+		transform: translateX(1.5rem);
+		opacity: 0.4;
+	}
+	to {
+		transform: none;
+		opacity: 1;
+	}
+}
+
+/* Logo / menu row */
+.ogc-el-logo-menu {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1rem 1.5rem;
+}
+
+.ogc-el-logo-menu__nav {
+	flex: 1 1 auto;
+}
+
+.ogc-el-footer-meta__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.65rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ogc-el-image-effects__frame img,
+	.ogc-el-slider--fade .ogc-el-slider__slide.is-active,
+	.ogc-el-slider--slide .ogc-el-slider__slide.is-active {
+		animation: none !important;
+		transition: none !important;
+	}
+}

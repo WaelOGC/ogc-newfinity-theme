@@ -40,6 +40,25 @@ require_once OGC_THEME_DIR . '/inc/contact-form.php';
 require_once OGC_THEME_DIR . '/inc/submit-idea-form.php';
 
 /**
+ * Bootstrap Elementor custom widgets only when Elementor is loaded.
+ * Theme remains fatal-free when Elementor is inactive.
+ *
+ * Elementor fires `elementor/loaded` during `plugins_loaded` (before the
+ * theme), so we both catch the late case and the already-fired case.
+ */
+function ogc_elementor_bootstrap() {
+	if ( ! did_action( 'elementor/loaded' ) ) {
+		return;
+	}
+	require_once OGC_THEME_DIR . '/inc/elementor/widgets-loader.php';
+}
+if ( did_action( 'elementor/loaded' ) ) {
+	ogc_elementor_bootstrap();
+} else {
+	add_action( 'elementor/loaded', 'ogc_elementor_bootstrap' );
+}
+
+/**
  * Warn when style.css Version header drifts from OGC_THEME_VERSION.
  *
  * WordPress reads the theme version from style.css; keep that header in sync
