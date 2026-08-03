@@ -46,24 +46,31 @@ class OGC_Elementor_Widget_Slider extends OGC_Elementor_Widget_Base {
 			)
 		);
 
+		$repeater = new \Elementor\Repeater();
+
+		$repeater->add_control(
+			'image',
+			array(
+				'label' => __( 'Image', 'ogc-newfinity' ),
+				'type'  => \Elementor\Controls_Manager::MEDIA,
+			)
+		);
+
+		$repeater->add_control(
+			'caption',
+			array(
+				'label' => __( 'Caption', 'ogc-newfinity' ),
+				'type'  => \Elementor\Controls_Manager::TEXT,
+			)
+		);
+
 		$this->add_control(
 			'slides',
 			array(
 				'label'       => __( 'Slides', 'ogc-newfinity' ),
 				'type'        => \Elementor\Controls_Manager::REPEATER,
+				'fields'      => $repeater->get_controls(),
 				'title_field' => '{{{ caption }}}',
-				'fields'      => array(
-					array(
-						'name'  => 'image',
-						'label' => __( 'Image', 'ogc-newfinity' ),
-						'type'  => \Elementor\Controls_Manager::MEDIA,
-					),
-					array(
-						'name'  => 'caption',
-						'label' => __( 'Caption', 'ogc-newfinity' ),
-						'type'  => \Elementor\Controls_Manager::TEXT,
-					),
-				),
 				'default'     => array(
 					array(
 						'caption' => __( 'Slide 1', 'ogc-newfinity' ),

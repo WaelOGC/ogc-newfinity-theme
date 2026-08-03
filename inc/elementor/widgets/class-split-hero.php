@@ -55,33 +55,43 @@ class OGC_Elementor_Widget_Split_Hero extends OGC_Elementor_Widget_Base {
 			)
 		);
 
+		$repeater = new \Elementor\Repeater();
+
+		$repeater->add_control(
+			'text',
+			array(
+				'label'   => __( 'Word / phrase', 'ogc-newfinity' ),
+				'type'    => \Elementor\Controls_Manager::TEXT,
+				'default' => __( 'Our', 'ogc-newfinity' ),
+			)
+		);
+
+		$repeater->add_control(
+			'shimmer',
+			array(
+				'label'        => __( 'Accent underline (hero-shimmer)', 'ogc-newfinity' ),
+				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'return_value' => 'yes',
+				'default'      => '',
+			)
+		);
+
+		$repeater->add_control(
+			'color',
+			array(
+				'label'   => __( 'Color', 'ogc-newfinity' ),
+				'type'    => \Elementor\Controls_Manager::COLOR,
+				'default' => '',
+			)
+		);
+
 		$this->add_control(
 			'headline_words',
 			array(
 				'label'       => __( 'Headline words', 'ogc-newfinity' ),
 				'type'        => \Elementor\Controls_Manager::REPEATER,
+				'fields'      => $repeater->get_controls(),
 				'title_field' => '{{{ text }}}',
-				'fields'      => array(
-					array(
-						'name'    => 'text',
-						'label'   => __( 'Word / phrase', 'ogc-newfinity' ),
-						'type'    => \Elementor\Controls_Manager::TEXT,
-						'default' => __( 'Our', 'ogc-newfinity' ),
-					),
-					array(
-						'name'         => 'shimmer',
-						'label'        => __( 'Accent underline (hero-shimmer)', 'ogc-newfinity' ),
-						'type'         => \Elementor\Controls_Manager::SWITCHER,
-						'return_value' => 'yes',
-						'default'      => '',
-					),
-					array(
-						'name'    => 'color',
-						'label'   => __( 'Color', 'ogc-newfinity' ),
-						'type'    => \Elementor\Controls_Manager::COLOR,
-						'default' => '',
-					),
-				),
 				'default'     => array(
 					array(
 						'text'    => __( 'Our', 'ogc-newfinity' ),
