@@ -24,6 +24,23 @@ Long-term, the theme + Amy Agent plugin may be sold together as a product with a
 
 ---
 
+## AI Provider Configuration (Admin-Managed, Not Hardcoded)
+
+The Amy Agent plugin must include a **settings page in the WordPress admin dashboard** where the site owner configures which AI provider powers Amy. API keys must **never** live in the plugin’s source code, in the theme, or in Cursor / developer tooling.
+
+### Requirements
+
+1. **Admin settings UI** — The site owner can:
+   - Select an AI provider from a list (for example: Google Gemini, OpenAI, Anthropic Claude, DeepSeek).
+   - Enter the corresponding API key for that provider.
+2. **Secure storage** — The selected provider and its API key must be stored in the WordPress database via the WordPress Options API (or equivalent WP-native storage). Nothing is hardcoded in plugin source.
+3. **Python middleware reads WP config** — The Python service (the middleware layer that calls the AI provider) must read the currently selected provider and API key from this WordPress-stored configuration, then call the correct provider’s API.
+4. **Switch without code changes** — Changing providers later is an admin settings action only. No plugin or middleware code changes should be required to switch between supported providers.
+
+This is a **future plugin obligation**. Do not implement provider settings, API key storage, or provider-switching logic in the theme.
+
+---
+
 ## Integration Contract — Submit Your Idea (`/submit-idea/`)
 
 The theme and the future plugin must cooperate so visitors never see both UIs at once.
@@ -106,4 +123,5 @@ Doc 05 described an early Gemini chat idea inside the theme. **Amy Agent superse
 | `ogc_submit_idea_render` | Theme fires hook | Plugin renders Amy UI |
 | Chat widget | Theme placeholder ok | Plugin powers Amy |
 | Support FAQ agent context | Documented only | Plugin system prompt |
+| AI provider + API key | Out of scope | Admin settings → WP Options; Python middleware reads config |
 | License-key productization | Out of scope | Possible commercial path |
