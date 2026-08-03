@@ -1,3 +1,6 @@
+> **⚠️ SUPERSEDED — DO NOT IMPLEMENT FROM THIS DOCUMENT.**
+> The site-wide AI chat widget described below is now owned by the future **Amy Agent plugin** (see `09-amy-agent-plugin-scope.md`, section "Future Plugin Responsibilities" item 1). It will NOT be built as a theme feature, and will not necessarily use the Gemini API as described below — that decision is deferred to when the plugin is actually built. This file is kept only as historical context for the original idea. Read `09-amy-agent-plugin-scope.md` for the current plan.
+
 # 05 — AI Assistant (Gemini API Integration)
 
 ## Purpose
@@ -23,4 +26,4 @@ A customer-facing chat assistant embedded on the site (widget, likely bottom-rig
 - This feature can be built after the core theme/pages are complete and stable — it is an enhancement layer, not part of the initial skeleton.
 
 ## Status
-Scope defined here; implementation timing to be decided later (after base theme + admin options are working).
+Superseded by `09-amy-agent-plugin-scope.md`. Not part of the theme.

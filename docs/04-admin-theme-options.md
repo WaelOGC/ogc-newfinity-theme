@@ -20,7 +20,7 @@ Not under Settings → General. Native Customizer **Site Identity** (logo + Site
 
 Save posts to `admin-post.php?action=ogc_save_theme_options` (nonce-protected). Import / Export / Reset This Tab / Reset All are separate `admin-post` actions reusing the same schema sanitizers.
 
-## Tab Map (11 sections)
+## Tab Map (10 sections)
 
 1. **General** — site-wide contact/location/response copy, analytics, maintenance  
 2. **Header** — logo, sizes, bg, sticky, nav order/visibility, nav text color  
@@ -28,11 +28,10 @@ Save posts to `admin-post.php?action=ogc_save_theme_options` (nonce-protected). 
 4. **Colors** — base + component tokens + presets (JS fill, save to persist)  
 5. **Fonts** — allow-listed Google Fonts, sizes, weights, line-height, letter-spacing  
 6. **Buttons & Effects** — radius, shadow, per-variant hover (primary vs outline), a11y states, orbit + H1 underline  
-7. **Images** — light logo + optional hero backgrounds (Home/About/Services/Mission)  
-8. **Pages** — hero background opacity per key page  
-9. **Posts** — blog card image/date/category toggles + excerpt length  
-10. **Ads Manager** — Google AdSense + advertiser creatives (sub-tabs), placement limits, page-restricted rendering  
-11. **Advanced** — custom CSS/JS, import/export, reset  
+7. **Images** — light logo only (hero backgrounds live in the per-Page meta box)  
+8. **Posts** — blog card image/date/category toggles + excerpt length  
+9. **Ads Manager** — Google AdSense + advertiser creatives (sub-tabs), placement limits, page-restricted rendering  
+10. **Advanced** — custom CSS/JS, import/export, reset  
 
 Social links live under **Footer** (not a separate tab).
 
@@ -141,43 +140,24 @@ Primary buttons: `.ogc-btn`. Outline: `.ogc-btn-outline`. Effects use body class
 | Key | Type | Default | Read by |
 |---|---|---|---|
 | `ogc_logo_light` | image | `''` | `ogc_get_logo_light_url()` |
-| `ogc_hero_bg_{page}` | image | `''` | `ogc_render_hero_bg( $page )` — pages: home, about, services, mission |
-| `ogc_hero_bg_fit_{page}` | select | `cover` | cover / contain / custom → `--ogc-hero-bg-size-{page}` |
-| `ogc_hero_bg_width_{page}` | text (px/%) | `100%` | used when fit=`custom` |
-| `ogc_hero_bg_height_{page}` | text (px/%/auto) | `auto` | used when fit=`custom` |
-| `ogc_hero_bg_position_{page}` | select | `center` | `--ogc-hero-bg-position-{page}` |
-| `ogc_hero_bg_repeat_{page}` | select | `no-repeat` | `--ogc-hero-bg-repeat-{page}` |
-| `ogc_hero_bg_border_width_{page}` | number (px) | `0` | border on `.ogc-hero-bg--{page}` |
-| `ogc_hero_bg_border_color_{page}` | color | `#FFD27A` | |
-| `ogc_hero_bg_border_style_{page}` | select | `solid` | solid / dashed / dotted / double |
-| `ogc_hero_bg_border_radius_{page}` | range 0–50 | `0` | px |
-| `ogc_hero_bg_blur_{page}` | range 0–20 | `0` | px → CSS `filter` |
-| `ogc_hero_bg_grayscale_{page}` | range 0–100 | `0` | % → CSS `filter` |
-| `ogc_hero_bg_overlay_color_{page}` | color | `''` | empty = no overlay |
-| `ogc_hero_bg_overlay_opacity_{page}` | range 0–100 | `0` | only when overlay color set |
-| `ogc_hero_bg_brightness_{page}` | range 50–150 | `100` | % |
-| `ogc_hero_bg_contrast_{page}` | range 50–150 | `100` | % |
-| `ogc_hero_bg_animation_{page}` | select | `none` | none / parallax / fade-in / ken-burns (`data-hero-anim`); off under `prefers-reduced-motion` and `body.ogc-motion-reduced-by-admin` |
 
-Empty hero image = no extra layer (WebGL/canvas heroes unchanged). Favicon = WP Site Icon; theme bundled files are fallback only.
+> Hero Background is no longer part of Theme Options. It moved to a per-Page "OGC Page Settings" meta box (Pages editor screen) so it can be set on any page, not just 4 fixed pages. See the new "Per-Page Meta Box" section added below.
+
+Favicon = WP Site Icon; theme bundled files are fallback only.
 
 **Customizer bridge** (`inc/customizer-bridge.php` + `assets/js/customize-preview.js` + `assets/js/customize-controls.js`): Appearance → Customize exposes the same theme_mod keys as the dashboard for live preview — **no duplicate storage**.
 
 | Customizer UI | Dashboard tab | Notes |
 |---|---|---|
-| Panel **OGC Hero Backgrounds** (Home / About / Services / Mission) | Images (+ Pages opacity) | Collapsible groups: Image, Size & Position, Border, Effects, Animation. Images use `refresh`; other fields `postMessage`. |
 | **OGC Header** | Header | Logo (refresh), bar colors/opacity/sticky (`postMessage`). |
 | **OGC Footer** | Footer | Logo (refresh), width/bg/tagline (`postMessage`), link columns builder with label + URL inputs (`refresh`; same `ogc_footer_columns_json`). |
 | **OGC Colors** | Colors | Full palette, button gradient, shadow (`postMessage`). |
 | **OGC Buttons & Motion** | Buttons | Shape, primary/outline hover, states, orbit toggle, swoosh (`postMessage` + body classes). |
 | **OGC Fonts** | Fonts | Heading/body families (`refresh` for Google Fonts reload), base size (`postMessage`). |
 
-Each section links back to its OGC NewFinity tab. Field tooltips from the schema render as clickable `(?)` icons (not permanent helper text). Collapsible groups mirror the dashboard’s bold section headings.
+Hero Background has no Customizer live-preview panel anymore — it's edited per-page in the block editor sidebar instead.
 
-### Pages
-| Key | Type | Default | Read by |
-|---|---|---|---|
-| `ogc_hero_bg_opacity_{page}` | range | `35` | Layer opacity (separate from overlay opacity) — home / about / services / mission |
+Each section links back to its OGC NewFinity tab. Field tooltips from the schema render as clickable `(?)` icons (not permanent helper text). Collapsible groups mirror the dashboard’s bold section headings.
 
 ### Posts
 | Key | Type | Default | Read by |
@@ -186,6 +166,66 @@ Each section links back to its OGC NewFinity tab. Field tooltips from the schema
 | `ogc_blog_card_show_date` | checkbox | on | blog card |
 | `ogc_blog_card_show_category` | checkbox | on | blog card |
 | `ogc_blog_excerpt_length` | number (words) | `22` | `ogc_get_blog_card_excerpt()` in `inc/blog.php` |
+
+### Per-Page Meta Box (Hero Background, Layout, Visibility, Subtitle)
+
+Hero Background, layout, visibility toggles, and subtitle are **not** Theme Options. They live on the **Pages editor screen only**, in the **OGC Page Settings** meta box (`inc/meta-box-page-settings.php`), registered at `normal` / `high` — same position as Yoast SEO.
+
+**Storage:** post meta (not `theme_mod`). Schema source: `ogc_page_settings_hero_fields()` plus the layout/visibility/subtitle keys rendered beside it.
+
+Hero Background keys (`_ogc_hero_bg_*` — includes the newer saturation / noise / vignette / blend mode fields):
+
+| Meta key |
+|---|
+| `_ogc_hero_bg_image` |
+| `_ogc_hero_bg_fit` |
+| `_ogc_hero_bg_width` |
+| `_ogc_hero_bg_height` |
+| `_ogc_hero_bg_position` |
+| `_ogc_hero_bg_repeat` |
+| `_ogc_hero_bg_border_width` |
+| `_ogc_hero_bg_border_color` |
+| `_ogc_hero_bg_border_style` |
+| `_ogc_hero_bg_border_radius` |
+| `_ogc_hero_bg_box_shadow` |
+| `_ogc_hero_bg_blur` |
+| `_ogc_hero_bg_grayscale` |
+| `_ogc_hero_bg_overlay_color` |
+| `_ogc_hero_bg_overlay_opacity` |
+| `_ogc_hero_bg_brightness` |
+| `_ogc_hero_bg_contrast` |
+| `_ogc_hero_bg_saturation` |
+| `_ogc_hero_bg_noise` |
+| `_ogc_hero_bg_vignette` |
+| `_ogc_hero_bg_blend_mode` |
+| `_ogc_hero_bg_animation` |
+| `_ogc_hero_bg_opacity` |
+
+Layout / visibility / subtitle keys:
+
+| Meta key | Purpose |
+|---|---|
+| `_ogc_page_layout` | `default` / `full_width_contained` / `full_width_stretched` / `boxed` |
+| `_ogc_page_enable_widget_area` | Opt-in page widget sidebar |
+| `_ogc_hide_page_title` | Hide the page title in the hero |
+| `_ogc_hide_footer` | Hide the site footer on this page |
+| `_ogc_hide_widget_area` | Hide the page widget area even when enabled |
+| `_ogc_hide_featured_image` | Hide the featured image |
+| `_ogc_page_subtitle` | Optional hero subtitle text |
+
+**Render helpers** (all in `inc/theme-options.php`; each accepts a post ID, defaulting via `get_the_ID()`):
+
+| Helper | Role |
+|---|---|
+| `ogc_render_hero_bg( $post_id )` | Prints the additive hero background layer when `_ogc_hero_bg_image` is set |
+| `ogc_get_page_layout_class()` | Returns a body/article layout class from `_ogc_page_layout` |
+| `ogc_page_enable_widget_area()` | Whether the page widget area is opted in |
+| `ogc_page_should_hide( $flag )` | Visibility check for `title` / `footer` / `widget_area` / `featured_image` |
+| `ogc_get_page_subtitle()` | Returns `_ogc_page_subtitle` |
+
+Works on **any** page — including brand-new pages created from the dashboard — via the `page.php` fallback template (no per-page PHP file needed). Dedicated templates (`page-about-ogc-newfinity.php`, `page-services.php`, etc.) also call the same helpers.
+
+One-time migration of the 4 legacy pages' old Theme Options values happened via `inc/migrate-hero-bg-to-postmeta.php` (already run, versioned, safe to leave in the codebase as a historical migration).
 
 ### Ads Manager
 Admin UI splits into two JS sub-tabs (**Google ads** / **Advertisers' advertisements**) plus shared placement limits below. Front-end code: `inc/ads.php`, `template-parts/ad-slot.php`, `assets/css/ads.css`.
