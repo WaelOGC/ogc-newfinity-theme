@@ -334,10 +334,10 @@
 .ogc-opt__select {
 	appearance: none;
 	background-image: linear-gradient(45deg, transparent 50%, var(--opt-muted) 50%), linear-gradient(135deg, var(--opt-muted) 50%, transparent 50%);
-	background-position: calc(100% - 16px) 16px, calc(100% - 11px) 16px;
+	background-position: calc(100% - 16px) center, calc(100% - 11px) center;
 	background-size: 5px 5px, 5px 5px;
 	background-repeat: no-repeat;
-	padding-right: 32px;
+	padding-right: 32px !important;
 }
 
 .ogc-opt__select option {
@@ -752,8 +752,7 @@
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(7.5rem, 0.85fr) auto;
 }
 
-.ogc-opt__linkrow input,
-.ogc-opt__linkrow select {
+.ogc-opt__linkrow input {
 	padding: 6px 10px;
 	border: 1px solid var(--opt-line);
 	border-radius: 8px;
@@ -764,6 +763,12 @@
 
 .ogc-opt__linkrow select {
 	min-width: 0;
+	padding: 6px 32px 6px 10px;
+	border: 1px solid var(--opt-line);
+	border-radius: 8px;
+	background: var(--opt-panel-2);
+	color: var(--opt-text);
+	font-size: 12.5px;
 	cursor: pointer;
 }
 
@@ -810,10 +815,19 @@
 .ogc-opt__field-inline input[type="text"],
 .ogc-opt__field-inline input[type="url"],
 .ogc-opt__field-inline input[type="number"],
-.ogc-opt__field-inline select,
 .ogc-opt__field-inline textarea {
 	width: 100%;
 	padding: 6px 10px;
+	border: 1px solid var(--opt-line);
+	border-radius: 8px;
+	background: var(--opt-panel-2);
+	color: var(--opt-text);
+	font-size: 12.5px;
+}
+
+.ogc-opt__field-inline select {
+	width: 100%;
+	padding: 6px 32px 6px 10px;
 	border: 1px solid var(--opt-line);
 	border-radius: 8px;
 	background: var(--opt-panel-2);
