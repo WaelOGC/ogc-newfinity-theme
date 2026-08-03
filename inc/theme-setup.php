@@ -191,3 +191,45 @@ add_action( 'init', 'ogc_maybe_register_site_icon', 25 );
 function ogc_primary_nav_fallback() {
 	ogc_render_primary_nav();
 }
+
+/**
+ * Do not claim custom-header theme support — Elementor Canvas / Full Width
+ * own the chrome when those page templates are selected.
+ */
+add_action(
+	'after_setup_theme',
+	static function () {
+		remove_theme_support( 'custom-header' );
+	}
+);
+
+/**
+ * Pass-through for Elementor Canvas pages.
+ *
+ * Confirms no theme filter at priority > 999 overrides `$template` for
+ * Elementor-built canvas pages. Elementor's own template_include (higher
+ * priority / earlier) remains authoritative.
+ *
+ * @param string $template Path to the template file.
+ * @return string
+ */
+add_filter(
+	'template_include',
+	static function ( $template ) {
+		if ( class_exists( '\Elementor\Plugin' ) && function_exists( 'get_the_ID' ) ) {
+			$post_id = get_the_ID();
+			if (
+				$post_id
+				&& \Elementor\Plugin::$instance->documents->get( $post_id )
+				&& \Elementor\Plugin::$instance->documents->get( $post_id )->is_built_with_elementor()
+			) {
+				$page_template = get_page_template_slug( $post_id );
+				if ( 'elementor_canvas' === $page_template ) {
+					return $template; // Let Elementor win; do not interfere.
+				}
+			}
+		}
+		return $template;
+	},
+	999
+);

@@ -8,6 +8,28 @@
  * @package OGC_NewFinity
  */
 
+$ogc_queried_id           = (int) get_queried_object_id();
+$ogc_is_elementor_managed = class_exists( '\Elementor\Plugin' )
+	&& $ogc_queried_id
+	&& \Elementor\Plugin::$instance->documents->get( $ogc_queried_id )
+	&& \Elementor\Plugin::$instance->documents->get( $ogc_queried_id )->is_built_with_elementor()
+	&& in_array(
+		get_page_template_slug( $ogc_queried_id ),
+		array( 'elementor_canvas', 'elementor_header_footer' ),
+		true
+	);
+
+if ( $ogc_is_elementor_managed ) {
+	// Elementor owns this page chrome — do not print theme header/hero/footer.
+	if ( have_posts() ) {
+		while ( have_posts() ) {
+			the_post();
+			the_content();
+		}
+	}
+	return;
+}
+
 get_header();
 ?>
 

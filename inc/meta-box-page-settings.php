@@ -760,8 +760,8 @@ function ogc_render_page_settings_meta_box( $post ) {
 		<?php ogc_page_settings_card_close(); ?>
 
 		<?php ogc_page_settings_card_open( 'visibility', __( 'Visibility', 'ogc-newfinity' ), $visibility_badge, false, 'dashicons-visibility' ); ?>
-			<div class="ogc-page-settings__checks">
-				<div class="ogc-page-settings__row">
+			<div class="ogc-ps-visibility-tiles">
+				<div class="ogc-page-settings__row" data-vis="title">
 					<label class="ogc-page-settings__check ogc-ps-toggle-row">
 						<span class="ogc-ps-toggle">
 							<input type="checkbox" name="_ogc_hide_page_title" value="1" <?php checked( $hide_title, 1 ); ?>>
@@ -770,7 +770,7 @@ function ogc_render_page_settings_meta_box( $post ) {
 						<span><?php esc_html_e( 'Hide Page Title', 'ogc-newfinity' ); ?></span>
 					</label>
 				</div>
-				<div class="ogc-page-settings__row">
+				<div class="ogc-page-settings__row" data-vis="footer">
 					<label class="ogc-page-settings__check ogc-ps-toggle-row">
 						<span class="ogc-ps-toggle">
 							<input type="checkbox" name="_ogc_hide_footer" value="1" <?php checked( $hide_footer, 1 ); ?>>
@@ -779,7 +779,7 @@ function ogc_render_page_settings_meta_box( $post ) {
 						<span><?php esc_html_e( 'Hide Footer', 'ogc-newfinity' ); ?></span>
 					</label>
 				</div>
-				<div class="ogc-page-settings__row" id="ogc-ps-hide-widget-row">
+				<div class="ogc-page-settings__row" id="ogc-ps-hide-widget-row" data-vis="widgets">
 					<label class="ogc-page-settings__check ogc-ps-toggle-row">
 						<span class="ogc-ps-toggle">
 							<input type="checkbox" id="_ogc_hide_widget_area" name="_ogc_hide_widget_area" value="1" <?php checked( $hide_widgets, 1 ); ?> <?php disabled( ! $enable_widgets ); ?>>
@@ -788,7 +788,7 @@ function ogc_render_page_settings_meta_box( $post ) {
 						<span><?php esc_html_e( 'Hide Widget Area', 'ogc-newfinity' ); ?></span>
 					</label>
 				</div>
-				<div class="ogc-page-settings__row">
+				<div class="ogc-page-settings__row" data-vis="featured">
 					<label class="ogc-page-settings__check ogc-ps-toggle-row">
 						<span class="ogc-ps-toggle">
 							<input type="checkbox" name="_ogc_hide_featured_image" value="1" <?php checked( $hide_featured, 1 ); ?>>
