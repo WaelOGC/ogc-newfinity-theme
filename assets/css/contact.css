@@ -77,6 +77,59 @@
 }
 
 /* --------------------------------------------------------------------------
+   Amy Agent variant — trust cards move below the chat, single column,
+   horizontal row. Visibility is controlled at runtime by the amy-agent
+   plugin's JS via the `.is-visible` class (see contract note below).
+   -------------------------------------------------------------------------- */
+
+.ogc-contact-layout--amy {
+	grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+	.ogc-contact-layout--amy {
+		grid-template-columns: 1fr;
+	}
+}
+
+.ogc-contact-layout--amy .ogc-contact-layout__aside {
+	grid-column: 1 / -1;
+	opacity: 0;
+	max-height: 0;
+	overflow: hidden;
+	pointer-events: none;
+	transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.ogc-contact-layout--amy .ogc-contact-layout__aside.is-visible {
+	opacity: 1;
+	max-height: 600px;
+	pointer-events: auto;
+}
+
+.ogc-contact-layout--amy .ogc-contact-aside__cards {
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 1rem;
+	margin-bottom: 0;
+}
+
+.ogc-contact-layout--amy .ogc-contact-aside__cards .ogc-pillar-card {
+	flex: 1 1 0;
+	min-width: 220px;
+}
+
+@media (max-width: 640px) {
+	.ogc-contact-layout--amy .ogc-contact-aside__cards {
+		flex-direction: column;
+	}
+
+	.ogc-contact-layout--amy .ogc-contact-aside__cards .ogc-pillar-card {
+		min-width: 0;
+	}
+}
+
+/* --------------------------------------------------------------------------
    Notices
    -------------------------------------------------------------------------- */
 

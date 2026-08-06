@@ -59,7 +59,10 @@ $trust_cards = array(
 		</div>
 	</section>
 
-	<section class="ogc-contact-layout" aria-labelledby="ogc-submit-idea-form-heading">
+	<section
+		class="ogc-contact-layout<?php echo ogc_amy_agent_is_active() ? ' ogc-contact-layout--amy' : ''; ?>"
+		aria-labelledby="ogc-submit-idea-form-heading"
+	>
 		<div class="ogc-contact-layout__form">
 			<header class="ogc-section-header">
 				<h2 id="ogc-submit-idea-form-heading" class="ogc-section-title">
