@@ -486,6 +486,15 @@ function ogc_theme_options_schema() {
 					'attrs'    => array( 'placeholder' => '000000000000000' ),
 				),
 				array(
+					'key'      => 'ogc_clarity_project_id',
+					'type'     => 'text',
+					'label'    => __( 'Microsoft Clarity Project ID', 'ogc-newfinity' ),
+					'tooltip'  => __( 'Project ID from clarity.microsoft.com. Leave empty to disable.', 'ogc-newfinity' ),
+					'default'  => '',
+					'sanitize' => 'ogc_sanitize_tracking_id',
+					'attrs'    => array( 'placeholder' => 'xxxxxxxxxx' ),
+				),
+				array(
 					'key'   => 'ogc_maintenance_heading',
 					'type'  => 'heading',
 					'label' => __( 'Maintenance mode', 'ogc-newfinity' ),
@@ -2711,15 +2720,16 @@ add_filter( 'body_class', 'ogc_theme_options_body_classes' );
  * ====================================================================== */
 
 /**
- * Print GA4 and Meta Pixel snippets when IDs are configured.
+ * Print GA4, Meta Pixel, and Microsoft Clarity snippets when IDs are configured.
  */
 function ogc_output_tracking_scripts() {
 	if ( is_admin() ) {
 		return;
 	}
 
-	$ga4   = (string) ogc_mod( 'ogc_google_analytics_id' );
-	$pixel = (string) ogc_mod( 'ogc_meta_pixel_id' );
+	$ga4     = (string) ogc_mod( 'ogc_google_analytics_id' );
+	$pixel   = (string) ogc_mod( 'ogc_meta_pixel_id' );
+	$clarity = (string) ogc_mod( 'ogc_clarity_project_id' );
 
 	if ( $ga4 ) {
 		printf(
@@ -2738,6 +2748,17 @@ function ogc_output_tracking_scripts() {
 			. "s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');"
 			. "fbq('init',%1\$s);fbq('track','PageView');</script>\n",
 			wp_json_encode( $pixel )
+		);
+	}
+
+	if ( $clarity ) {
+		printf(
+			'<script id="ogc-clarity">(function(c,l,a,r,i,t,y){'
+			. 'c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};'
+			. 't=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;'
+			. 'y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);'
+			. '})(window,document,"clarity","script",%1$s);</script>' . "\n",
+			wp_json_encode( $clarity )
 		);
 	}
 }

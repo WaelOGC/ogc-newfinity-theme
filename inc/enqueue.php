@@ -245,6 +245,13 @@ function ogc_enqueue_assets() {
 			OGC_THEME_VERSION,
 			true
 		);
+		wp_enqueue_script(
+			'ogc-contact-form',
+			OGC_THEME_URI . '/assets/js/contact-form.js',
+			array(),
+			OGC_THEME_VERSION,
+			true
+		);
 	}
 
 	if ( is_page( 'submit-idea' ) ) {
