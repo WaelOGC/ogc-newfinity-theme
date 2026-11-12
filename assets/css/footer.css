@@ -227,6 +227,27 @@
 	opacity: 0.75;
 }
 
+.ogc-footer__copyright-line {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: baseline;
+	gap: 0.15rem 0.35rem;
+	max-width: 48rem;
+	margin-left: auto;
+	margin-right: auto;
+	line-height: 1.45;
+}
+
+.ogc-footer__copyright-text,
+.ogc-footer__registration {
+	display: inline;
+}
+
+.ogc-footer__copyright-sep {
+	display: inline;
+}
+
 @media (min-width: 640px) {
 	.ogc-footer__grid {
 		grid-template-columns: repeat(2, 1fr);

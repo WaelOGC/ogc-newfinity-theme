@@ -224,18 +224,29 @@ $ogc_render_footer_column = static function ( $column ) {
 	<div class="ogc-accent-bar" aria-hidden="true"></div>
 
 	<div class="ogc-footer__copyright">
-		<p>
-			<?php
-			if ( function_exists( 'ogc_get_footer_copyright' ) ) {
-				echo esc_html( ogc_get_footer_copyright() );
-			} else {
-				printf(
-					/* translators: %s: current year */
-					esc_html__( '© 2022–%s OGC NewFinity. All rights reserved.', 'ogc-newfinity' ),
-					esc_html( wp_date( 'Y' ) )
-				);
-			}
-			?>
+		<?php
+		$ogc_registration_line = function_exists( 'ogc_get_footer_company_registration_line' )
+			? ogc_get_footer_company_registration_line()
+			: '';
+		?>
+		<p class="ogc-footer__copyright-line">
+			<span class="ogc-footer__copyright-text">
+				<?php
+				if ( function_exists( 'ogc_get_footer_copyright' ) ) {
+					echo esc_html( ogc_get_footer_copyright() );
+				} else {
+					printf(
+						/* translators: %s: current year */
+						esc_html__( '© 2022–%s OGC NewFinity. All rights reserved.', 'ogc-newfinity' ),
+						esc_html( wp_date( 'Y' ) )
+					);
+				}
+				?>
+			</span>
+			<?php if ( '' !== $ogc_registration_line ) : ?>
+				<span class="ogc-footer__copyright-sep" aria-hidden="true"> · </span>
+				<span class="ogc-footer__registration"><?php echo esc_html( $ogc_registration_line ); ?></span>
+			<?php endif; ?>
 		</p>
 	</div>
 </footer>

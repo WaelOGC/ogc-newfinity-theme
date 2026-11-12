@@ -122,7 +122,7 @@ function ogc_get_pricing_data() {
 					'price_prefix' => '',
 					'price'        => '€450',
 					'unit'         => __( 'fixed', 'ogc-newfinity' ),
-					'popular'      => false,
+					'popular'      => true,
 					'features'     => array(
 						__( 'Requirements workshop', 'ogc-newfinity' ),
 						__( 'Problem definition and user roles', 'ogc-newfinity' ),
@@ -135,10 +135,10 @@ function ogc_get_pricing_data() {
 				array(
 					'name'         => __( 'Focused MVP', 'ogc-newfinity' ),
 					'fit'          => __( 'A usable, testable first release.', 'ogc-newfinity' ),
-					'price_prefix' => __( 'FROM', 'ogc-newfinity' ),
-					'price'        => '€5,000',
-					'unit'         => __( 'quoted after discovery', 'ogc-newfinity' ),
-					'popular'      => true,
+					'price_prefix' => '',
+					'price'        => __( 'Custom quote', 'ogc-newfinity' ),
+					'unit'         => __( 'typically from €5,000', 'ogc-newfinity' ),
+					'popular'      => false,
 					'features'     => array(
 						__( 'Tightly scoped first release', 'ogc-newfinity' ),
 						__( 'Agreed core workflow', 'ogc-newfinity' ),
@@ -150,9 +150,9 @@ function ogc_get_pricing_data() {
 				array(
 					'name'         => __( 'Custom Web Application', 'ogc-newfinity' ),
 					'fit'          => __( 'A full application built around your process.', 'ogc-newfinity' ),
-					'price_prefix' => __( 'FROM', 'ogc-newfinity' ),
-					'price'        => '€10,000',
-					'unit'         => __( 'quoted after discovery', 'ogc-newfinity' ),
+					'price_prefix' => '',
+					'price'        => __( 'Custom quote', 'ogc-newfinity' ),
+					'unit'         => __( 'typically from €10,000', 'ogc-newfinity' ),
 					'popular'      => false,
 					'features'     => array(
 						__( 'Authentication and user roles', 'ogc-newfinity' ),
@@ -414,8 +414,8 @@ function ogc_get_pricing_data() {
 					'name'         => __( 'AI Starter Assistant', 'ogc-newfinity' ),
 					'fit'          => __( 'One assistant or workflow, done properly.', 'ogc-newfinity' ),
 					'price_prefix' => __( 'SETUP', 'ogc-newfinity' ),
-					'price'        => '€795',
-					'unit'         => __( '+ €99 per month', 'ogc-newfinity' ),
+					'price'        => '€595',
+					'unit'         => __( '+ €79 per month', 'ogc-newfinity' ),
 					'popular'      => false,
 					'features'     => array(
 						__( 'One narrow website assistant or workflow', 'ogc-newfinity' ),

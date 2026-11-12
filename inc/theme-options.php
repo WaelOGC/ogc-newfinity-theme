@@ -467,6 +467,32 @@ function ogc_theme_options_schema() {
 					'default' => OGC_DEFAULT_RESPONSE_TIME,
 				),
 				array(
+					'key'   => 'ogc_company_details_heading',
+					'type'  => 'heading',
+					'label' => __( 'Company details', 'ogc-newfinity' ),
+				),
+				array(
+					'key'     => 'ogc_company_legal_name',
+					'type'    => 'text',
+					'label'   => __( 'Legal company name', 'ogc-newfinity' ),
+					'tooltip' => __( 'Registered trading name. Shown in the footer bar when set.', 'ogc-newfinity' ),
+					'default' => '',
+				),
+				array(
+					'key'     => 'ogc_company_kvk',
+					'type'    => 'text',
+					'label'   => __( 'KVK number', 'ogc-newfinity' ),
+					'tooltip' => __( 'Chamber of Commerce registration number. Shown as “KVK …” in the footer when set.', 'ogc-newfinity' ),
+					'default' => '',
+				),
+				array(
+					'key'     => 'ogc_company_vat',
+					'type'    => 'text',
+					'label'   => __( 'VAT (BTW) number', 'ogc-newfinity' ),
+					'tooltip' => __( 'VAT identification number. Shown as “VAT …” in the footer when set.', 'ogc-newfinity' ),
+					'default' => '',
+				),
+				array(
 					'key'     => 'ogc_tracking_heading',
 					'type'    => 'heading',
 					'label'   => __( 'Tracking', 'ogc-newfinity' ),
@@ -1985,6 +2011,67 @@ function ogc_get_footer_copyright() {
 			'{start_year}' => '2022',
 		)
 	);
+}
+
+/**
+ * Registered legal company name from Theme Options.
+ *
+ * @return string
+ */
+function ogc_get_company_legal_name() {
+	return sanitize_text_field( (string) ogc_mod( 'ogc_company_legal_name' ) );
+}
+
+/**
+ * KVK (Chamber of Commerce) number from Theme Options.
+ *
+ * @return string
+ */
+function ogc_get_company_kvk() {
+	return sanitize_text_field( (string) ogc_mod( 'ogc_company_kvk' ) );
+}
+
+/**
+ * VAT (BTW) identification number from Theme Options.
+ *
+ * @return string
+ */
+function ogc_get_company_vat() {
+	return sanitize_text_field( (string) ogc_mod( 'ogc_company_vat' ) );
+}
+
+/**
+ * Footer registration line (legal name, KVK, VAT). Empty when no fields are set.
+ *
+ * @return string
+ */
+function ogc_get_footer_company_registration_line() {
+	$parts = array();
+
+	$legal_name = ogc_get_company_legal_name();
+	if ( '' !== $legal_name ) {
+		$parts[] = $legal_name;
+	}
+
+	$kvk = ogc_get_company_kvk();
+	if ( '' !== $kvk ) {
+		$parts[] = sprintf(
+			/* translators: %s: KVK registration number. */
+			__( 'KVK %s', 'ogc-newfinity' ),
+			$kvk
+		);
+	}
+
+	$vat = ogc_get_company_vat();
+	if ( '' !== $vat ) {
+		$parts[] = sprintf(
+			/* translators: %s: VAT / BTW identification number. */
+			__( 'VAT %s', 'ogc-newfinity' ),
+			$vat
+		);
+	}
+
+	return implode( ' · ', $parts );
 }
 
 /**

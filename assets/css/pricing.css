@@ -437,6 +437,12 @@
 	white-space: nowrap;
 }
 
+.ogc-pricing-package__amount--text {
+	font-size: clamp(1.25rem, 4.2vw, 1.75rem);
+	white-space: nowrap;
+	line-height: 1.15;
+}
+
 .ogc-pricing-package__unit {
 	min-height: 1.375rem;
 	font-size: 0.875rem;
