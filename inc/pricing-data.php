@@ -26,7 +26,7 @@ function ogc_get_pricing_data() {
 					'name'          => __( 'Starter Website', 'ogc-newfinity' ),
 					'fit'           => __( 'A first professional site for a small business.', 'ogc-newfinity' ),
 					'price_prefix'  => '',
-					'price'         => '€695',
+					'price'         => '€549',
 					'unit'          => __( 'one-off', 'ogc-newfinity' ),
 					'popular'       => false,
 					'features'      => array(
@@ -44,7 +44,7 @@ function ogc_get_pricing_data() {
 					'name'          => __( 'Business Website', 'ogc-newfinity' ),
 					'fit'           => __( 'A brand-aligned site that connects to your tools.', 'ogc-newfinity' ),
 					'price_prefix'  => '',
-					'price'         => '€1,295',
+					'price'         => '€995',
 					'unit'          => __( 'one-off', 'ogc-newfinity' ),
 					'popular'       => true,
 					'features'      => array(
@@ -62,7 +62,7 @@ function ogc_get_pricing_data() {
 					'name'          => __( 'Professional Website', 'ogc-newfinity' ),
 					'fit'           => __( 'Custom layouts and features, scoped with you.', 'ogc-newfinity' ),
 					'price_prefix'  => __( 'FROM', 'ogc-newfinity' ),
-					'price'         => '€2,495',
+					'price'         => '€1,995',
 					'unit'          => __( 'one-off', 'ogc-newfinity' ),
 					'popular'       => false,
 					'features'      => array(
@@ -79,35 +79,35 @@ function ogc_get_pricing_data() {
 				array(
 					'title' => __( 'Add-ons', 'ogc-newfinity' ),
 					'rows'  => array(
-						array( 'label' => __( 'Additional standard page', 'ogc-newfinity' ), 'price' => '€75–€125' ),
-						array( 'label' => __( 'Copywriting, one page', 'ogc-newfinity' ), 'price' => __( 'From €95', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Additional standard page', 'ogc-newfinity' ), 'price' => '€60–€100' ),
+						array( 'label' => __( 'Copywriting, one page', 'ogc-newfinity' ), 'price' => __( 'From €75', 'ogc-newfinity' ) ),
 						array( 'label' => __( 'Website migration', 'ogc-newfinity' ), 'price' => __( 'From €250', 'ogc-newfinity' ) ),
 						array( 'label' => __( 'Multilingual setup, per language', 'ogc-newfinity' ), 'price' => __( 'From €250', 'ogc-newfinity' ) ),
 						array( 'label' => __( 'Booking integration', 'ogc-newfinity' ), 'price' => __( 'From €250', 'ogc-newfinity' ) ),
-						array( 'label' => __( 'WooCommerce starter store', 'ogc-newfinity' ), 'price' => __( 'From €1,495', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'WooCommerce starter store', 'ogc-newfinity' ), 'price' => __( 'Custom quote', 'ogc-newfinity' ) ),
 					),
 				),
 				array(
 					'title' => __( 'WordPress Care plans', 'ogc-newfinity' ),
 					'rows'  => array(
-						array( 'label' => __( 'Care Basic: updates, backup, uptime check', 'ogc-newfinity' ), 'price' => '€49/month' ),
-						array( 'label' => __( 'Care Plus: adds security monitoring, 30 min changes', 'ogc-newfinity' ), 'price' => '€79/month' ),
-						array( 'label' => __( 'Care Pro: priority, 90 min changes, monthly review', 'ogc-newfinity' ), 'price' => '€129/month' ),
+						array( 'label' => __( 'Care Basic: updates, backup, uptime check', 'ogc-newfinity' ), 'price' => '€39/month' ),
+						array( 'label' => __( 'Care Plus: adds security monitoring, 30 min changes', 'ogc-newfinity' ), 'price' => '€59/month' ),
+						array( 'label' => __( 'Care Pro: priority, 90 min changes, monthly review', 'ogc-newfinity' ), 'price' => '€99/month' ),
 					),
 				),
 				array(
 					'title' => __( 'Fix & Repair', 'ogc-newfinity' ),
 					'rows'  => array(
-						array( 'label' => __( 'Diagnosis', 'ogc-newfinity' ), 'price' => __( 'From €99', 'ogc-newfinity' ) ),
-						array( 'label' => __( 'Standard repair', 'ogc-newfinity' ), 'price' => __( 'From €149', 'ogc-newfinity' ) ),
-						array( 'label' => __( 'Malware cleanup', 'ogc-newfinity' ), 'price' => __( 'From €249', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Diagnosis', 'ogc-newfinity' ), 'price' => '€79' ),
+						array( 'label' => __( 'Standard repair', 'ogc-newfinity' ), 'price' => '€119' ),
+						array( 'label' => __( 'Malware cleanup', 'ogc-newfinity' ), 'price' => '€199' ),
 						array( 'label' => __( 'Complex incident or recovery', 'ogc-newfinity' ), 'price' => __( 'Custom quote', 'ogc-newfinity' ) ),
 					),
 				),
 			),
 			'notes' => array(
 				__( 'Hosting is billed separately or listed clearly as an add-on.', 'ogc-newfinity' ),
-				__( 'Malware cleanup price is confirmed after we assess the infection and your backups.', 'ogc-newfinity' ),
+				__( 'Standard malware cleanup is €199; complex recovery work is quoted separately after we assess the infection and your backups.', 'ogc-newfinity' ),
 			),
 		),
 		array(
@@ -263,7 +263,7 @@ function ogc_get_pricing_data() {
 					'name'         => __( 'Local SEO Essential', 'ogc-newfinity' ),
 					'fit'          => __( 'One location, kept active and reported.', 'ogc-newfinity' ),
 					'price_prefix' => '',
-					'price'        => '€299',
+					'price'        => '€249',
 					'unit'         => __( 'per month', 'ogc-newfinity' ),
 					'popular'      => false,
 					'features'     => array(
@@ -279,7 +279,7 @@ function ogc_get_pricing_data() {
 					'name'         => __( 'Local SEO Growth', 'ogc-newfinity' ),
 					'fit'          => __( 'More content and a view on competitors.', 'ogc-newfinity' ),
 					'price_prefix' => '',
-					'price'        => '€499',
+					'price'        => '€399',
 					'unit'         => __( 'per month', 'ogc-newfinity' ),
 					'popular'      => true,
 					'features'     => array(
@@ -295,7 +295,7 @@ function ogc_get_pricing_data() {
 					'name'         => __( 'SEO & Visibility Pro', 'ogc-newfinity' ),
 					'fit'          => __( 'Technical SEO and quarterly strategy.', 'ogc-newfinity' ),
 					'price_prefix' => '',
-					'price'        => '€799',
+					'price'        => '€649',
 					'unit'         => __( 'per month', 'ogc-newfinity' ),
 					'popular'      => false,
 					'features'     => array(
@@ -311,8 +311,8 @@ function ogc_get_pricing_data() {
 				array(
 					'title' => __( 'One-time setup', 'ogc-newfinity' ),
 					'rows'  => array(
-						array( 'label' => __( 'Local Presence Setup', 'ogc-newfinity' ), 'price' => '€199' ),
-						array( 'label' => __( 'Local Growth Setup', 'ogc-newfinity' ), 'price' => '€349' ),
+						array( 'label' => __( 'Local Presence Setup', 'ogc-newfinity' ), 'price' => '€159' ),
+						array( 'label' => __( 'Local Growth Setup', 'ogc-newfinity' ), 'price' => '€279' ),
 						array( 'label' => __( 'One-off SEO audit', 'ogc-newfinity' ), 'price' => __( 'From €350', 'ogc-newfinity' ) ),
 					),
 				),
@@ -327,8 +327,8 @@ function ogc_get_pricing_data() {
 				array(
 					'title' => __( 'Add-ons', 'ogc-newfinity' ),
 					'rows'  => array(
-						array( 'label' => __( 'Service or location landing page', 'ogc-newfinity' ), 'price' => __( 'From €150', 'ogc-newfinity' ) ),
-						array( 'label' => __( 'Blog article', 'ogc-newfinity' ), 'price' => __( 'From €150', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Service or location landing page', 'ogc-newfinity' ), 'price' => __( 'From €120', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Blog article', 'ogc-newfinity' ), 'price' => __( 'From €120', 'ogc-newfinity' ) ),
 						array( 'label' => __( 'Additional business location', 'ogc-newfinity' ), 'price' => __( 'Quoted', 'ogc-newfinity' ) ),
 					),
 				),
@@ -394,8 +394,8 @@ function ogc_get_pricing_data() {
 					'title' => __( 'Ongoing and incident work', 'ogc-newfinity' ),
 					'rows'  => array(
 						array( 'label' => __( 'Security monitoring', 'ogc-newfinity' ), 'price' => __( 'From €49/month', 'ogc-newfinity' ) ),
-						array( 'label' => __( 'Incident response and malware remediation', 'ogc-newfinity' ), 'price' => __( 'Priced after triage', 'ogc-newfinity' ) ),
-						array( 'label' => __( 'Penetration test', 'ogc-newfinity' ), 'price' => __( 'Scoped separately', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Incident response and malware remediation', 'ogc-newfinity' ), 'price' => __( 'Custom quote', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Penetration test', 'ogc-newfinity' ), 'price' => __( 'Custom quote', 'ogc-newfinity' ) ),
 					),
 				),
 			),
@@ -472,7 +472,7 @@ function ogc_get_pricing_data() {
 					'rows'  => array(
 						array( 'label' => __( 'Knowledge-base preparation', 'ogc-newfinity' ), 'price' => __( 'From €250', 'ogc-newfinity' ) ),
 						array( 'label' => __( 'Usage and performance review', 'ogc-newfinity' ), 'price' => __( 'From €149', 'ogc-newfinity' ) ),
-						array( 'label' => __( 'Advanced or multi-agent system', 'ogc-newfinity' ), 'price' => __( 'From €5,000', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Advanced or multi-agent system', 'ogc-newfinity' ), 'price' => __( 'Custom quote', 'ogc-newfinity' ) ),
 					),
 				),
 			),
@@ -572,7 +572,7 @@ function ogc_get_pricing_faq() {
 			'answer'   => sprintf(
 				/* translators: %s: Help & Support link */
 				__(
-					'No. All prices exclude 21%% Dutch VAT, which is shown separately on every quote and invoice. For billing questions, visit %s.',
+					'No. All prices are in EUR, excluding VAT. The VAT rate depends on your location and business status (including EU reverse charge where applicable). Your written quote and invoice state the exact amount. For billing questions, visit %s.',
 					'ogc-newfinity'
 				),
 				'<a href="' . esc_url( $support_url ) . '">' . esc_html__( 'Help & Support', 'ogc-newfinity' ) . '</a>'
