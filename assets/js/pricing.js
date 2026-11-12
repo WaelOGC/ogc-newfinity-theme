@@ -1,5 +1,5 @@
 /**
- * OGC NewFinity — Pricing page service-line tabs + hash deep links.
+ * OGC NewFinity — Pricing page service-line navigation + hash deep links.
  * Enqueued only on the Pricing template.
  */
 (function () {
@@ -12,8 +12,10 @@
 		return;
 	}
 
+	var tablist = tabsRoot.querySelector('[data-ogc-pricing-tablist]');
 	var tabs = tabsRoot.querySelectorAll('[data-ogc-pricing-tab]');
 	var panels = tabsRoot.querySelectorAll('[data-ogc-pricing-panel]');
+	var desktopQuery = window.matchMedia('(min-width: 1024px)');
 
 	if (!tabs.length || !panels.length) {
 		return;
@@ -41,13 +43,31 @@
 		return hash && slugToPanel[hash] ? hash : '';
 	}
 
+	function setTablistOrientation() {
+		if (!tablist) {
+			return;
+		}
+		tablist.setAttribute('aria-orientation', desktopQuery.matches ? 'vertical' : 'vertical');
+	}
+
 	function setTabFocusOrder(activeTab) {
 		for (var t = 0; t < tabs.length; t++) {
 			tabs[t].tabIndex = tabs[t] === activeTab ? 0 : -1;
 		}
 	}
 
-	function activate(slug, updateHash) {
+	function scrollPanelIntoView(panel) {
+		if (desktopQuery.matches || !panel) {
+			return;
+		}
+		var header = panel.querySelector('.ogc-pricing-tabpanel__header');
+		if (!header) {
+			return;
+		}
+		header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	}
+
+	function activate(slug, updateHash, shouldScroll) {
 		if (!slug || !slugToPanel[slug]) {
 			slug = tabs[0].getAttribute('data-ogc-pricing-tab');
 		}
@@ -78,20 +98,31 @@
 				window.location.hash = slug;
 			}
 		}
+
+		if (shouldScroll) {
+			scrollPanelIntoView(activePanel);
+		}
 	}
 
 	function onTabClick(event) {
 		var tab = event.currentTarget;
 		var slug = tab.getAttribute('data-ogc-pricing-tab');
 		if (slug) {
-			activate(slug, true);
+			activate(slug, true, true);
 			tab.focus();
 		}
 	}
 
 	function onTabKeydown(event) {
 		var key = event.key;
-		if (key !== 'ArrowLeft' && key !== 'ArrowRight' && key !== 'Home' && key !== 'End') {
+		if (
+			key !== 'ArrowUp' &&
+			key !== 'ArrowDown' &&
+			key !== 'ArrowLeft' &&
+			key !== 'ArrowRight' &&
+			key !== 'Home' &&
+			key !== 'End'
+		) {
 			return;
 		}
 
@@ -105,9 +136,9 @@
 
 		var next = index;
 
-		if (key === 'ArrowLeft') {
+		if (key === 'ArrowUp' || key === 'ArrowLeft') {
 			next = index > 0 ? index - 1 : list.length - 1;
-		} else if (key === 'ArrowRight') {
+		} else if (key === 'ArrowDown' || key === 'ArrowRight') {
 			next = index < list.length - 1 ? index + 1 : 0;
 		} else if (key === 'Home') {
 			next = 0;
@@ -119,9 +150,13 @@
 		var nextTab = list[next];
 		var slug = nextTab.getAttribute('data-ogc-pricing-tab');
 		if (slug) {
-			activate(slug, true);
+			activate(slug, true, true);
 			nextTab.focus();
 		}
+	}
+
+	function onMediaChange() {
+		setTablistOrientation();
 	}
 
 	root.classList.add('ogc-pricing--tabs');
@@ -134,9 +169,16 @@
 	window.addEventListener('hashchange', function () {
 		var slug = getSlugFromHash();
 		if (slug) {
-			activate(slug, false);
+			activate(slug, false, false);
 		}
 	});
 
-	activate(getSlugFromHash() || tabs[0].getAttribute('data-ogc-pricing-tab'), false);
+	if (typeof desktopQuery.addEventListener === 'function') {
+		desktopQuery.addEventListener('change', onMediaChange);
+	} else if (typeof desktopQuery.addListener === 'function') {
+		desktopQuery.addListener(onMediaChange);
+	}
+
+	setTablistOrientation();
+	activate(getSlugFromHash() || tabs[0].getAttribute('data-ogc-pricing-tab'), false, false);
 })();
