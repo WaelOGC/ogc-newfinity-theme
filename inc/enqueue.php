@@ -150,6 +150,13 @@ function ogc_enqueue_assets() {
 			array( 'ogc-main', 'ogc-pages', 'ogc-glass' ),
 			OGC_THEME_VERSION
 		);
+		wp_enqueue_script(
+			'ogc-pricing',
+			OGC_THEME_URI . '/assets/js/pricing.js',
+			array(),
+			OGC_THEME_VERSION,
+			true
+		);
 	}
 
 	wp_enqueue_script(
