@@ -1,6 +1,6 @@
 <?php
 /**
- * Public pricing catalogue data (sections 5–10 + customer-facing terms).
+ * Public pricing catalogue data (mockup-aligned).
  *
  * @package OGC_NewFinity
  */
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Service-line pricing: packages, add-ons, subscriptions, and section notes.
+ * Service-line pricing: packages, extras, and notes.
  *
  * @return array<int, array<string, mixed>>
  */
@@ -20,13 +20,16 @@ function ogc_get_pricing_data() {
 			'slug'  => 'custom-wordpress-development',
 			'icon'  => 'wordpress',
 			'title' => __( 'Custom WordPress Development', 'ogc-newfinity' ),
-			'intro' => __( 'Fixed-price website packages, optional care plans, and repair work — scoped and priced honestly.', 'ogc-newfinity' ),
+			'intro' => __( 'Fixed-price websites, monthly care plans and repair work.', 'ogc-newfinity' ),
 			'packages' => array(
 				array(
-					'name'       => __( 'Starter Website', 'ogc-newfinity' ),
-					'price'      => '€695',
-					'price_note' => __( 'one-off', 'ogc-newfinity' ),
-					'included'   => array(
+					'name'          => __( 'Starter Website', 'ogc-newfinity' ),
+					'fit'           => __( 'A first professional site for a small business.', 'ogc-newfinity' ),
+					'price_prefix'  => '',
+					'price'         => '€695',
+					'unit'          => __( 'one-off', 'ogc-newfinity' ),
+					'popular'       => false,
+					'features'      => array(
 						__( 'Up to 5 standard pages', 'ogc-newfinity' ),
 						__( 'Responsive WordPress setup', 'ogc-newfinity' ),
 						__( 'One approved design direction', 'ogc-newfinity' ),
@@ -38,28 +41,33 @@ function ogc_get_pricing_data() {
 					),
 				),
 				array(
-					'name'       => __( 'Business Website', 'ogc-newfinity' ),
-					'price'      => '€1,295',
-					'price_note' => __( 'one-off', 'ogc-newfinity' ),
-					'included'   => array(
+					'name'          => __( 'Business Website', 'ogc-newfinity' ),
+					'fit'           => __( 'A brand-aligned site that connects to your tools.', 'ogc-newfinity' ),
+					'price_prefix'  => '',
+					'price'         => '€1,295',
+					'unit'          => __( 'one-off', 'ogc-newfinity' ),
+					'popular'       => true,
+					'features'      => array(
 						__( 'Up to 10 pages', 'ogc-newfinity' ),
 						__( 'Brand-aligned design', 'ogc-newfinity' ),
 						__( 'Responsive layouts', 'ogc-newfinity' ),
 						__( 'Performance baseline', 'ogc-newfinity' ),
-						__( 'Analytics/Search Console connection', 'ogc-newfinity' ),
-						__( 'Basic on-page SEO', 'ogc-newfinity' ),
-						__( 'Contact form', 'ogc-newfinity' ),
+						__( 'Analytics and Search Console connection', 'ogc-newfinity' ),
+						__( 'Basic on-page SEO and contact form', 'ogc-newfinity' ),
 						__( 'Up to 2 standard integrations', 'ogc-newfinity' ),
 						__( '2 revision rounds', 'ogc-newfinity' ),
 					),
 				),
 				array(
-					'name'       => __( 'Professional Website', 'ogc-newfinity' ),
-					'price'      => __( 'From €2,495', 'ogc-newfinity' ),
-					'price_note' => __( 'one-off', 'ogc-newfinity' ),
-					'included'   => array(
+					'name'          => __( 'Professional Website', 'ogc-newfinity' ),
+					'fit'           => __( 'Custom layouts and features, scoped with you.', 'ogc-newfinity' ),
+					'price_prefix'  => __( 'FROM', 'ogc-newfinity' ),
+					'price'         => '€2,495',
+					'unit'          => __( 'one-off', 'ogc-newfinity' ),
+					'popular'       => false,
+					'features'      => array(
 						__( 'Custom page layouts', 'ogc-newfinity' ),
-						__( 'Advanced forms, booking, or catalogue features', 'ogc-newfinity' ),
+						__( 'Advanced forms, booking or catalogue features', 'ogc-newfinity' ),
 						__( 'Up to 3 agreed integrations', 'ogc-newfinity' ),
 						__( 'Enhanced performance and technical SEO', 'ogc-newfinity' ),
 						__( 'Staging and launch support', 'ogc-newfinity' ),
@@ -67,96 +75,57 @@ function ogc_get_pricing_data() {
 					),
 				),
 			),
-			'addons' => array(
+			'extras' => array(
 				array(
-					'label' => __( 'Additional standard page', 'ogc-newfinity' ),
-					'price' => '€75–€125',
-				),
-				array(
-					'label' => __( 'Copywriting for one standard page', 'ogc-newfinity' ),
-					'price' => __( 'From €95', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Website migration', 'ogc-newfinity' ),
-					'price' => __( 'From €250', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Multilingual setup (per additional language, translation excluded)', 'ogc-newfinity' ),
-					'price' => __( 'From €250', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Booking integration', 'ogc-newfinity' ),
-					'price' => __( 'From €250', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'WooCommerce starter store', 'ogc-newfinity' ),
-					'price' => __( 'From €1,495', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Custom functionality', 'ogc-newfinity' ),
-					'price' => __( 'Quoted after discovery', 'ogc-newfinity' ),
-				),
-			),
-			'subscriptions' => array(
-				'heading' => __( 'WordPress Care subscriptions', 'ogc-newfinity' ),
-				'rows'    => array(
-					array(
-						'name'     => __( 'Care Basic', 'ogc-newfinity' ),
-						'price'    => '€49/month',
-						'included' => __( 'Monthly core/theme/plugin updates; pre-update backup; basic uptime check; maintenance summary', 'ogc-newfinity' ),
-					),
-					array(
-						'name'     => __( 'Care Plus', 'ogc-newfinity' ),
-						'price'    => '€79/month',
-						'included' => __( 'Basic plus more frequent checks, security/malware monitoring, external backups, up to 30 minutes of small changes/month', 'ogc-newfinity' ),
-					),
-					array(
-						'name'     => __( 'Care Pro', 'ogc-newfinity' ),
-						'price'    => '€129/month',
-						'included' => __( 'Plus plus priority handling, up to 90 minutes of small changes/month, monthly performance/security review', 'ogc-newfinity' ),
+					'title' => __( 'Add-ons', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Additional standard page', 'ogc-newfinity' ), 'price' => '€75–€125' ),
+						array( 'label' => __( 'Copywriting, one page', 'ogc-newfinity' ), 'price' => __( 'From €95', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Website migration', 'ogc-newfinity' ), 'price' => __( 'From €250', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Multilingual setup, per language', 'ogc-newfinity' ), 'price' => __( 'From €250', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Booking integration', 'ogc-newfinity' ), 'price' => __( 'From €250', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'WooCommerce starter store', 'ogc-newfinity' ), 'price' => __( 'From €1,495', 'ogc-newfinity' ) ),
 					),
 				),
-			),
-			'repair' => array(
-				'heading' => __( 'WordPress Fix & Repair', 'ogc-newfinity' ),
-				'rows'    => array(
-					array(
-						'label' => __( 'Diagnosis', 'ogc-newfinity' ),
-						'price' => __( 'From €99', 'ogc-newfinity' ),
+				array(
+					'title' => __( 'WordPress Care plans', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Care Basic: updates, backup, uptime check', 'ogc-newfinity' ), 'price' => '€49/month' ),
+						array( 'label' => __( 'Care Plus: adds security monitoring, 30 min changes', 'ogc-newfinity' ), 'price' => '€79/month' ),
+						array( 'label' => __( 'Care Pro: priority, 90 min changes, monthly review', 'ogc-newfinity' ), 'price' => '€129/month' ),
 					),
-					array(
-						'label' => __( 'Standard repair (after assessment)', 'ogc-newfinity' ),
-						'price' => __( 'From €149', 'ogc-newfinity' ),
-					),
-					array(
-						'label' => __( 'Malware cleanup (subject to scope and backup assessment)', 'ogc-newfinity' ),
-						'price' => __( 'From €249', 'ogc-newfinity' ),
-					),
-					array(
-						'label' => __( 'Complex compromise, database recovery, or server-level incident', 'ogc-newfinity' ),
-						'price' => __( 'Custom quote', 'ogc-newfinity' ),
+				),
+				array(
+					'title' => __( 'Fix & Repair', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Diagnosis', 'ogc-newfinity' ), 'price' => __( 'From €99', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Standard repair', 'ogc-newfinity' ), 'price' => __( 'From €149', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Malware cleanup', 'ogc-newfinity' ), 'price' => __( 'From €249', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Complex incident or recovery', 'ogc-newfinity' ), 'price' => __( 'Custom quote', 'ogc-newfinity' ) ),
 					),
 				),
 			),
 			'notes' => array(
-				__( 'Hosting is billed separately or listed clearly as an add-on. Unused care-plan time does not roll over.', 'ogc-newfinity' ),
-				__( 'Malware cleanup pricing is confirmed after we assess the infection and your backups.', 'ogc-newfinity' ),
+				__( 'Hosting is billed separately or listed clearly as an add-on.', 'ogc-newfinity' ),
+				__( 'Malware cleanup price is confirmed after we assess the infection and your backups.', 'ogc-newfinity' ),
 			),
 		),
 		array(
 			'slug'  => 'software-app-development',
 			'icon'  => 'code',
 			'title' => __( 'Software & App Development', 'ogc-newfinity' ),
-			'intro' => __( 'Discovery-led builds — fixed starting points where scope is clear; custom software is quoted after specification.', 'ogc-newfinity' ),
+			'intro' => __( 'Custom software starts with a discovery session, then a milestone-based quote.', 'ogc-newfinity' ),
 			'packages' => array(
 				array(
-					'name'       => __( 'Technical Discovery & Specification', 'ogc-newfinity' ),
-					'price'      => '€450',
-					'price_note' => '',
-					'included'   => array(
+					'name'         => __( 'Technical Discovery', 'ogc-newfinity' ),
+					'fit'          => __( 'Know what to build and what it will cost.', 'ogc-newfinity' ),
+					'price_prefix' => '',
+					'price'        => '€450',
+					'unit'         => __( 'fixed', 'ogc-newfinity' ),
+					'popular'      => false,
+					'features'     => array(
 						__( 'Requirements workshop', 'ogc-newfinity' ),
-						__( 'Problem definition', 'ogc-newfinity' ),
-						__( 'User roles', 'ogc-newfinity' ),
+						__( 'Problem definition and user roles', 'ogc-newfinity' ),
 						__( 'Feature list', 'ogc-newfinity' ),
 						__( 'Integration review', 'ogc-newfinity' ),
 						__( 'Technical approach', 'ogc-newfinity' ),
@@ -164,74 +133,86 @@ function ogc_get_pricing_data() {
 					),
 				),
 				array(
-					'name'       => __( 'Clickable Prototype / Proof of Concept', 'ogc-newfinity' ),
-					'price'      => __( 'From €1,500', 'ogc-newfinity' ),
-					'price_note' => '',
-					'included'   => array(
-						__( 'Narrow demonstration', 'ogc-newfinity' ),
-						__( 'Limited screens or one technical proof', 'ogc-newfinity' ),
-						__( 'Not production-ready', 'ogc-newfinity' ),
-					),
-				),
-				array(
-					'name'       => __( 'Focused MVP Development', 'ogc-newfinity' ),
-					'price'      => __( 'From €5,000', 'ogc-newfinity' ),
-					'price_note' => '',
-					'included'   => array(
-						__( 'Tightly scoped first release with agreed core workflow', 'ogc-newfinity' ),
-						__( 'Backend/data layer where needed', 'ogc-newfinity' ),
+					'name'         => __( 'Focused MVP', 'ogc-newfinity' ),
+					'fit'          => __( 'A usable, testable first release.', 'ogc-newfinity' ),
+					'price_prefix' => __( 'FROM', 'ogc-newfinity' ),
+					'price'        => '€5,000',
+					'unit'         => __( 'quoted after discovery', 'ogc-newfinity' ),
+					'popular'      => true,
+					'features'     => array(
+						__( 'Tightly scoped first release', 'ogc-newfinity' ),
+						__( 'Agreed core workflow', 'ogc-newfinity' ),
+						__( 'Backend and data layer where needed', 'ogc-newfinity' ),
 						__( 'Testing', 'ogc-newfinity' ),
 						__( 'Deployment plan', 'ogc-newfinity' ),
 					),
 				),
 				array(
-					'name'       => __( 'Custom Web Application', 'ogc-newfinity' ),
-					'price'      => __( 'From €10,000', 'ogc-newfinity' ),
-					'price_note' => '',
-					'included'   => array(
-						__( 'Custom application with authentication, database, admin interface', 'ogc-newfinity' ),
-						__( 'Workflows and agreed integrations', 'ogc-newfinity' ),
-					),
-				),
-				array(
-					'name'       => __( 'API Development & Integration', 'ogc-newfinity' ),
-					'price'      => __( 'From €450', 'ogc-newfinity' ),
-					'price_note' => '',
-					'included'   => array(
-						__( 'One clearly scoped API connection or data workflow', 'ogc-newfinity' ),
+					'name'         => __( 'Custom Web Application', 'ogc-newfinity' ),
+					'fit'          => __( 'A full application built around your process.', 'ogc-newfinity' ),
+					'price_prefix' => __( 'FROM', 'ogc-newfinity' ),
+					'price'        => '€10,000',
+					'unit'         => __( 'quoted after discovery', 'ogc-newfinity' ),
+					'popular'      => false,
+					'features'     => array(
+						__( 'Authentication and user roles', 'ogc-newfinity' ),
+						__( 'Database', 'ogc-newfinity' ),
+						__( 'Admin interface', 'ogc-newfinity' ),
+						__( 'Workflows', 'ogc-newfinity' ),
+						__( 'Agreed integrations', 'ogc-newfinity' ),
 					),
 				),
 			),
-			'addons'        => array(),
-			'subscriptions' => array(),
-			'notes'         => array(
-				__( 'Custom software is quoted after a discovery session.', 'ogc-newfinity' ),
-				__( 'Typical payment schedule: 40% at start, 40% at milestone, 20% at handover.', 'ogc-newfinity' ),
-				__( 'Hosting, cloud services, API fees, licences, and ongoing maintenance are billed separately.', 'ogc-newfinity' ),
+			'extras' => array(
+				array(
+					'title' => __( 'Also available', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Clickable prototype or proof of concept', 'ogc-newfinity' ), 'price' => __( 'From €1,500', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'API development and integration', 'ogc-newfinity' ), 'price' => __( 'From €450', 'ogc-newfinity' ) ),
+					),
+				),
+				array(
+					'title' => __( 'Payment milestones', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Project start', 'ogc-newfinity' ), 'price' => '40%' ),
+						array( 'label' => __( 'Agreed milestone', 'ogc-newfinity' ), 'price' => '40%' ),
+						array( 'label' => __( 'Acceptance and handover', 'ogc-newfinity' ), 'price' => '20%' ),
+					),
+				),
+			),
+			'notes' => array(
+				__( 'A prototype demonstrates an idea; it is not production-ready software.', 'ogc-newfinity' ),
+				__( 'Hosting, cloud services, external API fees, licences and maintenance are separate.', 'ogc-newfinity' ),
 			),
 		),
 		array(
 			'slug'  => 'ui-ux-design',
 			'icon'  => 'design',
 			'title' => __( 'UI/UX Design', 'ogc-newfinity' ),
-			'intro' => __( 'Screen-based packages with clear revision rounds — research and testing scoped separately when needed.', 'ogc-newfinity' ),
+			'intro' => __( 'Screen-based design packages with clear revision rounds.', 'ogc-newfinity' ),
 			'packages' => array(
 				array(
-					'name'       => __( 'UI Starter', 'ogc-newfinity' ),
-					'price'      => '€350',
-					'price_note' => '',
-					'included'   => array(
-						__( 'Up to 3 screens/page layouts', 'ogc-newfinity' ),
+					'name'         => __( 'UI Starter', 'ogc-newfinity' ),
+					'fit'          => __( 'A visual direction for a few key screens.', 'ogc-newfinity' ),
+					'price_prefix' => '',
+					'price'        => '€350',
+					'unit'         => __( 'one-off', 'ogc-newfinity' ),
+					'popular'      => false,
+					'features'     => array(
+						__( 'Up to 3 screens or page layouts', 'ogc-newfinity' ),
 						__( 'Visual direction', 'ogc-newfinity' ),
 						__( 'Responsive considerations', 'ogc-newfinity' ),
 						__( '1 revision round', 'ogc-newfinity' ),
 					),
 				),
 				array(
-					'name'       => __( 'UI/UX Business', 'ogc-newfinity' ),
-					'price'      => '€850',
-					'price_note' => '',
-					'included'   => array(
+					'name'         => __( 'UI/UX Business', 'ogc-newfinity' ),
+					'fit'          => __( 'Flows, wireframes and polished UI.', 'ogc-newfinity' ),
+					'price_prefix' => '',
+					'price'        => '€850',
+					'unit'         => __( 'one-off', 'ogc-newfinity' ),
+					'popular'      => true,
+					'features'     => array(
 						__( 'Up to 8 key screens', 'ogc-newfinity' ),
 						__( 'Basic user flow', 'ogc-newfinity' ),
 						__( 'Wireframes', 'ogc-newfinity' ),
@@ -240,13 +221,15 @@ function ogc_get_pricing_data() {
 					),
 				),
 				array(
-					'name'       => __( 'Product Design Advanced', 'ogc-newfinity' ),
-					'price'      => __( 'From €1,500', 'ogc-newfinity' ),
-					'price_note' => '',
-					'included'   => array(
+					'name'         => __( 'Product Design Advanced', 'ogc-newfinity' ),
+					'fit'          => __( 'From workshop to developer handoff.', 'ogc-newfinity' ),
+					'price_prefix' => __( 'FROM', 'ogc-newfinity' ),
+					'price'        => '€1,500',
+					'unit'         => __( 'one-off', 'ogc-newfinity' ),
+					'popular'      => false,
+					'features'     => array(
 						__( 'Discovery workshop', 'ogc-newfinity' ),
-						__( 'User flows', 'ogc-newfinity' ),
-						__( 'Wireframes', 'ogc-newfinity' ),
+						__( 'User flows and wireframes', 'ogc-newfinity' ),
 						__( 'Interactive prototype', 'ogc-newfinity' ),
 						__( 'Responsive states', 'ogc-newfinity' ),
 						__( 'Design handoff', 'ogc-newfinity' ),
@@ -254,226 +237,202 @@ function ogc_get_pricing_data() {
 					),
 				),
 			),
-			'addons' => array(
+			'extras' => array(
 				array(
-					'label' => __( 'Additional screen', 'ogc-newfinity' ),
-					'price' => '€75–€150',
-				),
-				array(
-					'label' => __( 'Design system/component library', 'ogc-newfinity' ),
-					'price' => __( 'From €500', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Usability testing', 'ogc-newfinity' ),
-					'price' => __( 'Quoted by participant count and research scope', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'UX audit (small website)', 'ogc-newfinity' ),
-					'price' => __( 'From €350', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Web application UX review', 'ogc-newfinity' ),
-					'price' => __( 'From €595', 'ogc-newfinity' ),
+					'title' => __( 'Add-ons', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Additional screen', 'ogc-newfinity' ), 'price' => '€75–€150' ),
+						array( 'label' => __( 'Design system or component library', 'ogc-newfinity' ), 'price' => __( 'From €500', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'UX audit, small website', 'ogc-newfinity' ), 'price' => __( 'From €350', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'UX audit, web application', 'ogc-newfinity' ), 'price' => __( 'From €595', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Usability testing', 'ogc-newfinity' ), 'price' => __( 'Quoted', 'ogc-newfinity' ) ),
+					),
 				),
 			),
-			'subscriptions' => array(),
-			'notes'         => array(
-				__( 'User interviews, usability testing, and UX research are quoted separately from UI design packages.', 'ogc-newfinity' ),
+			'notes' => array(
+				__( 'User interviews, research and testing are scoped separately from visual design.', 'ogc-newfinity' ),
 			),
 		),
 		array(
 			'slug'  => 'marketing-strategy-consulting',
 			'icon'  => 'strategy',
 			'title' => __( 'Marketing & Strategy Consulting', 'ogc-newfinity' ),
-			'intro' => __( 'Local presence, ongoing SEO, and optional social management — deliverables defined, not ranking promises.', 'ogc-newfinity' ),
-			'package_groups' => array(
+			'intro' => __( 'Local SEO and visibility, managed monthly with defined deliverables.', 'ogc-newfinity' ),
+			'packages' => array(
 				array(
-					'heading'  => __( 'One-time setup', 'ogc-newfinity' ),
-					'packages' => array(
-						array(
-							'name'       => __( 'Local Presence Setup', 'ogc-newfinity' ),
-							'price'      => '€199',
-							'price_note' => __( 'one-off', 'ogc-newfinity' ),
-							'included'   => array(
-								__( 'Google Business Profile setup/cleanup', 'ogc-newfinity' ),
-								__( 'Categories and services', 'ogc-newfinity' ),
-								__( 'Business details and opening hours', 'ogc-newfinity' ),
-								__( 'Initial optimization checklist', 'ogc-newfinity' ),
-							),
-						),
-						array(
-							'name'       => __( 'Local Growth Setup', 'ogc-newfinity' ),
-							'price'      => '€349',
-							'price_note' => __( 'one-off', 'ogc-newfinity' ),
-							'included'   => array(
-								__( 'Everything in Local Presence', 'ogc-newfinity' ),
-								__( 'Local keyword mapping', 'ogc-newfinity' ),
-								__( 'Review-request process', 'ogc-newfinity' ),
-								__( 'Local landing-page recommendations', 'ogc-newfinity' ),
-								__( 'Tracking setup', 'ogc-newfinity' ),
-							),
-						),
+					'name'         => __( 'Local SEO Essential', 'ogc-newfinity' ),
+					'fit'          => __( 'One location, kept active and reported.', 'ogc-newfinity' ),
+					'price_prefix' => '',
+					'price'        => '€299',
+					'unit'         => __( 'per month', 'ogc-newfinity' ),
+					'popular'      => false,
+					'features'     => array(
+						__( 'One location', 'ogc-newfinity' ),
+						__( 'Google Business Profile management', 'ogc-newfinity' ),
+						__( '2 posts per month', 'ogc-newfinity' ),
+						__( 'Review-response guidance', 'ogc-newfinity' ),
+						__( 'Basic local keyword tracking', 'ogc-newfinity' ),
+						__( 'Monthly report', 'ogc-newfinity' ),
+					),
+				),
+				array(
+					'name'         => __( 'Local SEO Growth', 'ogc-newfinity' ),
+					'fit'          => __( 'More content and a view on competitors.', 'ogc-newfinity' ),
+					'price_prefix' => '',
+					'price'        => '€499',
+					'unit'         => __( 'per month', 'ogc-newfinity' ),
+					'popular'      => true,
+					'features'     => array(
+						__( 'Everything in Essential', 'ogc-newfinity' ),
+						__( '4 posts per month', 'ogc-newfinity' ),
+						__( 'One content improvement per month', 'ogc-newfinity' ),
+						__( 'Citation consistency checks', 'ogc-newfinity' ),
+						__( 'Competitor snapshot', 'ogc-newfinity' ),
+						__( 'Monthly recommendations', 'ogc-newfinity' ),
+					),
+				),
+				array(
+					'name'         => __( 'SEO & Visibility Pro', 'ogc-newfinity' ),
+					'fit'          => __( 'Technical SEO and quarterly strategy.', 'ogc-newfinity' ),
+					'price_prefix' => '',
+					'price'        => '€799',
+					'unit'         => __( 'per month', 'ogc-newfinity' ),
+					'popular'      => false,
+					'features'     => array(
+						__( 'Everything in Growth', 'ogc-newfinity' ),
+						__( 'Up to 2 content or page improvements per month', 'ogc-newfinity' ),
+						__( 'Technical SEO review', 'ogc-newfinity' ),
+						__( 'Broader keyword tracking', 'ogc-newfinity' ),
+						__( 'Quarterly strategy review', 'ogc-newfinity' ),
 					),
 				),
 			),
-			'packages' => array(),
-			'subscriptions' => array(
+			'extras' => array(
 				array(
-					'heading' => __( 'Monthly SEO management', 'ogc-newfinity' ),
-					'rows'    => array(
-						array(
-							'name'     => __( 'Local SEO Essential', 'ogc-newfinity' ),
-							'price'    => '€299/month',
-							'included' => __( 'One location; profile management; 2 posts/month; review-response guidance; basic local keyword tracking; monthly report', 'ogc-newfinity' ),
-						),
-						array(
-							'name'     => __( 'Local SEO Growth', 'ogc-newfinity' ),
-							'price'    => '€499/month',
-							'included' => __( 'Essential plus 4 posts/month; one local/service content improvement/month; citation consistency checks; competitor snapshot; monthly recommendations', 'ogc-newfinity' ),
-						),
-						array(
-							'name'     => __( 'SEO & Visibility Pro', 'ogc-newfinity' ),
-							'price'    => '€799/month',
-							'included' => __( 'Growth plus up to 2 agreed content/page improvements/month; technical SEO review; broader keyword tracking; quarterly strategy review', 'ogc-newfinity' ),
-						),
+					'title' => __( 'One-time setup', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Local Presence Setup', 'ogc-newfinity' ), 'price' => '€199' ),
+						array( 'label' => __( 'Local Growth Setup', 'ogc-newfinity' ), 'price' => '€349' ),
+						array( 'label' => __( 'One-off SEO audit', 'ogc-newfinity' ), 'price' => __( 'From €350', 'ogc-newfinity' ) ),
 					),
 				),
 				array(
-					'heading' => __( 'Optional social media management', 'ogc-newfinity' ),
-					'rows'    => array(
-						array(
-							'name'     => __( 'Social Starter', 'ogc-newfinity' ),
-							'price'    => '€399/month',
-							'included' => __( '8 posts/month; one platform; content calendar; basic report', 'ogc-newfinity' ),
-						),
-						array(
-							'name'     => __( 'Social Growth', 'ogc-newfinity' ),
-							'price'    => '€699/month',
-							'included' => __( '12 posts + 2 short-form videos/month; up to 2 platforms; monthly report', 'ogc-newfinity' ),
-						),
-						array(
-							'name'     => __( 'Social Performance', 'ogc-newfinity' ),
-							'price'    => __( 'From €1,095/month', 'ogc-newfinity' ),
-							'included' => __( 'Content planning; multi-channel publishing; campaign coordination; monthly strategy review', 'ogc-newfinity' ),
-						),
+					'title' => __( 'Social media management', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Social Starter: 8 posts, one platform', 'ogc-newfinity' ), 'price' => '€399/month' ),
+						array( 'label' => __( 'Social Growth: 12 posts, 2 videos, 2 platforms', 'ogc-newfinity' ), 'price' => '€699/month' ),
+						array( 'label' => __( 'Social Performance: multi-channel', 'ogc-newfinity' ), 'price' => __( 'From €1,095/month', 'ogc-newfinity' ) ),
 					),
 				),
-			),
-			'addons' => array(
 				array(
-					'label' => __( 'One-off SEO audit', 'ogc-newfinity' ),
-					'price' => __( 'From €350', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Service/location landing page', 'ogc-newfinity' ),
-					'price' => __( 'From €150 per page', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Blog article', 'ogc-newfinity' ),
-					'price' => __( 'From €150', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Additional business location', 'ogc-newfinity' ),
-					'price' => __( 'Quoted by number of locations and content scope', 'ogc-newfinity' ),
+					'title' => __( 'Add-ons', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Service or location landing page', 'ogc-newfinity' ), 'price' => __( 'From €150', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Blog article', 'ogc-newfinity' ), 'price' => __( 'From €150', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Additional business location', 'ogc-newfinity' ), 'price' => __( 'Quoted', 'ogc-newfinity' ) ),
+					),
 				),
 			),
 			'notes' => array(
-				__( 'Backlink outreach is quoted by scope, not a fixed number of links.', 'ogc-newfinity' ),
-				__( 'Ad spend, on-location production, influencer fees, and platform budgets are excluded.', 'ogc-newfinity' ),
-				__( 'We do not guarantee search rankings — we commit to defined deliverables and optimisation work.', 'ogc-newfinity' ),
+				__( 'We commit to defined deliverables; no one can guarantee a position in Google Search or Maps.', 'ogc-newfinity' ),
+				__( 'Advertising spend is paid directly to the platform and is not included.', 'ogc-newfinity' ),
 			),
 		),
 		array(
 			'slug'  => 'cybersecurity',
 			'icon'  => 'shield',
 			'title' => __( 'Cybersecurity', 'ogc-newfinity' ),
-			'intro' => __( 'Website security reviews and hardening — distinct from formal penetration testing, which is scoped and quoted separately.', 'ogc-newfinity' ),
+			'intro' => __( 'Website security reviews and hardening. Penetration testing is scoped separately.', 'ogc-newfinity' ),
 			'packages' => array(
 				array(
-					'name'       => __( 'Website Security Check', 'ogc-newfinity' ),
-					'price'      => '€249',
-					'price_note' => __( 'one-off', 'ogc-newfinity' ),
-					'included'   => array(
-						__( 'Defined basic external/configuration review', 'ogc-newfinity' ),
-						__( 'WordPress/plugin update status', 'ogc-newfinity' ),
-						__( 'HTTPS/security-header checks where applicable', 'ogc-newfinity' ),
+					'name'         => __( 'Website Security Check', 'ogc-newfinity' ),
+					'fit'          => __( 'A clear picture of where your site stands.', 'ogc-newfinity' ),
+					'price_prefix' => '',
+					'price'        => '€249',
+					'unit'         => __( 'one-off', 'ogc-newfinity' ),
+					'popular'      => false,
+					'features'     => array(
+						__( 'Basic external and configuration review', 'ogc-newfinity' ),
+						__( 'WordPress and plugin update status', 'ogc-newfinity' ),
+						__( 'HTTPS and security-header checks', 'ogc-newfinity' ),
 						__( 'Visible exposure review', 'ogc-newfinity' ),
 						__( 'Prioritized findings report', 'ogc-newfinity' ),
 					),
 				),
 				array(
-					'name'       => __( 'WordPress Protection', 'ogc-newfinity' ),
-					'price'      => '€499',
-					'price_note' => __( 'one-off', 'ogc-newfinity' ),
-					'included'   => array(
+					'name'         => __( 'WordPress Protection', 'ogc-newfinity' ),
+					'fit'          => __( 'Hardening and recovery readiness.', 'ogc-newfinity' ),
+					'price_prefix' => '',
+					'price'        => '€499',
+					'unit'         => __( 'one-off', 'ogc-newfinity' ),
+					'popular'      => true,
+					'features'     => array(
 						__( 'Agreed WordPress hardening', 'ogc-newfinity' ),
-						__( 'Admin/account review', 'ogc-newfinity' ),
+						__( 'Admin and account review', 'ogc-newfinity' ),
 						__( 'Backup verification', 'ogc-newfinity' ),
 						__( 'Security configuration', 'ogc-newfinity' ),
 						__( 'Update and recovery recommendations', 'ogc-newfinity' ),
 					),
 				),
 				array(
-					'name'       => __( 'Application Security Review', 'ogc-newfinity' ),
-					'price'      => __( 'From €1,200', 'ogc-newfinity' ),
-					'price_note' => __( 'one-off', 'ogc-newfinity' ),
-					'included'   => array(
-						__( 'Scoped review of a small application/API', 'ogc-newfinity' ),
+					'name'         => __( 'Application Security Review', 'ogc-newfinity' ),
+					'fit'          => __( 'A scoped review of a small app or API.', 'ogc-newfinity' ),
+					'price_prefix' => __( 'FROM', 'ogc-newfinity' ),
+					'price'        => '€1,200',
+					'unit'         => __( 'scoped', 'ogc-newfinity' ),
+					'popular'      => false,
+					'features'     => array(
+						__( 'Review of a small application or API', 'ogc-newfinity' ),
 						__( 'Architecture and configuration review', 'ogc-newfinity' ),
 						__( 'Findings and remediation priorities', 'ogc-newfinity' ),
-						__( 'Not a full pentest unless explicitly scoped', 'ogc-newfinity' ),
+						__( 'Written scope and authorization', 'ogc-newfinity' ),
 					),
 				),
 			),
-			'addons' => array(
+			'extras' => array(
 				array(
-					'label' => __( 'Security monitoring add-on', 'ogc-newfinity' ),
-					'price' => __( 'From €49/month', 'ogc-newfinity' ),
+					'title' => __( 'Ongoing and incident work', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Security monitoring', 'ogc-newfinity' ), 'price' => __( 'From €49/month', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Incident response and malware remediation', 'ogc-newfinity' ), 'price' => __( 'Priced after triage', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Penetration test', 'ogc-newfinity' ), 'price' => __( 'Scoped separately', 'ogc-newfinity' ) ),
+					),
 				),
-				array(
-					'label' => __( 'Incident response and malware remediation', 'ogc-newfinity' ),
-					'price' => __( 'Priced after triage', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Formal penetration test', 'ogc-newfinity' ),
-					'price' => __( 'Separately scoped and quoted after discovery', 'ogc-newfinity' ),
-				),
-			),
-			'subscriptions' => array(
-				'heading' => '',
-				'rows'    => array(),
 			),
 			'notes' => array(
-				__( 'A website security check is not the same as a formal penetration test — pentests are scoped and quoted separately.', 'ogc-newfinity' ),
-				__( 'Penetration testing requires your written authorization and an agreed scope.', 'ogc-newfinity' ),
-				__( 'Security testing is point-in-time; no review can guarantee that a system stays secure afterward.', 'ogc-newfinity' ),
+				__( 'A security check is a point-in-time review, not a penetration test.', 'ogc-newfinity' ),
+				__( 'All testing requires written authorization and a defined scope.', 'ogc-newfinity' ),
 			),
 		),
 		array(
 			'slug'  => 'ai-solutions',
 			'icon'  => 'ai',
 			'title' => __( 'AI Solutions', 'ogc-newfinity' ),
-			'intro' => __( 'Implementation plus ongoing management — third-party model and platform usage billed transparently.', 'ogc-newfinity' ),
+			'intro' => __( 'Implementation plus monthly management, with AI usage costs shown openly.', 'ogc-newfinity' ),
 			'packages' => array(
 				array(
-					'name'       => __( 'AI Starter Assistant', 'ogc-newfinity' ),
-					'price'      => '€795',
-					'price_note' => __( 'setup', 'ogc-newfinity' ),
-					'price_recurring' => '€99/month',
-					'included'   => array(
+					'name'         => __( 'AI Starter Assistant', 'ogc-newfinity' ),
+					'fit'          => __( 'One assistant or workflow, done properly.', 'ogc-newfinity' ),
+					'price_prefix' => __( 'SETUP', 'ogc-newfinity' ),
+					'price'        => '€795',
+					'unit'         => __( '+ €99 per month', 'ogc-newfinity' ),
+					'popular'      => false,
+					'features'     => array(
 						__( 'One narrow website assistant or workflow', 'ogc-newfinity' ),
 						__( 'Approved knowledge sources', 'ogc-newfinity' ),
-						__( 'Fallback/handoff', 'ogc-newfinity' ),
+						__( 'Fallback and human handoff', 'ogc-newfinity' ),
 						__( 'Basic testing', 'ogc-newfinity' ),
 						__( 'Limited monthly monitoring', 'ogc-newfinity' ),
 					),
 				),
 				array(
-					'name'       => __( 'AI Business Automation', 'ogc-newfinity' ),
-					'price'      => '€1,500',
-					'price_note' => __( 'setup', 'ogc-newfinity' ),
-					'price_recurring' => '€199/month',
-					'included'   => array(
+					'name'         => __( 'AI Business Automation', 'ogc-newfinity' ),
+					'fit'          => __( 'A multi-step workflow tied into your tools.', 'ogc-newfinity' ),
+					'price_prefix' => __( 'SETUP', 'ogc-newfinity' ),
+					'price'        => '€1,500',
+					'unit'         => __( '+ €199 per month', 'ogc-newfinity' ),
+					'popular'      => true,
+					'features'     => array(
 						__( 'Multi-step workflow', 'ogc-newfinity' ),
 						__( 'Up to 2 agreed integrations', 'ogc-newfinity' ),
 						__( 'Exception handling', 'ogc-newfinity' ),
@@ -482,11 +441,13 @@ function ogc_get_pricing_data() {
 					),
 				),
 				array(
-					'name'       => __( 'Custom AI Agent', 'ogc-newfinity' ),
-					'price'      => __( 'From €2,500', 'ogc-newfinity' ),
-					'price_note' => __( 'setup', 'ogc-newfinity' ),
-					'price_recurring' => __( 'From €299/month', 'ogc-newfinity' ),
-					'included'   => array(
+					'name'         => __( 'Custom AI Agent', 'ogc-newfinity' ),
+					'fit'          => __( 'An agent with defined tools and approvals.', 'ogc-newfinity' ),
+					'price_prefix' => __( 'SETUP FROM', 'ogc-newfinity' ),
+					'price'        => '€2,500',
+					'unit'         => __( '+ from €299 per month', 'ogc-newfinity' ),
+					'popular'      => false,
+					'features'     => array(
 						__( 'Custom agent workflow', 'ogc-newfinity' ),
 						__( 'Defined tools and permissions', 'ogc-newfinity' ),
 						__( 'API integrations', 'ogc-newfinity' ),
@@ -496,132 +457,125 @@ function ogc_get_pricing_data() {
 					),
 				),
 			),
-			'addons' => array(
+			'extras' => array(
 				array(
-					'label' => __( 'AI Opportunity / Process Scan', 'ogc-newfinity' ),
-					'price' => '€249',
+					'title' => __( 'Optional services', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'AI Opportunity / Process Scan', 'ogc-newfinity' ), 'price' => '€249' ),
+						array( 'label' => __( 'AI Workflow Blueprint', 'ogc-newfinity' ), 'price' => __( 'From €450', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Additional workflow', 'ogc-newfinity' ), 'price' => __( 'From €450', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Additional integration', 'ogc-newfinity' ), 'price' => __( 'From €350', 'ogc-newfinity' ) ),
+					),
 				),
 				array(
-					'label' => __( 'AI Workflow Blueprint', 'ogc-newfinity' ),
-					'price' => __( 'From €450', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Additional workflow', 'ogc-newfinity' ),
-					'price' => __( 'From €450', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Additional integration', 'ogc-newfinity' ),
-					'price' => __( 'From €350', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'AI knowledge-base preparation', 'ogc-newfinity' ),
-					'price' => __( 'From €250', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'Advanced agent / multi-agent system', 'ogc-newfinity' ),
-					'price' => __( 'From €5,000', 'ogc-newfinity' ),
-				),
-				array(
-					'label' => __( 'AI usage and performance review', 'ogc-newfinity' ),
-					'price' => __( 'From €149', 'ogc-newfinity' ),
+					'title' => __( 'More', 'ogc-newfinity' ),
+					'rows'  => array(
+						array( 'label' => __( 'Knowledge-base preparation', 'ogc-newfinity' ), 'price' => __( 'From €250', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Usage and performance review', 'ogc-newfinity' ), 'price' => __( 'From €149', 'ogc-newfinity' ) ),
+						array( 'label' => __( 'Advanced or multi-agent system', 'ogc-newfinity' ), 'price' => __( 'From €5,000', 'ogc-newfinity' ) ),
+					),
 				),
 			),
-			'subscriptions' => array(),
-			'notes'         => array(
-				__( 'Third-party AI model and automation platform costs are listed clearly on your quote.', 'ogc-newfinity' ),
-				__( 'Managed plans include a defined usage allowance; overage is billed transparently or you can upgrade.', 'ogc-newfinity' ),
-				__( 'You may supply your own API key (BYOK) and pay the provider directly; we charge for implementation, monitoring, and support.', 'ogc-newfinity' ),
+			'notes' => array(
+				__( 'AI model usage is either included up to a stated allowance or paid directly by you with your own key.', 'ogc-newfinity' ),
+				__( 'Every assistant has a human handoff for questions it should not answer.', 'ogc-newfinity' ),
 			),
 		),
 	);
 }
 
 /**
- * Customer-facing commercial terms (sections 4 and 11).
+ * Allowed HTML for pricing FAQ answers (inline links).
  *
- * @return array<string, array<int, string>>
+ * @return array<string, array<string, bool>>
  */
-function ogc_get_pricing_commercial_terms() {
+function ogc_pricing_faq_allowed_html() {
 	return array(
-		'separate_costs' => array(
-			__( 'Unless specifically included, the customer pays separately for hosting, domain, premium plugins/themes, stock assets, AI model usage, automation platform subscriptions, SMS/WhatsApp fees, payment gateway fees, translation, external security testing, and advertising spend.', 'ogc-newfinity' ),
-			__( 'The customer owns their domain, content, and business accounts. OGC receives only access needed to perform the contracted work.', 'ogc-newfinity' ),
-		),
-		'out_of_scope' => array(
-			__( 'Recommended out-of-scope rates: general implementation/support €85/hour.', 'ogc-newfinity' ),
-			__( 'Specialist engineering, AI, and security: €95–€125/hour, depending on scope.', 'ogc-newfinity' ),
-			__( 'Every fixed-price offer defines scope, revision rounds, response times, acceptance criteria, and exclusions. Work outside scope requires written approval and a separate quote.', 'ogc-newfinity' ),
-		),
-		'vat' => array(
-			__( 'Public catalogue displays prices excluding 21% VAT.', 'ogc-newfinity' ),
-			__( 'Quotes and invoices show VAT separately where applicable.', 'ogc-newfinity' ),
-			__( 'Confirm VAT treatment for customer location and service type.', 'ogc-newfinity' ),
-		),
-		'deposits' => array(
-			__( 'Fixed-price work below €1,000: suggested 50% upfront, 50% before handover/go-live.', 'ogc-newfinity' ),
-			__( 'Projects above €1,000: suggested 40% upfront, 40% at milestone, 20% at acceptance.', 'ogc-newfinity' ),
-			__( 'Recurring services invoiced monthly in advance.', 'ogc-newfinity' ),
-		),
-		'revisions' => array(
-			__( 'State included revision rounds.', 'ogc-newfinity' ),
-			__( 'A revision changes an agreed deliverable; a new feature or direction is additional work.', 'ogc-newfinity' ),
-			__( 'Work starts after required content, access, approvals, and deposit are received.', 'ogc-newfinity' ),
-		),
-		'recurring' => array(
-			__( 'State minimum term, cancellation notice, included support time, response target, and incident definition.', 'ogc-newfinity' ),
-			__( 'Suggested launch approach: monthly billing with a 3-month initial term for SEO/marketing/AI management where onboarding and optimization require time. Website care may be monthly cancellable.', 'ogc-newfinity' ),
-			__( 'Never guarantee business outcomes.', 'ogc-newfinity' ),
+		'a' => array(
+			'href' => array(),
 		),
 	);
 }
 
 /**
- * Pricing page FAQ (replaces the long “How pricing works” card grid).
+ * Pricing page FAQ.
  *
  * @return array<int, array{question: string, answer: string}>
  */
 function ogc_get_pricing_faq() {
+	$services_url = home_url( '/services/' );
+	$contact_url  = home_url( '/contact/' );
+	$submit_url   = home_url( '/submit-idea/' );
+	$terms_url    = home_url( '/terms-and-conditions/' );
+	$refund_url   = home_url( '/refund-policy/' );
+	$support_url  = home_url( '/support/' );
+
 	return array(
 		array(
 			'question' => __( 'What is billed separately?', 'ogc-newfinity' ),
-			'answer'   => __(
-				'Unless your quote says otherwise, you pay separately for hosting, domains, premium plugins or themes, stock assets, AI model usage, automation subscriptions, messaging fees, payment gateway fees, translation, formal security testing, and ad spend. You keep ownership of your domain, content, and accounts.',
-				'ogc-newfinity'
+			'answer'   => sprintf(
+				/* translators: 1: Our Services link, 2: contact link */
+				__(
+					'Hosting, your domain, premium plugins or themes, stock assets, AI model usage, automation platform fees and advertising spend. You own your domain, content and accounts. See what each service covers on %1$s, or %2$s.',
+					'ogc-newfinity'
+				),
+				'<a href="' . esc_url( $services_url ) . '">' . esc_html__( 'Our Services', 'ogc-newfinity' ) . '</a>',
+				'<a href="' . esc_url( $contact_url ) . '">' . esc_html__( 'ask us for a full cost overview', 'ogc-newfinity' ) . '</a>'
 			),
 		),
 		array(
 			'question' => __( 'How do payments work?', 'ogc-newfinity' ),
-			'answer'   => __(
-				'Projects under €1,000 are usually 50% upfront and 50% before go-live. Larger projects typically follow 40% upfront, 40% at an agreed milestone, and 20% at acceptance. Monthly plans are invoiced in advance each month.',
-				'ogc-newfinity'
+			'answer'   => sprintf(
+				/* translators: %s: Terms and Conditions link */
+				__(
+					'Fixed-price work under €1,000: 50%% upfront and 50%% before go-live. Projects above €1,000: 40%% at start, 40%% at an agreed milestone and 20%% at acceptance. Monthly plans are invoiced in advance. Full details are in our %s.',
+					'ogc-newfinity'
+				),
+				'<a href="' . esc_url( $terms_url ) . '">' . esc_html__( 'Terms and Conditions', 'ogc-newfinity' ) . '</a>'
 			),
 		),
 		array(
 			'question' => __( 'How many revisions are included?', 'ogc-newfinity' ),
-			'answer'   => __(
-				'Each package states its included revision rounds. A revision adjusts an agreed deliverable; a new feature or direction counts as additional work and is quoted separately.',
-				'ogc-newfinity'
+			'answer'   => sprintf(
+				/* translators: %s: Our Services link */
+				__(
+					'Each package lists its revision rounds. A revision changes something already agreed; a new feature or a new direction is extra work that we quote first. Read how a project runs on %s.',
+					'ogc-newfinity'
+				),
+				'<a href="' . esc_url( $services_url ) . '">' . esc_html__( 'Our Services', 'ogc-newfinity' ) . '</a>'
 			),
 		),
 		array(
-			'question' => __( 'Can I cancel monthly plans?', 'ogc-newfinity' ),
-			'answer'   => __(
-				'Terms depend on the plan: WordPress care is often cancellable month to month; SEO, marketing, and AI management may start with a short minimum term so onboarding and optimisation have time to take effect. Your quote states notice periods and what is included each month.',
-				'ogc-newfinity'
+			'question' => __( 'Can I cancel a monthly plan?', 'ogc-newfinity' ),
+			'answer'   => sprintf(
+				/* translators: %s: Refund and Cancellation Policy link */
+				__(
+					'Website care can be cancelled monthly. SEO, social media and AI management start with a 3-month term, then continue monthly. The rules are set out in our %s.',
+					'ogc-newfinity'
+				),
+				'<a href="' . esc_url( $refund_url ) . '">' . esc_html__( 'Refund and Cancellation Policy', 'ogc-newfinity' ) . '</a>'
 			),
 		),
 		array(
-			'question' => __( 'What if I need something outside the package?', 'ogc-newfinity' ),
-			'answer'   => __(
-				'Every fixed-price offer defines scope, revisions, response times, and exclusions. Extra work needs your written approval and a separate quote — typically from €85/hour for general work, or €95–€125/hour for specialist engineering, AI, or security tasks.',
-				'ogc-newfinity'
+			'question' => __( 'What if I need something outside a package?', 'ogc-newfinity' ),
+			'answer'   => sprintf(
+				/* translators: %s: Submit Your Idea link */
+				__(
+					'We quote it before any work starts. Extra work is €85 per hour, and €95–€125 per hour for specialist engineering, AI and security. %s and you get a written scope and price.',
+					'ogc-newfinity'
+				),
+				'<a href="' . esc_url( $submit_url ) . '">' . esc_html__( 'Submit your idea', 'ogc-newfinity' ) . '</a>'
 			),
 		),
 		array(
 			'question' => __( 'Is VAT included?', 'ogc-newfinity' ),
-			'answer'   => __(
-				'Catalogue prices on this page are in EUR and exclude 21% VAT. Quotes and invoices show VAT separately where it applies.',
-				'ogc-newfinity'
+			'answer'   => sprintf(
+				/* translators: %s: Help & Support link */
+				__(
+					'No. All prices exclude 21%% Dutch VAT, which is shown separately on every quote and invoice. For billing questions, visit %s.',
+					'ogc-newfinity'
+				),
+				'<a href="' . esc_url( $support_url ) . '">' . esc_html__( 'Help & Support', 'ogc-newfinity' ) . '</a>'
 			),
 		),
 	);

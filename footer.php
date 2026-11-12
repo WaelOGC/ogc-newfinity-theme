@@ -29,6 +29,10 @@ if ( ! is_array( $ogc_footer_columns ) || empty( $ogc_footer_columns ) ) {
 					'url'   => home_url( '/services/' ),
 				),
 				array(
+					'label' => __( 'Pricing', 'ogc-newfinity' ),
+					'url'   => home_url( '/pricing/' ),
+				),
+				array(
 					'label' => __( 'Our Mission', 'ogc-newfinity' ),
 					'url'   => home_url( '/our-mission/' ),
 				),

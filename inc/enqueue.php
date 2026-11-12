@@ -157,6 +157,13 @@ function ogc_enqueue_assets() {
 			OGC_THEME_VERSION,
 			true
 		);
+		wp_enqueue_script(
+			'ogc-pricing-tiers',
+			OGC_THEME_URI . '/assets/js/pricing-tiers.js',
+			array(),
+			OGC_THEME_VERSION,
+			true
+		);
 	}
 
 	wp_enqueue_script(
