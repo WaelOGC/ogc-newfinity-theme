@@ -1,0 +1,98 @@
+name: Deploy theme to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: hostinger-theme-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+      SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+      SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
+      REMOTE_THEME_PATH: ${{ secrets.DEPLOY_REMOTE_THEME_PATH }}
+      THEME_SLUG: ogc-newfinity-theme
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate configuration
+        run: |
+          set -euo pipefail
+          missing=()
+          for name in SSH_HOST SSH_PORT SSH_USER; do
+            if [ -z "${!name:-}" ]; then
+              missing+=("$name")
+            fi
+          done
+          if [ -z "${REMOTE_THEME_PATH:-}" ]; then
+            REMOTE_THEME_PATH="/home/${SSH_USER}/domains/ogcnewfinity.com/public_html/wp-content/themes/${THEME_SLUG}"
+            echo "REMOTE_THEME_PATH=${REMOTE_THEME_PATH}" >> "$GITHUB_ENV"
+          else
+            echo "REMOTE_THEME_PATH=${REMOTE_THEME_PATH}" >> "$GITHUB_ENV"
+          fi
+          if [ -z "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" ]; then
+            missing+=("DEPLOY_SSH_PRIVATE_KEY")
+          fi
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "Missing required secret(s) or env: ${missing[*]}"
+            exit 1
+          fi
+
+      - name: Validate remote theme path (safety)
+        run: |
+          set -euo pipefail
+          path="${REMOTE_THEME_PATH}"
+          path="${path%/}"
+
+          case "$path" in
+            */wp-content)
+              echo "Refusing to deploy: path must not be wp-content."
+              exit 1
+              ;;
+            */wp-content/themes)
+              echo "Refusing to deploy: path must not be the themes directory root."
+              exit 1
+              ;;
+          esac
+
+          if ! printf '%s' "$path" | grep -Eq '/wp-content/themes/[^/]+$'; then
+            echo "Remote path must be a single theme folder under wp-content/themes/ (got: $path)"
+            exit 1
+          fi
+
+          theme_dir="${path##*/}"
+          if [ "$theme_dir" != "$THEME_SLUG" ]; then
+            echo "Warning: remote theme folder '$theme_dir' does not match expected slug '$THEME_SLUG'."
+            echo "Set DEPLOY_REMOTE_THEME_PATH if the live folder name differs."
+          fi
+
+          echo "Deploy target validated: $path"
+
+      - name: Configure SSH key
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf 'Host hostinger-deploy\n  HostName %s\n  User %s\n  Port %s\n  IdentityFile ~/.ssh/deploy_key\n  StrictHostKeyChecking accept-new\n' \
+            "$SSH_HOST" "$SSH_USER" "$SSH_PORT" > ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+      - name: Rsync theme to Hostinger
+        run: |
+          set -euo pipefail
+          rsync -avz \
+            --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'node_modules/' \
+            --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r \
+            -e ssh \
+            ./ "hostinger-deploy:${REMOTE_THEME_PATH}/"
