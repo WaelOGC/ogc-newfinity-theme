@@ -168,16 +168,6 @@ $trust_cards = array(
 			<?php endif; ?>
 
 			<?php do_action( 'ogc_submit_idea_render' ); ?>
-
-			<p class="ogc-submit-idea-meta">
-				<?php
-				printf(
-					/* translators: %s: location text */
-					esc_html__( '%s · Free & Confidential', 'ogc-newfinity' ),
-					esc_html( ogc_get_location_text() )
-				);
-				?>
-			</p>
 		</div>
 
 		<aside class="ogc-contact-layout__aside" aria-labelledby="ogc-submit-idea-aside-heading">

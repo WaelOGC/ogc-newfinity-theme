@@ -37,21 +37,16 @@
 }
 
 /* --------------------------------------------------------------------------
-   Footer meta
+   Form section heading — centered copy above Amy / manual form
    -------------------------------------------------------------------------- */
 
-.ogc-submit-idea-meta {
-	margin: 1.25rem 0 0;
-	font-family: var(--ogc-font-body);
-	font-size: 0.8125rem;
-	line-height: 1.5;
-	color: var(--ogc-text-muted);
+.ogc-page--submit-idea .ogc-contact-layout__form .ogc-section-header {
 	text-align: center;
-	text-wrap: pretty;
+	margin-left: auto;
+	margin-right: auto;
 }
 
-@media (min-width: 900px) {
-	.ogc-submit-idea-meta {
-		text-align: left;
-	}
+.ogc-page--submit-idea .ogc-contact-layout__form .ogc-section-intro {
+	margin-left: auto;
+	margin-right: auto;
 }
