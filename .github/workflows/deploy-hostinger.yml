@@ -13,16 +13,18 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
-      SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
-      SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
-      REMOTE_THEME_PATH: ${{ secrets.DEPLOY_REMOTE_THEME_PATH }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      REMOTE_THEME_PATH: ${{ secrets.SSH_REMOTE_THEME_PATH }}
       THEME_SLUG: ogc-newfinity-theme
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Validate configuration
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           set -euo pipefail
           missing=()
@@ -31,15 +33,13 @@ jobs:
               missing+=("$name")
             fi
           done
+          if [ -z "${SSH_PRIVATE_KEY:-}" ]; then
+            missing+=("SSH_PRIVATE_KEY")
+          fi
           if [ -z "${REMOTE_THEME_PATH:-}" ]; then
             REMOTE_THEME_PATH="/home/${SSH_USER}/domains/ogcnewfinity.com/public_html/wp-content/themes/${THEME_SLUG}"
-            echo "REMOTE_THEME_PATH=${REMOTE_THEME_PATH}" >> "$GITHUB_ENV"
-          else
-            echo "REMOTE_THEME_PATH=${REMOTE_THEME_PATH}" >> "$GITHUB_ENV"
           fi
-          if [ -z "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" ]; then
-            missing+=("DEPLOY_SSH_PRIVATE_KEY")
-          fi
+          echo "REMOTE_THEME_PATH=${REMOTE_THEME_PATH}" >> "$GITHUB_ENV"
           if [ "${#missing[@]}" -gt 0 ]; then
             echo "Missing required secret(s) or env: ${missing[*]}"
             exit 1
@@ -70,16 +70,18 @@ jobs:
           theme_dir="${path##*/}"
           if [ "$theme_dir" != "$THEME_SLUG" ]; then
             echo "Warning: remote theme folder '$theme_dir' does not match expected slug '$THEME_SLUG'."
-            echo "Set DEPLOY_REMOTE_THEME_PATH if the live folder name differs."
+            echo "Set SSH_REMOTE_THEME_PATH if the live folder name differs."
           fi
 
           echo "Deploy target validated: $path"
 
       - name: Configure SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           set -euo pipefail
           install -m 700 -d ~/.ssh
-          printf '%s\n' "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           printf 'Host hostinger-deploy\n  HostName %s\n  User %s\n  Port %s\n  IdentityFile ~/.ssh/deploy_key\n  StrictHostKeyChecking accept-new\n' \
             "$SSH_HOST" "$SSH_USER" "$SSH_PORT" > ~/.ssh/config
