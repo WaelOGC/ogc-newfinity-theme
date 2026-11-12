@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** Theme version — bump when shipping asset cache-busts. */
-define( 'OGC_THEME_VERSION', '1.26.13' );
+define( 'OGC_THEME_VERSION', '1.26.14' );
 
 /** Absolute path to the theme root. */
 define( 'OGC_THEME_DIR', get_template_directory() );
@@ -39,6 +39,7 @@ require_once OGC_THEME_DIR . '/inc/form-helpers.php';
 require_once OGC_THEME_DIR . '/inc/contact-form.php';
 require_once OGC_THEME_DIR . '/inc/submit-idea-form.php';
 require_once OGC_THEME_DIR . '/inc/pricing-data.php';
+require_once OGC_THEME_DIR . '/inc/redirects.php';
 
 /**
  * Warn when style.css Version header drifts from OGC_THEME_VERSION.

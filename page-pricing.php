@@ -130,7 +130,11 @@ $ogc_show_widgets = ogc_page_enable_widget_area( $ogc_page_id ) && ! ogc_page_sh
 						<div class="ogc-pricing-packages">
 							<?php foreach ( $line['packages'] as $package ) : ?>
 								<?php
-								$is_popular = ! empty( $package['popular'] );
+								$is_popular   = ! empty( $package['popular'] );
+								$amount_class = 'ogc-pricing-package__amount';
+								if ( ! preg_match( '/^€/', (string) $package['price'] ) ) {
+									$amount_class .= ' ogc-pricing-package__amount--text';
+								}
 								$cta_label  = sprintf(
 									/* translators: %s: package name */
 									__( 'Choose %s', 'ogc-newfinity' ),
@@ -151,7 +155,7 @@ $ogc_show_widgets = ogc_page_enable_widget_area( $ogc_page_id ) && ! ogc_page_sh
 										<?php else : ?>
 											<span class="ogc-pricing-package__prefix" aria-hidden="true"></span>
 										<?php endif; ?>
-										<span class="ogc-pricing-package__amount"><?php echo esc_html( $package['price'] ); ?></span>
+										<span class="<?php echo esc_attr( $amount_class ); ?>"><?php echo esc_html( $package['price'] ); ?></span>
 										<span class="ogc-pricing-package__unit"><?php echo esc_html( $package['unit'] ); ?></span>
 									</div>
 									<a
