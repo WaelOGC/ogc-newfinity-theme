@@ -181,9 +181,6 @@ $ogc_render_plan_cards = static function ( array $rows ) {
 				);
 				?>
 			</p>
-			<p class="ogc-pricing-vat-notice" role="note">
-				<?php esc_html_e( 'All prices in EUR, excluding 21% VAT (excl. BTW).', 'ogc-newfinity' ); ?>
-			</p>
 		</div>
 	</section>
 
@@ -192,39 +189,53 @@ $ogc_render_plan_cards = static function ( array $rows ) {
 			<div class="ogc-page-body__main">
 	<?php endif; ?>
 
-	<div class="ogc-pricing-tabs" data-ogc-pricing-tabs>
-		<div class="ogc-pricing-tabs__bar-wrap">
-			<div
-				class="ogc-pricing-tabs__list"
-				role="tablist"
-				aria-label="<?php esc_attr_e( 'Service line pricing', 'ogc-newfinity' ); ?>"
-			>
-				<?php foreach ( $service_lines as $tab_index => $line ) : ?>
-					<button
-						type="button"
-						class="ogc-pricing-tabs__tab"
-						role="tab"
-						id="<?php echo esc_attr( 'ogc-pricing-tab-' . $line['slug'] ); ?>"
-						aria-selected="<?php echo 0 === $tab_index ? 'true' : 'false'; ?>"
-						aria-controls="<?php echo esc_attr( $line['slug'] ); ?>"
-						tabindex="<?php echo 0 === $tab_index ? '0' : '-1'; ?>"
-						data-ogc-pricing-tab="<?php echo esc_attr( $line['slug'] ); ?>"
-					>
-						<?php
-						ogc_icon(
-							$line['icon'],
-							array(
-								'size'  => 'sm',
-								'class' => 'ogc-pricing-tabs__tab-icon',
-							)
-						);
-						?>
-						<span class="ogc-pricing-tabs__tab-label"><?php echo esc_html( $line['title'] ); ?></span>
-					</button>
-				<?php endforeach; ?>
-			</div>
-		</div>
+	<div class="ogc-pricing-layout" data-ogc-pricing-tabs>
+		<div class="ogc-pricing-layout__columns">
+			<aside class="glass-card ogc-pricing-sidebar" aria-label="<?php esc_attr_e( 'Service line pricing', 'ogc-newfinity' ); ?>">
+				<p class="ogc-pricing-sidebar__eyebrow" id="ogc-pricing-nav-label"><?php esc_html_e( 'Pricing', 'ogc-newfinity' ); ?></p>
+				<div
+					class="ogc-pricing-nav"
+					role="tablist"
+					aria-labelledby="ogc-pricing-nav-label"
+					aria-orientation="vertical"
+					data-ogc-pricing-tablist
+				>
+					<?php foreach ( $service_lines as $tab_index => $line ) : ?>
+						<button
+							type="button"
+							class="ogc-pricing-nav__tab"
+							role="tab"
+							id="<?php echo esc_attr( 'ogc-pricing-tab-' . $line['slug'] ); ?>"
+							aria-selected="<?php echo 0 === $tab_index ? 'true' : 'false'; ?>"
+							aria-controls="<?php echo esc_attr( $line['slug'] ); ?>"
+							tabindex="<?php echo 0 === $tab_index ? '0' : '-1'; ?>"
+							data-ogc-pricing-tab="<?php echo esc_attr( $line['slug'] ); ?>"
+						>
+							<?php
+							ogc_icon(
+								$line['icon'],
+								array(
+									'size'  => 'sm',
+									'class' => 'ogc-pricing-nav__tab-icon',
+								)
+							);
+							?>
+							<span class="ogc-pricing-nav__tab-label"><?php echo esc_html( $line['title'] ); ?></span>
+						</button>
+					<?php endforeach; ?>
+				</div>
+				<div class="ogc-pricing-sidebar__footer">
+					<hr class="ogc-pricing-sidebar__divider" />
+					<p class="ogc-pricing-sidebar__vat" role="note">
+						<?php esc_html_e( 'All prices in EUR, excluding 21% VAT (excl. BTW).', 'ogc-newfinity' ); ?>
+					</p>
+					<a class="ogc-btn ogc-pricing-sidebar__quote" href="<?php echo esc_url( $submit_url ); ?>">
+						<?php esc_html_e( 'Get a quote', 'ogc-newfinity' ); ?>
+					</a>
+				</div>
+			</aside>
 
+			<div class="ogc-pricing-content">
 		<?php foreach ( $service_lines as $panel_index => $line ) : ?>
 			<section
 				class="ogc-pricing-tabpanel"
@@ -326,6 +337,17 @@ $ogc_render_plan_cards = static function ( array $rows ) {
 				<?php endif; ?>
 			</section>
 		<?php endforeach; ?>
+			</div>
+		</div>
+
+		<div class="ogc-pricing-mobile-foot">
+			<p class="ogc-pricing-mobile-foot__vat" role="note">
+				<?php esc_html_e( 'All prices in EUR, excluding 21% VAT (excl. BTW).', 'ogc-newfinity' ); ?>
+			</p>
+			<a class="ogc-btn ogc-pricing-mobile-foot__quote" href="<?php echo esc_url( $submit_url ); ?>">
+				<?php esc_html_e( 'Get a quote', 'ogc-newfinity' ); ?>
+			</a>
+		</div>
 	</div>
 
 	<section class="ogc-pricing-faq" aria-labelledby="ogc-pricing-faq-heading">
