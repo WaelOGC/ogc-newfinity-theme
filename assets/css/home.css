@@ -410,6 +410,25 @@ a.ogc-service-card:focus-visible {
 	text-wrap: pretty;
 }
 
+.ogc-service-card__pricing-link {
+	margin: 1rem 0 0;
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.ogc-service-card__pricing-link a {
+	color: var(--ogc-link-color);
+	text-decoration: none;
+	border-bottom: 1px solid rgba(var(--ogc-brand-rgb), 0.35);
+	transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.ogc-service-card__pricing-link a:hover,
+.ogc-service-card__pricing-link a:focus-visible {
+	color: var(--ogc-link-hover);
+	border-bottom-color: var(--ogc-link-hover);
+}
+
 /* --------------------------------------------------------------------------
    Trust / why us — 3 columns desktop, stack mobile
    -------------------------------------------------------------------------- */

@@ -143,6 +143,15 @@ function ogc_enqueue_assets() {
 		);
 	}
 
+	if ( is_page_template( 'page-pricing.php' ) || is_page( 'pricing' ) ) {
+		wp_enqueue_style(
+			'ogc-pricing',
+			OGC_THEME_URI . '/assets/css/pricing.css',
+			array( 'ogc-main', 'ogc-pages', 'ogc-glass' ),
+			OGC_THEME_VERSION
+		);
+	}
+
 	wp_enqueue_script(
 		'ogc-three',
 		'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',

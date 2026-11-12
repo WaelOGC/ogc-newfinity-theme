@@ -1,0 +1,324 @@
+/**
+ * OGC NewFinity — Pricing page (page-pricing.php).
+ */
+
+.ogc-page--pricing {
+	max-width: 72rem;
+	margin-inline: auto;
+	width: 100%;
+	padding-inline: clamp(1rem, 4vw, 2rem);
+}
+
+/* Hero */
+.ogc-pricing-vat-notice {
+	margin: 1rem 0 0;
+	padding: 0.65rem 1rem;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	color: var(--ogc-text-primary);
+	border-left: 3px solid var(--border-accent, var(--ogc-link-color));
+	background: rgba(var(--ogc-brand-rgb), 0.08);
+	border-radius: 0 0.35rem 0.35rem 0;
+}
+
+.ogc-pricing-hero__visual {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.ogc-pricing-hero__card {
+	padding: 1.5rem 1.75rem;
+	max-width: 20rem;
+}
+
+.ogc-pricing-hero__card-label {
+	margin: 0 0 0.75rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--ogc-link-color);
+}
+
+.ogc-pricing-hero__card-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	font-size: 0.9375rem;
+	line-height: 1.55;
+	color: var(--ogc-text-muted);
+}
+
+.ogc-pricing-hero__card-list li + li {
+	margin-top: 0.35rem;
+}
+
+/* Jump nav */
+.ogc-pricing-jump {
+	position: sticky;
+	top: calc(var(--ogc-header-height, 4rem) + 0.5rem);
+	z-index: 20;
+	margin: -1rem 0 0;
+	padding: 0.75rem 0;
+	background: linear-gradient(
+		to bottom,
+		rgba(10, 10, 10, 0.92) 70%,
+		rgba(10, 10, 10, 0)
+	);
+	backdrop-filter: blur(6px);
+}
+
+.ogc-pricing-jump__list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 0.65rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ogc-pricing-jump__link {
+	display: inline-block;
+	padding: 0.4rem 0.85rem;
+	font-family: var(--ogc-font-body);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--ogc-link-color);
+	text-decoration: none;
+	border: 1px solid rgba(var(--ogc-brand-rgb), 0.35);
+	border-radius: 999px;
+	background: rgba(var(--ogc-brand-rgb), 0.06);
+	transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.ogc-pricing-jump__link:hover,
+.ogc-pricing-jump__link:focus-visible {
+	color: var(--ogc-link-hover);
+	border-color: var(--ogc-link-color);
+	background: rgba(var(--ogc-brand-rgb), 0.14);
+	outline: none;
+}
+
+/* Service line sections */
+.ogc-pricing-line {
+	scroll-margin-top: calc(var(--ogc-header-height, 4rem) + 5rem);
+	padding-top: 0.5rem;
+	border-top: 1px solid rgba(var(--ogc-brand-rgb), 0.2);
+}
+
+.ogc-pricing-line:first-of-type {
+	border-top: none;
+}
+
+.ogc-pricing-line__header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 1rem 1.25rem;
+	margin-bottom: 1.75rem;
+}
+
+.ogc-pricing-line__heading-wrap {
+	flex: 1 1 16rem;
+	min-width: 0;
+}
+
+.ogc-pricing-subheading {
+	margin: 0 0 1rem;
+	font-family: var(--ogc-font-heading);
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--ogc-text-primary);
+}
+
+/* Package cards */
+.ogc-pricing-packages {
+	margin-bottom: 2rem;
+}
+
+.ogc-pricing-package {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	height: 100%;
+}
+
+.ogc-pricing-package__name {
+	margin: 0;
+	font-family: var(--ogc-font-heading);
+	font-size: 1.125rem;
+	font-weight: 700;
+	color: var(--ogc-text-primary);
+}
+
+.ogc-pricing-package__price {
+	margin: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.35rem 0.5rem;
+}
+
+.ogc-pricing-package__amount {
+	font-family: var(--ogc-font-heading);
+	font-size: 1.75rem;
+	font-weight: 700;
+	color: var(--ogc-link-color);
+	line-height: 1.2;
+}
+
+.ogc-pricing-package__note,
+.ogc-pricing-package__recurring {
+	font-size: 0.875rem;
+	color: var(--ogc-text-muted);
+}
+
+.ogc-pricing-package__recurring {
+	flex-basis: 100%;
+}
+
+.ogc-pricing-package__list {
+	margin: 0;
+	padding: 0 0 0 1.1rem;
+	font-size: 0.9375rem;
+	line-height: 1.55;
+	color: var(--ogc-text-muted);
+	flex-grow: 1;
+}
+
+.ogc-pricing-package__list li + li {
+	margin-top: 0.35rem;
+}
+
+.ogc-pricing-package__cta {
+	margin-top: auto;
+	align-self: flex-start;
+}
+
+/* Tables */
+.ogc-pricing-block {
+	margin-bottom: 2rem;
+}
+
+.ogc-pricing-table-wrap {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	border-radius: 0.5rem;
+	border: 1px solid rgba(var(--ogc-brand-rgb), 0.22);
+	background: rgba(20, 20, 20, 0.55);
+}
+
+.ogc-pricing-table {
+	width: 100%;
+	min-width: 18rem;
+	border-collapse: collapse;
+	font-size: 0.9375rem;
+}
+
+.ogc-pricing-table th,
+.ogc-pricing-table td {
+	padding: 0.85rem 1rem;
+	text-align: left;
+	vertical-align: top;
+	border-bottom: 1px solid rgba(var(--ogc-brand-rgb), 0.12);
+	color: var(--ogc-text-primary);
+}
+
+.ogc-pricing-table th {
+	font-family: var(--ogc-font-heading);
+	font-weight: 700;
+	font-size: 0.8125rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--ogc-link-color);
+	background: rgba(var(--ogc-brand-rgb), 0.08);
+}
+
+.ogc-pricing-table tbody tr:last-child th,
+.ogc-pricing-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.ogc-pricing-table td:nth-child(2) {
+	white-space: nowrap;
+	font-weight: 600;
+	color: var(--ogc-link-color);
+}
+
+@media (max-width: 599px) {
+	.ogc-pricing-table--stacked thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		border: 0;
+	}
+}
+
+/* Section notes */
+.ogc-pricing-notes {
+	margin: 0 0 1.5rem;
+	padding: 1rem 1.25rem;
+	border-radius: 0.5rem;
+	border: 1px solid rgba(var(--ogc-brand-rgb), 0.2);
+	background: rgba(var(--ogc-brand-rgb), 0.05);
+}
+
+.ogc-pricing-notes__label {
+	margin: 0 0 0.5rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--ogc-link-color);
+}
+
+.ogc-pricing-notes__list {
+	margin: 0;
+	padding: 0 0 0 1.1rem;
+	font-size: 0.9rem;
+	line-height: 1.6;
+	color: var(--ogc-text-muted);
+}
+
+.ogc-pricing-notes__list li + li {
+	margin-top: 0.4rem;
+}
+
+/* How pricing works */
+.ogc-pricing-terms__grid {
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+.ogc-pricing-terms__card-title {
+	margin: 0 0 0.75rem;
+	font-family: var(--ogc-font-heading);
+	font-size: 1.0625rem;
+	font-weight: 700;
+	color: var(--ogc-text-primary);
+}
+
+.ogc-pricing-terms__list {
+	margin: 0;
+	padding: 0 0 0 1.1rem;
+	font-size: 0.9rem;
+	line-height: 1.6;
+	color: var(--ogc-text-muted);
+}
+
+.ogc-pricing-terms__list li + li {
+	margin-top: 0.45rem;
+}
+
+@media (max-width: 899px) {
+	.ogc-pricing-jump {
+		position: relative;
+		top: auto;
+		background: transparent;
+		backdrop-filter: none;
+	}
+}
