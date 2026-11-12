@@ -47,7 +47,7 @@ $ogc_show_widgets = ogc_page_enable_widget_area( $ogc_page_id ) && ! ogc_page_sh
 				?>
 			</p>
 			<ul class="ogc-pricing-hero__pills" aria-label="<?php esc_attr_e( 'Pricing summary', 'ogc-newfinity' ); ?>">
-				<li><?php esc_html_e( 'Prices in EUR, excl. 21% VAT', 'ogc-newfinity' ); ?></li>
+				<li><?php esc_html_e( 'Prices in EUR, excluding VAT', 'ogc-newfinity' ); ?></li>
 				<li><?php esc_html_e( 'Fixed scope, written quote', 'ogc-newfinity' ); ?></li>
 				<li><?php esc_html_e( 'Reply within 48 hours', 'ogc-newfinity' ); ?></li>
 			</ul>
