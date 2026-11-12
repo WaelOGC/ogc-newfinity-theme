@@ -133,6 +133,11 @@ $ogc_show_widgets = ogc_page_enable_widget_area( $ogc_page_id ) && ! ogc_page_sh
 					?>
 					<h3 class="ogc-service-card__title"><?php echo esc_html( $service['title'] ); ?></h3>
 					<p class="ogc-service-card__text"><?php echo esc_html( $service['text'] ); ?></p>
+					<p class="ogc-service-card__pricing-link">
+						<a href="<?php echo esc_url( home_url( '/pricing/#' . $service['slug'] ) ); ?>">
+							<?php esc_html_e( 'See packages & pricing', 'ogc-newfinity' ); ?>
+						</a>
+					</p>
 				</article>
 			<?php endforeach; ?>
 		</div>
