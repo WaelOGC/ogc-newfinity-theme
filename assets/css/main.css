@@ -195,6 +195,26 @@
 	}
 }
 
+/* Sit above Amy launcher when the chat widget is on the page */
+body:has(.amy-agent-root) .ogc-back-top {
+	right: calc(1.25rem + (3.5rem - 46px) / 2);
+	bottom: 5.5rem;
+}
+
+@media (max-width: 599px) {
+	body:has(.amy-agent-root) .ogc-back-top {
+		right: calc(1.25rem + (3.5rem - 42px) / 2);
+		bottom: 5.5rem;
+	}
+}
+
+@media (max-width: 480px) {
+	body:has(.amy-agent-root) .ogc-back-top {
+		right: calc(0.85rem + (3.5rem - 42px) / 2);
+		bottom: 5rem;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.ogc-back-top,
 	.ogc-back-top.is-visible,
