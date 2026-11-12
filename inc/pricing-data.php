@@ -139,8 +139,8 @@ function ogc_get_pricing_data() {
 				),
 			),
 			'notes' => array(
-				__( 'Hosting should be separate or transparently listed as an add-on. Unused support time does not roll over.', 'ogc-newfinity' ),
-				__( 'Do not promise a fixed cleanup price before assessing the infection.', 'ogc-newfinity' ),
+				__( 'Hosting is billed separately or listed clearly as an add-on. Unused care-plan time does not roll over.', 'ogc-newfinity' ),
+				__( 'Malware cleanup pricing is confirmed after we assess the infection and your backups.', 'ogc-newfinity' ),
 			),
 		),
 		array(
@@ -205,12 +205,9 @@ function ogc_get_pricing_data() {
 			'addons'        => array(),
 			'subscriptions' => array(),
 			'notes'         => array(
-				__( 'Do not sell complex software as a fixed-price menu item without discovery.', 'ogc-newfinity' ),
-				__( 'Quote by milestones: discovery, design, implementation, testing, deployment.', 'ogc-newfinity' ),
-				__( 'Define acceptance criteria and change requests.', 'ogc-newfinity' ),
-				__( 'Suggested payment schedule: 40% start, 40% milestone, 20% acceptance/handover.', 'ogc-newfinity' ),
-				__( 'Hosting, cloud services, external API fees, licences, and maintenance are separate.', 'ogc-newfinity' ),
-				__( '“MVP” means a usable, testable first product, not a mockup.', 'ogc-newfinity' ),
+				__( 'Custom software is quoted after a discovery session.', 'ogc-newfinity' ),
+				__( 'Typical payment schedule: 40% at start, 40% at milestone, 20% at handover.', 'ogc-newfinity' ),
+				__( 'Hosting, cloud services, API fees, licences, and ongoing maintenance are billed separately.', 'ogc-newfinity' ),
 			),
 		),
 		array(
@@ -281,7 +278,7 @@ function ogc_get_pricing_data() {
 			),
 			'subscriptions' => array(),
 			'notes'         => array(
-				__( 'Do not describe UI-only work as UX research. Interviews, research, testing, and analysis require a separate scope.', 'ogc-newfinity' ),
+				__( 'User interviews, usability testing, and UX research are quoted separately from UI design packages.', 'ogc-newfinity' ),
 			),
 		),
 		array(
@@ -381,9 +378,9 @@ function ogc_get_pricing_data() {
 				),
 			),
 			'notes' => array(
-				__( 'Do not promise a fixed number of quality backlinks without control over publisher availability and quality.', 'ogc-newfinity' ),
+				__( 'Backlink outreach is quoted by scope, not a fixed number of links.', 'ogc-newfinity' ),
 				__( 'Ad spend, on-location production, influencer fees, and platform budgets are excluded.', 'ogc-newfinity' ),
-				__( 'No ranking guarantee: Google Business Profile and SEO optimization cannot guarantee first place in Google Search or Maps.', 'ogc-newfinity' ),
+				__( 'We do not guarantee search rankings — we commit to defined deliverables and optimisation work.', 'ogc-newfinity' ),
 			),
 		),
 		array(
@@ -447,11 +444,9 @@ function ogc_get_pricing_data() {
 				'rows'    => array(),
 			),
 			'notes' => array(
-				__( 'Clearly distinguish a basic website security review from a professional penetration test.', 'ogc-newfinity' ),
-				__( 'A formal pentest should be separately scoped and, where needed, delivered by a qualified specialist partner. Never sell a low-cost automated scan as a penetration test.', 'ogc-newfinity' ),
-				__( 'Written authorization and defined scope are mandatory for penetration testing.', 'ogc-newfinity' ),
-				__( 'Testing is point-in-time and cannot guarantee that a system is secure.', 'ogc-newfinity' ),
-				__( 'WordPress Care Plus/Pro may include defined security checks.', 'ogc-newfinity' ),
+				__( 'A website security check is not the same as a formal penetration test — pentests are scoped and quoted separately.', 'ogc-newfinity' ),
+				__( 'Penetration testing requires your written authorization and an agreed scope.', 'ogc-newfinity' ),
+				__( 'Security testing is point-in-time; no review can guarantee that a system stays secure afterward.', 'ogc-newfinity' ),
 			),
 		),
 		array(
@@ -533,10 +528,9 @@ function ogc_get_pricing_data() {
 			),
 			'subscriptions' => array(),
 			'notes'         => array(
-				__( 'Third-party model usage and automation-platform charges must be transparent.', 'ogc-newfinity' ),
-				__( 'Managed AI: OGC may include a defined usage allowance; overage is billed transparently or the customer upgrades.', 'ogc-newfinity' ),
-				__( 'BYOK (Bring Your Own Key): the customer supplies a supported provider key and pays that provider directly. OGC still charges for implementation, platform operations, monitoring, integrations, and support.', 'ogc-newfinity' ),
-				__( 'Do not advertise “unlimited AI” unless usage is genuinely unlimited and financially sustainable.', 'ogc-newfinity' ),
+				__( 'Third-party AI model and automation platform costs are listed clearly on your quote.', 'ogc-newfinity' ),
+				__( 'Managed plans include a defined usage allowance; overage is billed transparently or you can upgrade.', 'ogc-newfinity' ),
+				__( 'You may supply your own API key (BYOK) and pay the provider directly; we charge for implementation, monitoring, and support.', 'ogc-newfinity' ),
 			),
 		),
 	);
@@ -577,6 +571,58 @@ function ogc_get_pricing_commercial_terms() {
 			__( 'State minimum term, cancellation notice, included support time, response target, and incident definition.', 'ogc-newfinity' ),
 			__( 'Suggested launch approach: monthly billing with a 3-month initial term for SEO/marketing/AI management where onboarding and optimization require time. Website care may be monthly cancellable.', 'ogc-newfinity' ),
 			__( 'Never guarantee business outcomes.', 'ogc-newfinity' ),
+		),
+	);
+}
+
+/**
+ * Pricing page FAQ (replaces the long “How pricing works” card grid).
+ *
+ * @return array<int, array{question: string, answer: string}>
+ */
+function ogc_get_pricing_faq() {
+	return array(
+		array(
+			'question' => __( 'What is billed separately?', 'ogc-newfinity' ),
+			'answer'   => __(
+				'Unless your quote says otherwise, you pay separately for hosting, domains, premium plugins or themes, stock assets, AI model usage, automation subscriptions, messaging fees, payment gateway fees, translation, formal security testing, and ad spend. You keep ownership of your domain, content, and accounts.',
+				'ogc-newfinity'
+			),
+		),
+		array(
+			'question' => __( 'How do payments work?', 'ogc-newfinity' ),
+			'answer'   => __(
+				'Projects under €1,000 are usually 50% upfront and 50% before go-live. Larger projects typically follow 40% upfront, 40% at an agreed milestone, and 20% at acceptance. Monthly plans are invoiced in advance each month.',
+				'ogc-newfinity'
+			),
+		),
+		array(
+			'question' => __( 'How many revisions are included?', 'ogc-newfinity' ),
+			'answer'   => __(
+				'Each package states its included revision rounds. A revision adjusts an agreed deliverable; a new feature or direction counts as additional work and is quoted separately.',
+				'ogc-newfinity'
+			),
+		),
+		array(
+			'question' => __( 'Can I cancel monthly plans?', 'ogc-newfinity' ),
+			'answer'   => __(
+				'Terms depend on the plan: WordPress care is often cancellable month to month; SEO, marketing, and AI management may start with a short minimum term so onboarding and optimisation have time to take effect. Your quote states notice periods and what is included each month.',
+				'ogc-newfinity'
+			),
+		),
+		array(
+			'question' => __( 'What if I need something outside the package?', 'ogc-newfinity' ),
+			'answer'   => __(
+				'Every fixed-price offer defines scope, revisions, response times, and exclusions. Extra work needs your written approval and a separate quote — typically from €85/hour for general work, or €95–€125/hour for specialist engineering, AI, or security tasks.',
+				'ogc-newfinity'
+			),
+		),
+		array(
+			'question' => __( 'Is VAT included?', 'ogc-newfinity' ),
+			'answer'   => __(
+				'Catalogue prices on this page are in EUR and exclude 21% VAT. Quotes and invoices show VAT separately where it applies.',
+				'ogc-newfinity'
+			),
 		),
 	);
 }

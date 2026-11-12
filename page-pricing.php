@@ -8,57 +8,160 @@
 
 get_header();
 
-$submit_url   = home_url( '/submit-idea/' );
-$pricing_url  = home_url( '/pricing/' );
+$submit_url    = home_url( '/submit-idea/' );
 $service_lines = ogc_get_pricing_data();
-$commercial    = ogc_get_pricing_commercial_terms();
+$faq_items     = ogc_get_pricing_faq();
 
 $ogc_page_id      = (int) get_queried_object_id();
 $ogc_layout_class = ogc_get_page_layout_class( $ogc_page_id );
 $ogc_show_widgets = ogc_page_enable_widget_area( $ogc_page_id ) && ! ogc_page_should_hide( 'widget_area', $ogc_page_id );
 
 /**
- * Render a pricing table (add-ons or subscriptions).
+ * Index of the “most popular” package within a list (middle; second when two).
  *
- * @param string               $caption Accessible table caption.
- * @param array<int, string>   $columns Column header labels.
- * @param array<int, array>    $rows    Row cell values keyed by column index.
+ * @param array<int, array<string, mixed>> $packages Package rows.
+ * @return int
  */
-$ogc_render_pricing_table = static function ( $caption, $columns, $rows ) {
+$ogc_pricing_popular_index = static function ( array $packages ) {
+	$count = count( $packages );
+	if ( $count < 1 ) {
+		return -1;
+	}
+	if ( 2 === $count ) {
+		return 1;
+	}
+
+	return (int) floor( ( $count - 1 ) / 2 );
+};
+
+/**
+ * Render package cards for one group.
+ *
+ * @param array<int, array<string, mixed>> $packages Packages.
+ * @param string                           $submit_url CTA URL.
+ * @param callable                         $ogc_pricing_popular_index Popular index resolver.
+ */
+$ogc_render_package_cards = static function ( array $packages, $submit_url, $ogc_pricing_popular_index ) {
+	if ( empty( $packages ) ) {
+		return;
+	}
+	$popular = $ogc_pricing_popular_index( $packages );
+	?>
+	<div class="ogc-glass-grid ogc-pricing-packages">
+		<?php foreach ( $packages as $index => $package ) : ?>
+			<?php
+			$is_popular = ( $index === $popular );
+			$included   = isset( $package['included'] ) && is_array( $package['included'] ) ? $package['included'] : array();
+			$shown      = array_slice( $included, 0, 6 );
+			$extra      = count( $included ) - count( $shown );
+			?>
+			<article class="glass-card ogc-pricing-package<?php echo $is_popular ? ' ogc-pricing-package--popular' : ''; ?>">
+				<?php if ( $is_popular ) : ?>
+					<p class="ogc-pricing-package__badge"><?php esc_html_e( 'Most popular', 'ogc-newfinity' ); ?></p>
+				<?php endif; ?>
+				<h3 class="ogc-pricing-package__name"><?php echo esc_html( $package['name'] ); ?></h3>
+				<p class="ogc-pricing-package__price">
+					<span class="ogc-pricing-package__amount"><?php echo esc_html( $package['price'] ); ?></span>
+					<?php if ( ! empty( $package['price_note'] ) ) : ?>
+						<span class="ogc-pricing-package__note"><?php echo esc_html( $package['price_note'] ); ?></span>
+					<?php endif; ?>
+					<?php if ( ! empty( $package['price_recurring'] ) ) : ?>
+						<span class="ogc-pricing-package__recurring">
+							<?php
+							printf(
+								/* translators: %s: monthly management fee */
+								esc_html__( '+ %s management', 'ogc-newfinity' ),
+								esc_html( $package['price_recurring'] )
+							);
+							?>
+						</span>
+					<?php endif; ?>
+				</p>
+				<?php if ( ! empty( $shown ) ) : ?>
+					<ul class="ogc-pricing-package__list">
+						<?php foreach ( $shown as $item ) : ?>
+							<li><?php echo esc_html( $item ); ?></li>
+						<?php endforeach; ?>
+						<?php if ( $extra > 0 ) : ?>
+							<li class="ogc-pricing-package__more">
+								<?php
+								printf(
+									/* translators: %d: additional included items not shown */
+									esc_html( _n( '+%d more included', '+%d more included', $extra, 'ogc-newfinity' ) ),
+									(int) $extra
+								);
+								?>
+							</li>
+						<?php endif; ?>
+					</ul>
+				<?php endif; ?>
+				<a class="ogc-btn ogc-pricing-package__cta" href="<?php echo esc_url( $submit_url ); ?>">
+					<?php esc_html_e( 'Submit Your Idea', 'ogc-newfinity' ); ?>
+				</a>
+			</article>
+		<?php endforeach; ?>
+	</div>
+	<?php
+};
+
+/**
+ * Label + price rows inside an accordion (add-ons, repair).
+ *
+ * @param array<int, array{label?: string, price?: string, name?: string, included?: string}> $rows Rows.
+ */
+$ogc_render_price_rows = static function ( array $rows ) {
 	if ( empty( $rows ) ) {
 		return;
 	}
 	?>
-	<div class="ogc-pricing-table-wrap">
-		<table class="ogc-pricing-table">
-			<caption class="screen-reader-text"><?php echo esc_html( $caption ); ?></caption>
-			<thead>
-				<tr>
-					<?php foreach ( $columns as $col ) : ?>
-						<th scope="col"><?php echo esc_html( $col ); ?></th>
-					<?php endforeach; ?>
-				</tr>
-			</thead>
-			<tbody>
-				<?php foreach ( $rows as $row ) : ?>
-					<tr>
-						<?php foreach ( $row as $cell ) : ?>
-							<td><?php echo esc_html( $cell ); ?></td>
-						<?php endforeach; ?>
-					</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
+	<ul class="ogc-pricing-price-list">
+		<?php foreach ( $rows as $row ) : ?>
+			<?php
+			$label = isset( $row['label'] ) ? $row['label'] : ( isset( $row['name'] ) ? $row['name'] : '' );
+			$price = isset( $row['price'] ) ? $row['price'] : '';
+			?>
+			<li class="ogc-pricing-price-list__item">
+				<span class="ogc-pricing-price-list__label"><?php echo esc_html( $label ); ?></span>
+				<span class="ogc-pricing-price-list__price"><?php echo esc_html( $price ); ?></span>
+			</li>
+		<?php endforeach; ?>
+	</ul>
+	<?php
+};
+
+/**
+ * Subscription-style rows with included copy.
+ *
+ * @param array<int, array{name: string, price: string, included: string}> $rows Rows.
+ */
+$ogc_render_plan_cards = static function ( array $rows ) {
+	if ( empty( $rows ) ) {
+		return;
+	}
+	?>
+	<div class="ogc-pricing-plan-cards">
+		<?php foreach ( $rows as $row ) : ?>
+			<div class="ogc-pricing-plan-card">
+				<h4 class="ogc-pricing-plan-card__name"><?php echo esc_html( $row['name'] ); ?></h4>
+				<p class="ogc-pricing-plan-card__price"><?php echo esc_html( $row['price'] ); ?></p>
+				<?php if ( ! empty( $row['included'] ) ) : ?>
+					<p class="ogc-pricing-plan-card__included"><?php echo esc_html( $row['included'] ); ?></p>
+				<?php endif; ?>
+			</div>
+		<?php endforeach; ?>
 	</div>
 	<?php
 };
 ?>
 
-<article class="ogc-page ogc-page--pricing<?php echo $ogc_layout_class ? ' ' . esc_attr( $ogc_layout_class ) : ''; ?><?php echo $ogc_show_widgets ? ' ogc-page--has-widgets' : ''; ?>">
+<article
+	class="ogc-page ogc-page--pricing<?php echo $ogc_layout_class ? ' ' . esc_attr( $ogc_layout_class ) : ''; ?><?php echo $ogc_show_widgets ? ' ogc-page--has-widgets' : ''; ?>"
+	data-ogc-pricing
+>
 
-	<section class="ogc-page-hero ogc-split-hero" aria-labelledby="ogc-pricing-hero-heading">
+	<section class="ogc-page-hero ogc-split-hero ogc-pricing-hero" aria-labelledby="ogc-pricing-hero-heading">
 		<?php ogc_render_hero_bg( $ogc_page_id ); ?>
-		<div class="ogc-split-hero__copy">
+		<div class="ogc-split-hero__copy ogc-pricing-hero__copy">
 			<p class="ogc-badge"><?php esc_html_e( 'OGC NEWFINITY', 'ogc-newfinity' ); ?></p>
 			<?php if ( ! ogc_page_should_hide( 'title', $ogc_page_id ) ) : ?>
 				<h1 id="ogc-pricing-hero-heading" class="ogc-page-hero__title">
@@ -82,258 +185,165 @@ $ogc_render_pricing_table = static function ( $caption, $columns, $rows ) {
 				<?php esc_html_e( 'All prices in EUR, excluding 21% VAT (excl. BTW).', 'ogc-newfinity' ); ?>
 			</p>
 		</div>
-		<div class="ogc-split-hero__visual ogc-pricing-hero__visual" aria-hidden="true">
-			<div class="glass-card ogc-pricing-hero__card">
-				<p class="ogc-pricing-hero__card-label"><?php esc_html_e( 'Six service lines', 'ogc-newfinity' ); ?></p>
-				<ul class="ogc-pricing-hero__card-list">
-					<?php foreach ( $service_lines as $line ) : ?>
-						<li><?php echo esc_html( $line['title'] ); ?></li>
-					<?php endforeach; ?>
-				</ul>
-			</div>
-		</div>
 	</section>
-
-	<nav class="ogc-pricing-jump" aria-label="<?php esc_attr_e( 'Service line pricing', 'ogc-newfinity' ); ?>">
-		<ul class="ogc-pricing-jump__list">
-			<?php foreach ( $service_lines as $line ) : ?>
-				<li>
-					<a class="ogc-pricing-jump__link" href="<?php echo esc_url( $pricing_url . '#' . $line['slug'] ); ?>">
-						<?php echo esc_html( $line['title'] ); ?>
-					</a>
-				</li>
-			<?php endforeach; ?>
-		</ul>
-	</nav>
 
 	<?php if ( $ogc_show_widgets ) : ?>
 		<div class="ogc-page-body ogc-page-body--with-widgets">
 			<div class="ogc-page-body__main">
 	<?php endif; ?>
 
-	<?php foreach ( $service_lines as $line ) : ?>
-		<section
-			class="ogc-pricing-line"
-			id="<?php echo esc_attr( $line['slug'] ); ?>"
-			aria-labelledby="<?php echo esc_attr( 'ogc-pricing-' . $line['slug'] . '-heading' ); ?>"
-		>
-			<header class="ogc-pricing-line__header">
-				<?php
-				ogc_icon(
-					$line['icon'],
-					array(
-						'size'  => 'lg',
-						'class' => 'ogc-pricing-line__icon',
-					)
-				);
-				?>
-				<div class="ogc-pricing-line__heading-wrap">
-					<h2 id="<?php echo esc_attr( 'ogc-pricing-' . $line['slug'] . '-heading' ); ?>" class="ogc-section-title">
-						<?php echo esc_html( $line['title'] ); ?>
-					</h2>
+	<div class="ogc-pricing-tabs" data-ogc-pricing-tabs>
+		<div class="ogc-pricing-tabs__bar-wrap">
+			<div
+				class="ogc-pricing-tabs__list"
+				role="tablist"
+				aria-label="<?php esc_attr_e( 'Service line pricing', 'ogc-newfinity' ); ?>"
+			>
+				<?php foreach ( $service_lines as $tab_index => $line ) : ?>
+					<button
+						type="button"
+						class="ogc-pricing-tabs__tab"
+						role="tab"
+						id="<?php echo esc_attr( 'ogc-pricing-tab-' . $line['slug'] ); ?>"
+						aria-selected="<?php echo 0 === $tab_index ? 'true' : 'false'; ?>"
+						aria-controls="<?php echo esc_attr( $line['slug'] ); ?>"
+						tabindex="<?php echo 0 === $tab_index ? '0' : '-1'; ?>"
+						data-ogc-pricing-tab="<?php echo esc_attr( $line['slug'] ); ?>"
+					>
+						<?php
+						ogc_icon(
+							$line['icon'],
+							array(
+								'size'  => 'sm',
+								'class' => 'ogc-pricing-tabs__tab-icon',
+							)
+						);
+						?>
+						<span class="ogc-pricing-tabs__tab-label"><?php echo esc_html( $line['title'] ); ?></span>
+					</button>
+				<?php endforeach; ?>
+			</div>
+		</div>
+
+		<?php foreach ( $service_lines as $panel_index => $line ) : ?>
+			<section
+				class="ogc-pricing-tabpanel"
+				role="tabpanel"
+				id="<?php echo esc_attr( $line['slug'] ); ?>"
+				aria-labelledby="<?php echo esc_attr( 'ogc-pricing-tab-' . $line['slug'] ); ?>"
+				data-ogc-pricing-panel="<?php echo esc_attr( $line['slug'] ); ?>"
+				tabindex="-1"
+			>
+				<header class="ogc-pricing-tabpanel__header">
+					<h2 class="ogc-section-title"><?php echo esc_html( $line['title'] ); ?></h2>
 					<p class="ogc-section-intro"><?php echo esc_html( $line['intro'] ); ?></p>
-				</div>
-			</header>
+				</header>
 
-			<?php
-			$package_groups = array();
-			if ( ! empty( $line['packages'] ) ) {
-				$package_groups[] = array(
-					'heading'  => '',
-					'packages' => $line['packages'],
-				);
-			}
-			if ( ! empty( $line['package_groups'] ) ) {
-				$package_groups = array_merge( $package_groups, $line['package_groups'] );
-			}
-
-			foreach ( $package_groups as $group ) :
-				?>
-				<?php if ( ! empty( $group['heading'] ) ) : ?>
-					<h3 class="ogc-pricing-subheading"><?php echo esc_html( $group['heading'] ); ?></h3>
-				<?php endif; ?>
-				<div class="ogc-glass-grid ogc-pricing-packages">
-					<?php foreach ( $group['packages'] as $package ) : ?>
-						<article class="glass-card ogc-pricing-package">
-							<h4 class="ogc-pricing-package__name"><?php echo esc_html( $package['name'] ); ?></h4>
-							<p class="ogc-pricing-package__price">
-								<span class="ogc-pricing-package__amount"><?php echo esc_html( $package['price'] ); ?></span>
-								<?php if ( ! empty( $package['price_note'] ) ) : ?>
-									<span class="ogc-pricing-package__note"><?php echo esc_html( $package['price_note'] ); ?></span>
-								<?php endif; ?>
-								<?php if ( ! empty( $package['price_recurring'] ) ) : ?>
-									<span class="ogc-pricing-package__recurring">
-										<?php
-										printf(
-											/* translators: %s: monthly management fee */
-											esc_html__( '+ %s management', 'ogc-newfinity' ),
-											esc_html( $package['price_recurring'] )
-										);
-										?>
-									</span>
-								<?php endif; ?>
-							</p>
-							<?php if ( ! empty( $package['included'] ) ) : ?>
-								<ul class="ogc-pricing-package__list">
-									<?php foreach ( $package['included'] as $item ) : ?>
-										<li><?php echo esc_html( $item ); ?></li>
-									<?php endforeach; ?>
-								</ul>
-							<?php endif; ?>
-							<a class="ogc-btn ogc-pricing-package__cta" href="<?php echo esc_url( $submit_url ); ?>">
-								<?php esc_html_e( 'Submit Your Idea', 'ogc-newfinity' ); ?>
-							</a>
-						</article>
-					<?php endforeach; ?>
-				</div>
-			<?php endforeach; ?>
-
-			<?php if ( ! empty( $line['addons'] ) ) : ?>
-				<div class="ogc-pricing-block">
-					<h3 class="ogc-pricing-subheading"><?php esc_html_e( 'Add-ons', 'ogc-newfinity' ); ?></h3>
-					<?php
-					$addon_rows = array();
-					foreach ( $line['addons'] as $addon ) {
-						$addon_rows[] = array( $addon['label'], $addon['price'] );
-					}
-					$ogc_render_pricing_table(
-						sprintf(
-							/* translators: %s: service line title */
-							__( 'Add-ons for %s', 'ogc-newfinity' ),
-							$line['title']
-						),
-						array(
-							__( 'Add-on', 'ogc-newfinity' ),
-							__( 'Price', 'ogc-newfinity' ),
-						),
-						$addon_rows
+				<?php
+				$package_groups = array();
+				if ( ! empty( $line['packages'] ) ) {
+					$package_groups[] = array(
+						'heading'  => '',
+						'packages' => $line['packages'],
 					);
-					?>
-				</div>
-			<?php endif; ?>
-
-			<?php
-			$subscription_blocks = array();
-			if ( ! empty( $line['subscriptions'] ) ) {
-				if ( isset( $line['subscriptions']['rows'] ) ) {
-					if ( ! empty( $line['subscriptions']['rows'] ) ) {
-						$subscription_blocks[] = $line['subscriptions'];
-					}
-				} else {
-					foreach ( $line['subscriptions'] as $block ) {
-						if ( ! empty( $block['rows'] ) ) {
-							$subscription_blocks[] = $block;
-						}
-					}
 				}
-			}
+				if ( ! empty( $line['package_groups'] ) ) {
+					$package_groups = array_merge( $package_groups, $line['package_groups'] );
+				}
 
-			foreach ( $subscription_blocks as $block ) :
-				?>
-				<div class="ogc-pricing-block">
-					<?php if ( ! empty( $block['heading'] ) ) : ?>
-						<h3 class="ogc-pricing-subheading"><?php echo esc_html( $block['heading'] ); ?></h3>
+				foreach ( $package_groups as $group ) :
+					if ( empty( $group['packages'] ) ) {
+						continue;
+					}
+					?>
+					<?php if ( ! empty( $group['heading'] ) ) : ?>
+						<h3 class="ogc-pricing-group-heading"><?php echo esc_html( $group['heading'] ); ?></h3>
 					<?php endif; ?>
 					<?php
-					$sub_rows = array();
-					foreach ( $block['rows'] as $row ) {
-						$sub_rows[] = array( $row['name'], $row['price'], $row['included'] );
-					}
-					$ogc_render_pricing_table(
-						! empty( $block['heading'] ) ? $block['heading'] : $line['title'],
-						array(
-							__( 'Plan', 'ogc-newfinity' ),
-							__( 'Price', 'ogc-newfinity' ),
-							__( 'Included', 'ogc-newfinity' ),
-						),
-						$sub_rows
-					);
-					?>
-				</div>
-			<?php endforeach; ?>
+					$ogc_render_package_cards( $group['packages'], $submit_url, $ogc_pricing_popular_index );
+				endforeach;
+				?>
 
-			<?php if ( ! empty( $line['repair']['rows'] ) ) : ?>
-				<div class="ogc-pricing-block">
-					<h3 class="ogc-pricing-subheading"><?php echo esc_html( $line['repair']['heading'] ); ?></h3>
+				<div class="ogc-pricing-accordions">
+					<?php if ( ! empty( $line['addons'] ) ) : ?>
+						<details class="ogc-pricing-accordion">
+							<summary class="ogc-pricing-accordion__summary">
+								<span><?php esc_html_e( 'Add-ons', 'ogc-newfinity' ); ?></span>
+							</summary>
+							<div class="ogc-pricing-accordion__body">
+								<?php $ogc_render_price_rows( $line['addons'] ); ?>
+							</div>
+						</details>
+					<?php endif; ?>
+
 					<?php
-					$repair_rows = array();
-					foreach ( $line['repair']['rows'] as $row ) {
-						$repair_rows[] = array( $row['label'], $row['price'] );
+					$subscription_blocks = array();
+					if ( ! empty( $line['subscriptions'] ) ) {
+						if ( isset( $line['subscriptions']['rows'] ) ) {
+							if ( ! empty( $line['subscriptions']['rows'] ) ) {
+								$subscription_blocks[] = $line['subscriptions'];
+							}
+						} else {
+							foreach ( $line['subscriptions'] as $block ) {
+								if ( ! empty( $block['rows'] ) ) {
+									$subscription_blocks[] = $block;
+								}
+							}
+						}
 					}
-					$ogc_render_pricing_table(
-						$line['repair']['heading'],
-						array(
-							__( 'Service', 'ogc-newfinity' ),
-							__( 'Price', 'ogc-newfinity' ),
-						),
-						$repair_rows
-					);
-					?>
-				</div>
-			<?php endif; ?>
 
-			<?php if ( ! empty( $line['notes'] ) ) : ?>
-				<div class="ogc-pricing-notes" role="note">
-					<p class="ogc-pricing-notes__label"><?php esc_html_e( 'Good to know', 'ogc-newfinity' ); ?></p>
-					<ul class="ogc-pricing-notes__list">
-						<?php foreach ( $line['notes'] as $note ) : ?>
+					foreach ( $subscription_blocks as $block ) :
+						$block_heading = ! empty( $block['heading'] ) ? $block['heading'] : __( 'Plans', 'ogc-newfinity' );
+						?>
+						<details class="ogc-pricing-accordion">
+							<summary class="ogc-pricing-accordion__summary">
+								<span><?php echo esc_html( $block_heading ); ?></span>
+							</summary>
+							<div class="ogc-pricing-accordion__body">
+								<?php $ogc_render_plan_cards( $block['rows'] ); ?>
+							</div>
+						</details>
+					<?php endforeach; ?>
+
+					<?php if ( ! empty( $line['repair']['rows'] ) ) : ?>
+						<details class="ogc-pricing-accordion">
+							<summary class="ogc-pricing-accordion__summary">
+								<span><?php echo esc_html( $line['repair']['heading'] ); ?></span>
+							</summary>
+							<div class="ogc-pricing-accordion__body">
+								<?php $ogc_render_price_rows( $line['repair']['rows'] ); ?>
+							</div>
+						</details>
+					<?php endif; ?>
+				</div>
+
+				<?php if ( ! empty( $line['notes'] ) ) : ?>
+					<ul class="ogc-pricing-footnotes" role="note">
+						<?php foreach ( array_slice( $line['notes'], 0, 3 ) as $note ) : ?>
 							<li><?php echo esc_html( $note ); ?></li>
 						<?php endforeach; ?>
 					</ul>
-				</div>
-			<?php endif; ?>
-		</section>
-	<?php endforeach; ?>
+				<?php endif; ?>
+			</section>
+		<?php endforeach; ?>
+	</div>
 
-	<section class="ogc-pricing-terms" aria-labelledby="ogc-pricing-terms-heading">
+	<section class="ogc-pricing-faq" aria-labelledby="ogc-pricing-faq-heading">
 		<header class="ogc-section-header">
-			<h2 id="ogc-pricing-terms-heading" class="ogc-section-title">
-				<?php esc_html_e( 'How pricing works', 'ogc-newfinity' ); ?>
+			<h2 id="ogc-pricing-faq-heading" class="ogc-section-title">
+				<?php esc_html_e( 'Pricing questions', 'ogc-newfinity' ); ?>
 			</h2>
-			<p class="ogc-section-intro">
-				<?php esc_html_e( 'What is included, what is billed separately, and how we handle deposits, revisions, and recurring services.', 'ogc-newfinity' ); ?>
-			</p>
 		</header>
-
-		<div class="ogc-glass-grid ogc-pricing-terms__grid">
-			<?php
-			$term_blocks = array(
-				array(
-					'title' => __( 'Billed separately', 'ogc-newfinity' ),
-					'items' => $commercial['separate_costs'],
-				),
-				array(
-					'title' => __( 'Out-of-scope work', 'ogc-newfinity' ),
-					'items' => $commercial['out_of_scope'],
-				),
-				array(
-					'title' => __( 'VAT and invoicing', 'ogc-newfinity' ),
-					'items' => $commercial['vat'],
-				),
-				array(
-					'title' => __( 'Deposits and milestones', 'ogc-newfinity' ),
-					'items' => $commercial['deposits'],
-				),
-				array(
-					'title' => __( 'Scope and revisions', 'ogc-newfinity' ),
-					'items' => $commercial['revisions'],
-				),
-				array(
-					'title' => __( 'Recurring services', 'ogc-newfinity' ),
-					'items' => $commercial['recurring'],
-				),
-			);
-
-			foreach ( $term_blocks as $block ) :
-				?>
-				<div class="glass-card ogc-pricing-terms__card">
-					<h3 class="ogc-pricing-terms__card-title"><?php echo esc_html( $block['title'] ); ?></h3>
-					<ul class="ogc-pricing-terms__list">
-						<?php foreach ( $block['items'] as $item ) : ?>
-							<li><?php echo esc_html( $item ); ?></li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
+		<div class="ogc-pricing-faq__list">
+			<?php foreach ( $faq_items as $faq ) : ?>
+				<details class="glass-card ogc-pricing-faq__item">
+					<summary class="ogc-pricing-faq__summary">
+						<span class="ogc-pricing-faq__question"><?php echo esc_html( $faq['question'] ); ?></span>
+					</summary>
+					<div class="ogc-pricing-faq__answer">
+						<p><?php echo esc_html( $faq['answer'] ); ?></p>
+					</div>
+				</details>
 			<?php endforeach; ?>
 		</div>
 	</section>
