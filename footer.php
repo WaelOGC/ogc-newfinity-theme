@@ -37,16 +37,16 @@ if ( ! is_array( $ogc_footer_columns ) || empty( $ogc_footer_columns ) ) {
 					'url'   => home_url( '/our-mission/' ),
 				),
 				array(
-					'label' => __( 'Submit Your Idea', 'ogc-newfinity' ),
-					'url'   => home_url( '/submit-idea/' ),
-				),
-				array(
 					'label' => __( 'Blog & Insights', 'ogc-newfinity' ),
 					'url'   => home_url( '/blog/' ),
 				),
 				array(
 					'label' => __( 'Help & Support', 'ogc-newfinity' ),
 					'url'   => home_url( '/support/' ),
+				),
+				array(
+					'label' => __( 'Contact', 'ogc-newfinity' ),
+					'url'   => home_url( '/contact/' ),
 				),
 			),
 		),

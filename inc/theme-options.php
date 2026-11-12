@@ -248,6 +248,7 @@ function ogc_nav_slug_map() {
 		'home'     => array( 'label' => __( 'Home', 'ogc-newfinity' ), 'path' => '/' ),
 		'about'    => array( 'label' => __( 'About Us', 'ogc-newfinity' ), 'path' => '/about-ogc-newfinity/' ),
 		'services' => array( 'label' => __( 'Our Services', 'ogc-newfinity' ), 'path' => '/services/' ),
+		'pricing'  => array( 'label' => __( 'Pricing', 'ogc-newfinity' ), 'path' => '/pricing/' ),
 		'mission'  => array( 'label' => __( 'Our Mission', 'ogc-newfinity' ), 'path' => '/our-mission/' ),
 		'blog'     => array( 'label' => __( 'Blog & Insights', 'ogc-newfinity' ), 'path' => '/blog/' ),
 		'support'  => array( 'label' => __( 'Help & Support', 'ogc-newfinity' ), 'path' => '/support/' ),
@@ -256,18 +257,21 @@ function ogc_nav_slug_map() {
 }
 
 /**
- * Default header nav order JSON (all seven items, visible, current order).
+ * Default header nav order JSON (header items visible; blog/support footer-only).
  *
  * @return string
  */
 function ogc_default_nav_order_json() {
-	$rows = array();
-	foreach ( array_keys( ogc_nav_slug_map() ) as $slug ) {
-		$rows[] = array(
-			'slug'    => $slug,
-			'visible' => true,
-		);
-	}
+	$rows = array(
+		array( 'slug' => 'home', 'visible' => true ),
+		array( 'slug' => 'about', 'visible' => true ),
+		array( 'slug' => 'services', 'visible' => true ),
+		array( 'slug' => 'pricing', 'visible' => true ),
+		array( 'slug' => 'mission', 'visible' => true ),
+		array( 'slug' => 'contact', 'visible' => true ),
+		array( 'slug' => 'blog', 'visible' => false ),
+		array( 'slug' => 'support', 'visible' => false ),
+	);
 	return wp_json_encode( $rows );
 }
 
@@ -285,10 +289,11 @@ function ogc_default_footer_columns_json() {
 				'title' => 'Quick Links',
 				'links' => array(
 					array( 'label' => 'Our Services', 'url' => '/services/' ),
+					array( 'label' => 'Pricing', 'url' => '/pricing/' ),
 					array( 'label' => 'Our Mission', 'url' => '/our-mission/' ),
-					array( 'label' => 'Submit Your Idea', 'url' => '/submit-idea/' ),
 					array( 'label' => 'Blog & Insights', 'url' => '/blog/' ),
 					array( 'label' => 'Help & Support', 'url' => '/support/' ),
+					array( 'label' => 'Contact', 'url' => '/contact/' ),
 				),
 			),
 			array(

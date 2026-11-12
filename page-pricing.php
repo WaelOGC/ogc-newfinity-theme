@@ -236,24 +236,22 @@ $ogc_show_widgets = ogc_page_enable_widget_area( $ogc_page_id ) && ! ogc_page_sh
 
 	<section class="ogc-pricing-cta" aria-labelledby="ogc-pricing-cta-heading">
 		<div class="glass-card ogc-pricing-cta__inner">
-			<div class="ogc-pricing-cta__copy">
-				<h2 id="ogc-pricing-cta-heading" class="ogc-pricing-cta__title">
-					<?php esc_html_e( 'Ready for a quote?', 'ogc-newfinity' ); ?>
-				</h2>
-				<p class="ogc-pricing-cta__text">
-					<?php
-					esc_html_e(
-						'Tell us what you need. We confirm scope, timeline and cost before anything is signed.',
-						'ogc-newfinity'
-					);
-					?>
-				</p>
-			</div>
+			<h2 id="ogc-pricing-cta-heading" class="ogc-pricing-cta__title">
+				<?php esc_html_e( 'Ready for a quote?', 'ogc-newfinity' ); ?>
+			</h2>
+			<p class="ogc-pricing-cta__text">
+				<?php
+				esc_html_e(
+					'Share your brief or book a call — we confirm scope, timeline, and cost before anything is signed.',
+					'ogc-newfinity'
+				);
+				?>
+			</p>
 			<div class="ogc-pricing-cta__actions">
-				<a class="ogc-btn ogc-pricing-btn--gold" href="<?php echo esc_url( $submit_url ); ?>">
+				<a class="ogc-btn ogc-pricing-btn--gold ogc-pricing-cta__btn" href="<?php echo esc_url( $submit_url ); ?>">
 					<?php esc_html_e( 'Submit Your Idea', 'ogc-newfinity' ); ?>
 				</a>
-				<a class="ogc-btn-outline" href="<?php echo esc_url( $contact_url ); ?>">
+				<a class="ogc-btn ogc-btn-outline ogc-pricing-cta__btn" href="<?php echo esc_url( $contact_url ); ?>">
 					<?php esc_html_e( 'Contact us', 'ogc-newfinity' ); ?>
 				</a>
 			</div>

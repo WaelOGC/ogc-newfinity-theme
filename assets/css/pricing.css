@@ -486,6 +486,10 @@
 	.ogc-pricing-extras {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
+
+	.ogc-pricing-extras__panel:last-child:nth-child(odd) {
+		grid-column: 1 / -1;
+	}
 }
 
 .ogc-pricing-extras__panel {
@@ -632,11 +636,11 @@
 
 .ogc-pricing-cta__inner {
 	display: flex;
-	flex-wrap: wrap;
+	flex-direction: column;
 	align-items: center;
-	justify-content: space-between;
-	gap: 1.25rem;
-	padding: 1.75rem;
+	text-align: center;
+	gap: 1rem;
+	padding: 1.75rem 1.5rem;
 }
 
 .ogc-pricing-cta__inner.glass-card:hover,
@@ -655,13 +659,29 @@
 .ogc-pricing-cta__text {
 	margin: 0;
 	color: var(--ogc-text-muted);
-	max-width: 28rem;
+	max-width: 32rem;
+	line-height: 1.55;
 }
 
 .ogc-pricing-cta__actions {
-	display: flex;
-	flex-wrap: wrap;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 0.75rem;
+	width: 100%;
+	max-width: 32rem;
+	margin-top: 0.25rem;
+}
+
+.ogc-pricing-cta__btn {
+	width: 100%;
+	justify-content: center;
+	min-height: 2.75rem;
+}
+
+@media (max-width: 599px) {
+	.ogc-pricing-cta__actions {
+		grid-template-columns: 1fr;
+	}
 }
 
 @media (min-width: 900px) {

@@ -146,6 +146,7 @@ function ogc_get_icon_svg( $name, $size = 24 ) {
 		'blog'     => '<svg ' . $attrs . '><path d="M6 4h9l3 3v13H6z"/><path d="M15 4v3h3"/><path d="M9 11h6M9 15h6M9 19h3"/></svg>',
 		'support'  => '<svg ' . $attrs . '><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.6 2.6 0 015 1c0 1.5-2.5 2-2.5 3.5"/><circle cx="12" cy="17.2" r="0.8" fill="currentColor" stroke="none"/></svg>',
 		'contact'  => '<svg ' . $attrs . '><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
+		'pricing'  => '<svg ' . $attrs . '><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg>',
 		/* Services / trust (legacy keys) */
 		'code'      => '<svg ' . $attrs . '><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
 		'wordpress' => '<svg ' . $attrs . '><circle cx="12" cy="12" r="9"/><path d="M3.5 9.5h17M3.5 14.5h17"/><path d="M12 3c-2.5 3-2.5 15 0 18M12 3c2.5 3 2.5 15 0 18"/></svg>',
@@ -239,6 +240,7 @@ function ogc_nav_icon_for_item( $item ) {
 		'about-ogc-newfinity' => 'about',
 		'about'               => 'about',
 		'services'            => 'services',
+		'pricing'             => 'pricing',
 		'our-mission'         => 'mission',
 		'mission'             => 'mission',
 		'blog'                => 'blog',
@@ -316,6 +318,7 @@ if ( ! function_exists( 'ogc_primary_nav_items' ) ) {
 				'home'     => array( 'label' => __( 'Home', 'ogc-newfinity' ), 'path' => '/' ),
 				'about'    => array( 'label' => __( 'About Us', 'ogc-newfinity' ), 'path' => '/about-ogc-newfinity/' ),
 				'services' => array( 'label' => __( 'Our Services', 'ogc-newfinity' ), 'path' => '/services/' ),
+				'pricing'  => array( 'label' => __( 'Pricing', 'ogc-newfinity' ), 'path' => '/pricing/' ),
 				'mission'  => array( 'label' => __( 'Our Mission', 'ogc-newfinity' ), 'path' => '/our-mission/' ),
 				'blog'     => array( 'label' => __( 'Blog & Insights', 'ogc-newfinity' ), 'path' => '/blog/' ),
 				'support'  => array( 'label' => __( 'Help & Support', 'ogc-newfinity' ), 'path' => '/support/' ),
@@ -354,6 +357,9 @@ if ( ! function_exists( 'ogc_primary_nav_current_slug' ) ) {
 		if ( is_page( 'services' ) ) {
 			return 'services';
 		}
+		if ( is_page( 'pricing' ) ) {
+			return 'pricing';
+		}
 		if ( is_page( 'our-mission' ) ) {
 			return 'mission';
 		}
@@ -379,10 +385,15 @@ if ( ! function_exists( 'ogc_render_primary_nav' ) ) {
 	 */
 	function ogc_render_primary_nav() {
 		$items = ogc_primary_nav_items();
-		$order = function_exists( 'ogc_get_nav_order' ) ? ogc_get_nav_order() : array();
+		$order = function_exists( 'ogc_get_nav_order' ) ? ogc_get_nav_order( false ) : array();
 
 		if ( ! is_array( $order ) || empty( $order ) ) {
-			$order = array();
+			$order = function_exists( 'ogc_default_nav_order_json' )
+				? ogc_decode_json_list( ogc_default_nav_order_json() )
+				: array();
+		}
+
+		if ( empty( $order ) ) {
 			foreach ( array_keys( $items ) as $slug ) {
 				$order[] = array(
 					'slug'    => $slug,
