@@ -59,6 +59,8 @@ define( 'OGC_OPTIONS_PAGE_SLUG', 'ogc-theme-options' );
 /** Capability required to view / save theme options. */
 define( 'OGC_OPTIONS_CAPABILITY', 'edit_theme_options' );
 
+require_once OGC_THEME_DIR . '/inc/theme-options-access.php';
+
 /* =========================================================================
  * 2. Choice tables
  * ====================================================================== */
@@ -467,9 +469,10 @@ function ogc_theme_options_schema() {
 					'default' => OGC_DEFAULT_RESPONSE_TIME,
 				),
 				array(
-					'key'   => 'ogc_company_details_heading',
-					'type'  => 'heading',
-					'label' => __( 'Company details', 'ogc-newfinity' ),
+					'key'     => 'ogc_company_details_heading',
+					'type'    => 'heading',
+					'label'   => __( 'Company details', 'ogc-newfinity' ),
+					'tooltip' => __( 'Registered company identifiers shown in the footer when filled in.', 'ogc-newfinity' ),
 				),
 				array(
 					'key'     => 'ogc_company_legal_name',
@@ -526,9 +529,10 @@ function ogc_theme_options_schema() {
 					'attrs'    => array( 'placeholder' => 'xxxxxxxxxx' ),
 				),
 				array(
-					'key'   => 'ogc_maintenance_heading',
+					'key'     => 'ogc_maintenance_heading',
 					'type'  => 'heading',
-					'label' => __( 'Maintenance mode', 'ogc-newfinity' ),
+					'label'   => __( 'Maintenance mode', 'ogc-newfinity' ),
+					'tooltip' => __( 'Coming Soon page and editor bypass rules.', 'ogc-newfinity' ),
 				),
 				array(
 					'key'     => 'ogc_maintenance_mode_enabled',
@@ -3026,7 +3030,7 @@ function ogc_theme_options_menu() {
 	$hook = add_menu_page(
 		__( 'OGC NewFinity Theme Options', 'ogc-newfinity' ),
 		__( 'OGC NewFinity', 'ogc-newfinity' ),
-		OGC_OPTIONS_CAPABILITY,
+		'edit_posts',
 		OGC_OPTIONS_PAGE_SLUG,
 		'ogc_render_theme_options_page',
 		'dashicons-admin-customizer',
@@ -3036,6 +3040,16 @@ function ogc_theme_options_menu() {
 	add_action( 'load-' . $hook, 'ogc_theme_options_load' );
 }
 add_action( 'admin_menu', 'ogc_theme_options_menu' );
+
+/**
+ * Hide the menu entry for users without any theme-options access.
+ */
+function ogc_theme_options_menu_visibility() {
+	if ( ! ogc_user_can_access_theme_options_screen() ) {
+		remove_menu_page( OGC_OPTIONS_PAGE_SLUG );
+	}
+}
+add_action( 'admin_menu', 'ogc_theme_options_menu_visibility', 999 );
 
 /**
  * Fires when the options screen loads — hooks the asset enqueue for this page only.
@@ -3132,19 +3146,32 @@ function ogc_theme_options_current_tab() {
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab selection.
 	$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
 
-	return isset( $schema[ $tab ] ) ? $tab : 'general';
+	if ( OGC_THEME_OPTIONS_OVERVIEW_TAB === $tab || '' === $tab ) {
+		return OGC_THEME_OPTIONS_OVERVIEW_TAB;
+	}
+
+	if ( ! isset( $schema[ $tab ] ) ) {
+		return OGC_THEME_OPTIONS_OVERVIEW_TAB;
+	}
+
+	if ( ! ogc_user_can_edit_theme_options_tab( $tab ) ) {
+		ogc_theme_options_require_tab_access( $tab );
+	}
+
+	return $tab;
 }
 
 /**
  * Render the admin options screen.
  */
 function ogc_render_theme_options_page() {
-	if ( ! current_user_can( OGC_OPTIONS_CAPABILITY ) ) {
-		wp_die( esc_html__( 'You do not have permission to edit theme options.', 'ogc-newfinity' ) );
-	}
+	ogc_theme_options_require_screen_access();
 
-	$schema      = ogc_theme_options_schema();
-	$current_tab = ogc_theme_options_current_tab();
+	$schema            = ogc_theme_options_schema();
+	$current_tab       = ogc_theme_options_current_tab();
+	$allowed_tab_ids   = ogc_user_allowed_theme_options_tabs();
+	$is_super_admin    = ogc_user_is_theme_options_super_admin();
+	$sidebar_tab_ids   = $is_super_admin ? array_keys( $schema ) : $allowed_tab_ids;
 	?>
 	<div class="wrap ogc-opt">
 
@@ -3172,7 +3199,22 @@ function ogc_render_theme_options_page() {
 
 			<nav class="ogc-opt__sidebar" aria-label="<?php esc_attr_e( 'Theme option sections', 'ogc-newfinity' ); ?>">
 				<ul class="ogc-opt__tabs" role="tablist">
-					<?php foreach ( $schema as $tab_id => $tab ) : ?>
+					<li>
+						<button
+							type="button"
+							class="ogc-opt__tab<?php echo OGC_THEME_OPTIONS_OVERVIEW_TAB === $current_tab ? ' is-active' : ''; ?>"
+							data-tab="<?php echo esc_attr( OGC_THEME_OPTIONS_OVERVIEW_TAB ); ?>"
+							role="tab"
+							id="ogc-tab-overview"
+							aria-controls="ogc-panel-overview"
+							aria-selected="<?php echo OGC_THEME_OPTIONS_OVERVIEW_TAB === $current_tab ? 'true' : 'false'; ?>"
+						>
+							<span class="dashicons dashicons-dashboard" aria-hidden="true"></span>
+							<span><?php esc_html_e( 'Overview', 'ogc-newfinity' ); ?></span>
+						</button>
+					</li>
+					<?php foreach ( $sidebar_tab_ids as $tab_id ) : ?>
+						<?php $tab = $schema[ $tab_id ]; ?>
 						<li>
 							<button
 								type="button"
@@ -3204,7 +3246,10 @@ function ogc_render_theme_options_page() {
 				wp_nonce_field( 'ogc_reset_theme_options_tab', 'ogc_reset_tab_nonce' );
 				?>
 
-				<?php foreach ( $schema as $tab_id => $tab ) : ?>
+				<?php ogc_render_theme_options_overview_panel( $sidebar_tab_ids, OGC_THEME_OPTIONS_OVERVIEW_TAB === $current_tab ); ?>
+
+				<?php foreach ( $sidebar_tab_ids as $tab_id ) : ?>
+					<?php $tab = $schema[ $tab_id ]; ?>
 					<section
 						class="ogc-opt__panel<?php echo $tab_id === $current_tab ? ' is-active' : ''; ?>"
 						id="ogc-panel-<?php echo esc_attr( $tab_id ); ?>"
@@ -3461,15 +3506,11 @@ function ogc_render_ads_tab_fields( $fields ) {
  * @param array<string, mixed> $field Field definition.
  */
 function ogc_render_field_label( $field ) {
+	$tooltip = ogc_theme_options_infer_tooltip( $field );
 	?>
 	<div class="ogc-opt__label">
 		<label for="<?php echo esc_attr( $field['key'] ); ?>"><?php echo esc_html( $field['label'] ); ?></label>
-		<?php if ( ! empty( $field['tooltip'] ) ) : ?>
-			<span class="ogc-opt__tip" tabindex="0" role="note" aria-label="<?php echo esc_attr( $field['tooltip'] ); ?>">
-				<span aria-hidden="true">?</span>
-				<span class="ogc-opt__tip-bubble"><?php echo esc_html( $field['tooltip'] ); ?></span>
-			</span>
-		<?php endif; ?>
+		<?php ogc_render_option_tooltip_bubble( $tooltip ); ?>
 	</div>
 	<?php
 }
@@ -3481,12 +3522,13 @@ function ogc_render_field_label( $field ) {
  */
 function ogc_render_option_field( $field ) {
 	if ( 'heading' === $field['type'] ) {
+		$tooltip = ogc_theme_options_infer_tooltip( $field );
 		?>
 		<div class="ogc-opt__section-head">
-			<h3><?php echo esc_html( $field['label'] ); ?></h3>
-			<?php if ( ! empty( $field['tooltip'] ) ) : ?>
-				<p><?php echo esc_html( $field['tooltip'] ); ?></p>
-			<?php endif; ?>
+			<div class="ogc-opt__section-head-row">
+				<h3><?php echo esc_html( $field['label'] ); ?></h3>
+				<?php ogc_render_option_tooltip_bubble( $tooltip ); ?>
+			</div>
 		</div>
 		<?php
 		return;
@@ -3631,9 +3673,7 @@ function ogc_render_option_field( $field ) {
  * Guard: current user may manage theme options, or die.
  */
 function ogc_theme_options_require_cap() {
-	if ( ! current_user_can( OGC_OPTIONS_CAPABILITY ) ) {
-		wp_die( esc_html__( 'You do not have permission to edit theme options.', 'ogc-newfinity' ), '', array( 'response' => 403 ) );
-	}
+	ogc_theme_options_require_screen_access();
 }
 
 /**
@@ -3659,7 +3699,19 @@ function ogc_posted_tab() {
 	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- callers verify their own nonce first.
 	$tab = isset( $_POST['ogc_active_tab'] ) ? sanitize_key( wp_unslash( $_POST['ogc_active_tab'] ) ) : '';
 
-	return isset( $schema[ $tab ] ) ? $tab : 'general';
+	if ( OGC_THEME_OPTIONS_OVERVIEW_TAB === $tab || '' === $tab ) {
+		return OGC_THEME_OPTIONS_OVERVIEW_TAB;
+	}
+
+	if ( ! isset( $schema[ $tab ] ) ) {
+		return OGC_THEME_OPTIONS_OVERVIEW_TAB;
+	}
+
+	if ( ! ogc_user_can_edit_theme_options_tab( $tab ) ) {
+		ogc_theme_options_require_tab_access( $tab );
+	}
+
+	return $tab;
 }
 
 /**
@@ -3669,7 +3721,20 @@ function ogc_handle_save_theme_options() {
 	ogc_theme_options_require_cap();
 	check_admin_referer( 'ogc_save_theme_options', 'ogc_save_nonce' );
 
+	if ( ogc_user_is_theme_options_super_admin() && isset( $_POST['ogc_tab_access'] ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized below.
+		$raw_access = wp_unslash( $_POST['ogc_tab_access'] );
+		set_theme_mod(
+			OGC_THEME_OPTIONS_TAB_ACCESS_KEY,
+			ogc_sanitize_theme_options_tab_access( $raw_access )
+		);
+	}
+
 	foreach ( ogc_theme_options_fields() as $key => $field ) {
+		if ( ! ogc_user_can_edit_theme_options_tab( $field['tab'] ) ) {
+			continue;
+		}
+
 		if ( 'checkbox' === $field['type'] ) {
 			set_theme_mod( $key, isset( $_POST[ $key ] ) );
 			continue;
@@ -3714,6 +3779,7 @@ function ogc_collect_theme_options() {
  */
 function ogc_handle_export_theme_options() {
 	ogc_theme_options_require_cap();
+	ogc_theme_options_require_tab_access( 'advanced' );
 	check_admin_referer( 'ogc_export_theme_options', 'ogc_export_nonce' );
 
 	$payload = array(
@@ -3739,6 +3805,7 @@ add_action( 'admin_post_ogc_export_theme_options', 'ogc_handle_export_theme_opti
  */
 function ogc_handle_import_theme_options() {
 	ogc_theme_options_require_cap();
+	ogc_theme_options_require_tab_access( 'advanced' );
 	check_admin_referer( 'ogc_import_theme_options', 'ogc_import_nonce' );
 
 	$tmp = isset( $_FILES['ogc_import_file']['tmp_name'] )
@@ -3761,6 +3828,9 @@ function ogc_handle_import_theme_options() {
 	}
 
 	foreach ( ogc_theme_options_fields() as $key => $field ) {
+		if ( ! ogc_user_can_edit_theme_options_tab( $field['tab'] ) ) {
+			continue;
+		}
 		if ( ! array_key_exists( $key, $options ) ) {
 			continue;
 		}
@@ -3781,6 +3851,12 @@ function ogc_handle_reset_theme_options_tab() {
 
 	$tab = ogc_posted_tab();
 
+	if ( OGC_THEME_OPTIONS_OVERVIEW_TAB === $tab ) {
+		wp_die( esc_html__( 'Reset is not available on the Overview.', 'ogc-newfinity' ), '', array( 'response' => 403 ) );
+	}
+
+	ogc_theme_options_require_tab_access( $tab );
+
 	foreach ( ogc_theme_options_fields() as $key => $field ) {
 		if ( $field['tab'] === $tab ) {
 			remove_theme_mod( $key );
@@ -3797,6 +3873,7 @@ add_action( 'admin_post_ogc_reset_theme_options_tab', 'ogc_handle_reset_theme_op
  */
 function ogc_handle_reset_theme_options_all() {
 	ogc_theme_options_require_cap();
+	ogc_theme_options_require_tab_access( 'advanced' );
 	check_admin_referer( 'ogc_reset_theme_options_all', 'ogc_reset_all_nonce' );
 
 	foreach ( array_keys( ogc_theme_options_fields() ) as $key ) {

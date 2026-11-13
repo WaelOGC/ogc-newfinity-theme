@@ -88,6 +88,16 @@
 		if (updateHash) {
 			history.replaceState(null, '', '#' + id);
 		}
+
+		updateResetTabVisibility();
+	}
+
+	function updateResetTabVisibility() {
+		var reset = root.querySelector('.ogc-opt__reset-tab');
+		if (!reset || !activeTabInput) {
+			return;
+		}
+		reset.hidden = activeTabInput.value === 'overview';
 	}
 
 	tabs.forEach(function (tab) {
@@ -96,8 +106,37 @@
 		});
 	});
 
+	Array.prototype.forEach.call(root.querySelectorAll('.ogc-opt__tab-jump'), function (button) {
+		button.addEventListener('click', function () {
+			activateTab(button.dataset.tab, true);
+		});
+	});
+
+	Array.prototype.forEach.call(root.querySelectorAll('.ogc-opt__overview-toggle'), function (mirror) {
+		var key = mirror.dataset.toggleFor;
+		if (!key) {
+			return;
+		}
+		var target = document.getElementById(key);
+		if (!target) {
+			return;
+		}
+
+		mirror.addEventListener('change', function () {
+			target.checked = mirror.checked;
+			target.dispatchEvent(new Event('change', { bubbles: true }));
+			markDirty();
+		});
+
+		target.addEventListener('change', function () {
+			mirror.checked = target.checked;
+		});
+	});
+
 	if (window.location.hash) {
 		activateTab(window.location.hash.replace('#', ''), false);
+	} else {
+		updateResetTabVisibility();
 	}
 
 	/* -------------------------------------------------------- Ads sub-tabs */

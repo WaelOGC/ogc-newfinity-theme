@@ -237,12 +237,6 @@
 	color: var(--opt-accent);
 }
 
-.ogc-opt__section-head p {
-	margin: 4px 0 0;
-	color: var(--opt-muted);
-	font-size: 12px;
-}
-
 /* -------------------------------------------------------------- Tooltips */
 
 .ogc-opt__tip {
@@ -953,4 +947,209 @@
 	color: var(--opt-accent);
 	font-size: 12px;
 	font-weight: 600;
+}
+
+/* ----------------------------------------------------------- Overview UI */
+
+.ogc-opt__section-head-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.ogc-opt__section-head-row h3 {
+	margin: 0;
+}
+
+.ogc-opt__overview-stats {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	margin: 0 0 20px;
+}
+
+@media (max-width: 782px) {
+	.ogc-opt__overview-stats {
+		grid-template-columns: 1fr;
+	}
+}
+
+.ogc-opt__stat {
+	padding: 14px 16px;
+	border-radius: var(--opt-radius);
+	border: 1px solid var(--opt-line);
+	background: linear-gradient(145deg, rgba(255, 210, 122, 0.12), rgba(255, 210, 122, 0.02));
+}
+
+.ogc-opt__stat-value {
+	display: block;
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--opt-accent);
+}
+
+.ogc-opt__stat-value--version {
+	font-size: 16px;
+	letter-spacing: 0.02em;
+}
+
+.ogc-opt__stat-label {
+	display: block;
+	margin-top: 4px;
+	font-size: 12px;
+	color: var(--opt-muted);
+}
+
+.ogc-opt__overview-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 14px;
+	margin-bottom: 24px;
+}
+
+.ogc-opt__overview-card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 100%;
+	padding: 16px 16px 14px;
+	border-radius: var(--opt-radius);
+	border: 1px solid var(--opt-line);
+	background: var(--opt-panel);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.ogc-opt__overview-card.is-disabled {
+	opacity: 0.55;
+}
+
+.ogc-opt__overview-card-icon .dashicons {
+	font-size: 22px;
+	width: 22px;
+	height: 22px;
+	color: var(--opt-accent);
+}
+
+.ogc-opt__overview-card-title {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 700;
+}
+
+.ogc-opt__overview-card-sub {
+	margin: 0;
+	font-size: 12px;
+	line-height: 1.45;
+	color: var(--opt-muted);
+}
+
+.ogc-opt__overview-card-toggle {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-top: 4px;
+}
+
+.ogc-opt__overview-link {
+	align-self: flex-start;
+	margin-top: auto;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--opt-accent);
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.ogc-opt__overview-link:hover,
+.ogc-opt__overview-link:focus-visible {
+	color: var(--opt-accent-2);
+	text-decoration: underline;
+}
+
+.ogc-opt__overview-locked {
+	margin: auto 0 0;
+	font-size: 12px;
+	color: var(--opt-muted);
+}
+
+/* --------------------------------------------------------- Tab access UI */
+
+.ogc-opt__access {
+	margin-top: 12px;
+	padding-top: 8px;
+	border-top: 1px solid var(--opt-line);
+}
+
+.ogc-opt__access-lead {
+	margin: 0 0 14px;
+	font-size: 12.5px;
+	color: var(--opt-muted);
+}
+
+.ogc-opt__access-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.ogc-opt__access-row {
+	display: grid;
+	grid-template-columns: minmax(140px, 1fr) minmax(0, 2fr) minmax(120px, 1fr);
+	gap: 10px 14px;
+	align-items: start;
+	padding: 12px 14px;
+	border-radius: 10px;
+	border: 1px solid var(--opt-line);
+	background: var(--opt-panel-2);
+}
+
+@media (max-width: 960px) {
+	.ogc-opt__access-row {
+		grid-template-columns: 1fr;
+	}
+}
+
+.ogc-opt__access-tab {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.ogc-opt__access-tab .dashicons {
+	color: var(--opt-accent);
+}
+
+.ogc-opt__access-roles {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 14px;
+}
+
+.ogc-opt__access-role {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: var(--opt-text);
+}
+
+.ogc-opt__access-users {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 12px;
+	color: var(--opt-muted);
+}
+
+.ogc-opt__access-users .ogc-opt__input {
+	width: 100%;
 }
