@@ -9,12 +9,25 @@
 	--opt-panel: #16161a;
 	--opt-panel-2: #1d1d22;
 	--opt-line: #2b2b33;
+	/* Text-on-dark contrast ladder (WCAG AA on panel backgrounds). */
 	--opt-text: #f2f2f4;
-	--opt-muted: #9b9ba6;
-	--opt-accent: #ffd27a;
-	--opt-accent-2: #ffeac2;
+	--opt-text-subdued: rgba(242, 242, 244, 0.84); /* ~84% — subdued, still clearly readable */
+	--opt-text-subdued-soft: rgba(242, 242, 244, 0.72); /* subtitles on inactive cards */
+	--opt-muted: #b8b8c2;
+	/* Brand orange accent (shared with Page Settings). */
+	--opt-accent: #f7931e;
+	--opt-accent-2: #ffb238;
+	--opt-accent-soft: rgba(247, 147, 30, 0.16);
+	--opt-accent-glow: rgba(247, 147, 30, 0.45);
+	--opt-accent-muted: rgba(247, 147, 30, 0.78);
 	--opt-danger: #ff6b5e;
 	--opt-radius: 12px;
+	/* Form control border / interaction states (reuse everywhere). */
+	--opt-control-border: rgba(255, 255, 255, 0.38);
+	--opt-control-border-hover: rgba(255, 255, 255, 0.55);
+	--opt-control-border-focus: var(--opt-accent);
+	--opt-control-focus-ring: 0 0 0 3px var(--opt-accent-glow);
+	--opt-control-radius: 8px;
 
 	margin: 20px 20px 0 2px;
 	color: var(--opt-text);
@@ -32,7 +45,7 @@
 	padding: 12px 16px;
 	border-radius: var(--opt-radius);
 	border-left: 4px solid var(--opt-accent);
-	background: linear-gradient(90deg, rgba(255, 210, 122, 0.14), rgba(255, 210, 122, 0.02));
+	background: linear-gradient(90deg, var(--opt-accent-soft), rgba(247, 147, 30, 0.02));
 	color: var(--opt-text);
 }
 
@@ -144,14 +157,14 @@
 .ogc-opt__tab:hover,
 .ogc-opt__tab:focus-visible {
 	color: var(--opt-text);
-	background: rgba(255, 210, 122, 0.06);
+	background: var(--opt-accent-soft);
 	outline: none;
 }
 
 .ogc-opt__tab.is-active {
 	color: var(--opt-accent);
 	border-left-color: var(--opt-accent);
-	background: rgba(255, 210, 122, 0.1);
+	background: rgba(247, 147, 30, 0.12);
 }
 
 /* ------------------------------------------------------------------ Form */
@@ -294,35 +307,128 @@
 
 /* ---------------------------------------------------------------- Inputs */
 
+/*
+ * Shared control surface: every text field, select, textarea, and checkbox
+ * in Theme Options uses these border / hover / focus tokens.
+ */
+.ogc-opt__input,
+.ogc-opt__select,
+.ogc-opt__textarea,
+.ogc-opt__color-text,
+.ogc-opt__card-head input[type="text"],
+.ogc-opt__linkrow input,
+.ogc-opt__linkrow select,
+.ogc-opt__field-inline input[type="text"],
+.ogc-opt__field-inline input[type="url"],
+.ogc-opt__field-inline input[type="number"],
+.ogc-opt__field-inline select,
+.ogc-opt__field-inline textarea,
+.ogc-opt input[type="text"],
+.ogc-opt input[type="url"],
+.ogc-opt input[type="number"],
+.ogc-opt input[type="email"],
+.ogc-opt input[type="search"],
+.ogc-opt input[type="password"],
+.ogc-opt select,
+.ogc-opt textarea {
+	border: 1px solid var(--opt-control-border);
+	border-radius: var(--opt-control-radius);
+	background: var(--opt-panel);
+	color: var(--opt-text);
+	box-shadow: none;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
 .ogc-opt__input,
 .ogc-opt__select,
 .ogc-opt__textarea {
 	width: 100%;
 	max-width: 460px;
 	padding: 8px 10px;
-	border: 1px solid var(--opt-line);
-	border-radius: 8px;
-	background: var(--opt-panel);
-	color: var(--opt-text);
 	font-size: 13px;
 	line-height: 1.5;
-	box-shadow: none;
 }
 
 .ogc-opt__input:hover,
 .ogc-opt__select:hover,
-.ogc-opt__textarea:hover {
+.ogc-opt__textarea:hover,
+.ogc-opt__color-text:hover,
+.ogc-opt__card-head input[type="text"]:hover,
+.ogc-opt__linkrow input:hover,
+.ogc-opt__linkrow select:hover,
+.ogc-opt__field-inline input:hover,
+.ogc-opt__field-inline select:hover,
+.ogc-opt__field-inline textarea:hover,
+.ogc-opt input[type="text"]:hover,
+.ogc-opt input[type="url"]:hover,
+.ogc-opt input[type="number"]:hover,
+.ogc-opt input[type="email"]:hover,
+.ogc-opt input[type="search"]:hover,
+.ogc-opt input[type="password"]:hover,
+.ogc-opt select:hover,
+.ogc-opt textarea:hover {
 	background-color: var(--opt-panel) !important;
 	color: var(--opt-text) !important;
-	border-color: var(--opt-line);
+	border-color: var(--opt-control-border-hover);
 }
 
 .ogc-opt__input:focus,
 .ogc-opt__select:focus,
-.ogc-opt__textarea:focus {
-	border-color: var(--opt-accent);
-	box-shadow: 0 0 0 2px rgba(255, 210, 122, 0.25);
-	outline: none;
+.ogc-opt__textarea:focus,
+.ogc-opt__color-text:focus,
+.ogc-opt__card-head input[type="text"]:focus,
+.ogc-opt__linkrow input:focus,
+.ogc-opt__linkrow select:focus,
+.ogc-opt__field-inline input:focus,
+.ogc-opt__field-inline select:focus,
+.ogc-opt__field-inline textarea:focus,
+.ogc-opt input[type="text"]:focus,
+.ogc-opt input[type="url"]:focus,
+.ogc-opt input[type="number"]:focus,
+.ogc-opt input[type="email"]:focus,
+.ogc-opt input[type="search"]:focus,
+.ogc-opt input[type="password"]:focus,
+.ogc-opt select:focus,
+.ogc-opt textarea:focus,
+.ogc-opt__input:focus-visible,
+.ogc-opt__select:focus-visible,
+.ogc-opt__textarea:focus-visible,
+.ogc-opt__color-text:focus-visible,
+.ogc-opt input[type="text"]:focus-visible,
+.ogc-opt input[type="url"]:focus-visible,
+.ogc-opt input[type="number"]:focus-visible,
+.ogc-opt input[type="email"]:focus-visible,
+.ogc-opt input[type="search"]:focus-visible,
+.ogc-opt input[type="password"]:focus-visible,
+.ogc-opt select:focus-visible,
+.ogc-opt textarea:focus-visible {
+	border-color: var(--opt-control-border-focus);
+	box-shadow: var(--opt-control-focus-ring);
+	outline: 2px solid transparent; /* visible non-color cue for high-contrast modes */
+}
+
+/* Native checkboxes (Tab Access roles, etc.) — switches keep a custom track. */
+.ogc-opt input[type="checkbox"] {
+	width: 1.05em;
+	height: 1.05em;
+	margin: 0;
+	accent-color: var(--opt-accent);
+	border: 1px solid var(--opt-control-border);
+	border-radius: 3px;
+	background: var(--opt-panel);
+	cursor: pointer;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ogc-opt input[type="checkbox"]:hover {
+	border-color: var(--opt-control-border-hover);
+}
+
+.ogc-opt input[type="checkbox"]:focus,
+.ogc-opt input[type="checkbox"]:focus-visible {
+	border-color: var(--opt-control-border-focus);
+	box-shadow: var(--opt-control-focus-ring);
+	outline: 2px solid transparent;
 }
 
 .ogc-opt__select {
@@ -393,7 +499,7 @@
 .ogc-opt__range-output {
 	min-width: 52px;
 	padding: 3px 8px;
-	border: 1px solid var(--opt-line);
+	border: 1px solid var(--opt-control-border);
 	border-radius: 999px;
 	background: var(--opt-panel);
 	color: var(--opt-accent);
@@ -414,28 +520,30 @@
 	width: 40px;
 	height: 34px;
 	padding: 2px;
-	border: 1px solid var(--opt-line);
-	border-radius: 8px;
+	border: 1px solid var(--opt-control-border);
+	border-radius: var(--opt-control-radius);
 	background: var(--opt-panel);
 	cursor: pointer;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ogc-opt__color-swatch:hover {
+	border-color: var(--opt-control-border-hover);
+}
+
+.ogc-opt__color-swatch:focus,
+.ogc-opt__color-swatch:focus-visible {
+	border-color: var(--opt-control-border-focus);
+	box-shadow: var(--opt-control-focus-ring);
+	outline: 2px solid transparent;
 }
 
 .ogc-opt__color-text {
 	width: 120px;
 	padding: 8px 10px;
-	border: 1px solid var(--opt-line);
-	border-radius: 8px;
-	background: var(--opt-panel);
-	color: var(--opt-text);
 	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 	font-size: 12.5px;
 	text-transform: uppercase;
-}
-
-.ogc-opt__color-text:hover {
-	background-color: var(--opt-panel) !important;
-	color: var(--opt-text) !important;
-	border-color: var(--opt-line);
 }
 
 .ogc-opt__color-reset {
@@ -478,19 +586,25 @@
 	align-items: center;
 	gap: 8px;
 	padding: 6px 12px;
-	border: 1px solid var(--opt-line);
+	border: 1px solid var(--opt-control-border);
 	border-radius: 999px;
 	background: var(--opt-panel-2);
 	color: var(--opt-text);
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
-	transition: border-color 0.15s ease, transform 0.15s ease;
+	transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ogc-opt__preset:hover {
-	border-color: var(--opt-accent);
+	border-color: var(--opt-control-border-hover);
 	transform: translateY(-1px);
+}
+
+.ogc-opt__preset:focus-visible {
+	border-color: var(--opt-control-border-focus);
+	box-shadow: var(--opt-control-focus-ring);
+	outline: 2px solid transparent;
 }
 
 .ogc-opt__preset-swatches {
@@ -520,6 +634,8 @@
 	opacity: 0;
 	width: 0;
 	height: 0;
+	border: 0;
+	box-shadow: none;
 }
 
 .ogc-opt__switch-track {
@@ -527,9 +643,9 @@
 	width: 40px;
 	height: 22px;
 	border-radius: 999px;
-	border: 1px solid var(--opt-line);
+	border: 1px solid var(--opt-control-border);
 	background: var(--opt-panel-2);
-	transition: background 0.15s ease, border-color 0.15s ease;
+	transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ogc-opt__switch-track::after {
@@ -544,8 +660,12 @@
 	transition: transform 0.15s ease, background 0.15s ease;
 }
 
+.ogc-opt__switch:hover .ogc-opt__switch-track {
+	border-color: var(--opt-control-border-hover);
+}
+
 .ogc-opt__switch input:checked + .ogc-opt__switch-track {
-	background: rgba(255, 210, 122, 0.24);
+	background: var(--opt-accent-soft);
 	border-color: var(--opt-accent);
 }
 
@@ -555,7 +675,9 @@
 }
 
 .ogc-opt__switch input:focus-visible + .ogc-opt__switch-track {
-	box-shadow: 0 0 0 2px rgba(255, 210, 122, 0.35);
+	border-color: var(--opt-control-border-focus);
+	box-shadow: var(--opt-control-focus-ring);
+	outline: 2px solid transparent;
 }
 
 .ogc-opt__switch-text {
@@ -589,19 +711,25 @@
 
 .ogc-opt__btn {
 	padding: 7px 14px;
-	border: 1px solid var(--opt-line);
-	border-radius: 8px;
+	border: 1px solid var(--opt-control-border);
+	border-radius: var(--opt-control-radius);
 	background: var(--opt-panel-2);
 	color: var(--opt-text);
 	font-size: 12.5px;
 	font-weight: 600;
 	cursor: pointer;
-	transition: border-color 0.15s ease, color 0.15s ease;
+	transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ogc-opt__btn:hover {
-	border-color: var(--opt-accent);
+	border-color: var(--opt-control-border-hover);
 	color: var(--opt-accent);
+}
+
+.ogc-opt__btn:focus-visible {
+	border-color: var(--opt-control-border-focus);
+	box-shadow: var(--opt-control-focus-ring);
+	outline: 2px solid transparent;
 }
 
 .ogc-opt__btn--ghost {
@@ -632,7 +760,7 @@
 
 .ogc-opt__subtab {
 	appearance: none;
-	border: 1px solid var(--opt-line);
+	border: 1px solid var(--opt-control-border);
 	border-radius: 999px;
 	background: var(--opt-panel);
 	color: var(--opt-muted);
@@ -641,18 +769,24 @@
 	font-weight: 600;
 	padding: 8px 14px;
 	cursor: pointer;
-	transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+	transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ogc-opt__subtab:hover {
-	border-color: var(--opt-accent);
+	border-color: var(--opt-control-border-hover);
 	color: var(--opt-accent);
+}
+
+.ogc-opt__subtab:focus-visible {
+	border-color: var(--opt-control-border-focus);
+	box-shadow: var(--opt-control-focus-ring);
+	outline: 2px solid transparent;
 }
 
 .ogc-opt__subtab.is-active {
 	border-color: var(--opt-accent);
 	color: #0a0a0a;
-	background: var(--opt-accent);
+	background: linear-gradient(145deg, var(--opt-accent), var(--opt-accent-2));
 }
 
 .ogc-opt__subpanel[hidden] {
@@ -682,7 +816,7 @@
 	align-items: center;
 	gap: 10px;
 	padding: 8px 12px;
-	border: 1px solid var(--opt-line);
+	border: 1px solid var(--opt-control-border);
 	border-radius: 10px;
 	background: var(--opt-panel);
 }
@@ -694,7 +828,7 @@
 
 .ogc-opt__sortrow.is-over {
 	border-color: var(--opt-accent);
-	box-shadow: 0 0 0 2px rgba(255, 210, 122, 0.2);
+	box-shadow: var(--opt-control-focus-ring);
 }
 
 .ogc-opt__grip {
@@ -728,10 +862,7 @@
 .ogc-opt__card-head input[type="text"] {
 	flex: 1;
 	padding: 7px 10px;
-	border: 1px solid var(--opt-line);
-	border-radius: 8px;
 	background: var(--opt-panel-2);
-	color: var(--opt-text);
 	font-weight: 600;
 }
 
@@ -748,20 +879,14 @@
 
 .ogc-opt__linkrow input {
 	padding: 6px 10px;
-	border: 1px solid var(--opt-line);
-	border-radius: 8px;
 	background: var(--opt-panel-2);
-	color: var(--opt-text);
 	font-size: 12.5px;
 }
 
 .ogc-opt__linkrow select {
 	min-width: 0;
 	padding: 6px 32px 6px 10px;
-	border: 1px solid var(--opt-line);
-	border-radius: 8px;
 	background: var(--opt-panel-2);
-	color: var(--opt-text);
 	font-size: 12.5px;
 	cursor: pointer;
 }
@@ -774,12 +899,13 @@
 .ogc-opt__card-head input[type="text"]:hover {
 	background-color: var(--opt-panel-2) !important;
 	color: var(--opt-text) !important;
+	border-color: var(--opt-control-border-hover);
 }
 
 .ogc-opt__row-remove {
 	padding: 4px 10px;
-	border: 1px solid var(--opt-line);
-	border-radius: 8px;
+	border: 1px solid var(--opt-control-border);
+	border-radius: var(--opt-control-radius);
 	background: none;
 	color: var(--opt-muted);
 	font-size: 14px;
@@ -812,20 +938,14 @@
 .ogc-opt__field-inline textarea {
 	width: 100%;
 	padding: 6px 10px;
-	border: 1px solid var(--opt-line);
-	border-radius: 8px;
 	background: var(--opt-panel-2);
-	color: var(--opt-text);
 	font-size: 12.5px;
 }
 
 .ogc-opt__field-inline select {
 	width: 100%;
 	padding: 6px 32px 6px 10px;
-	border: 1px solid var(--opt-line);
-	border-radius: 8px;
 	background: var(--opt-panel-2);
-	color: var(--opt-text);
 	font-size: 12.5px;
 }
 
@@ -924,7 +1044,7 @@
 
 .ogc-opt__save:hover {
 	transform: translateY(-1px);
-	box-shadow: 0 8px 20px rgba(255, 210, 122, 0.28);
+	box-shadow: 0 8px 20px var(--opt-accent-glow);
 }
 
 .ogc-opt__reset-tab {
@@ -979,7 +1099,7 @@
 	padding: 14px 16px;
 	border-radius: var(--opt-radius);
 	border: 1px solid var(--opt-line);
-	background: linear-gradient(145deg, rgba(255, 210, 122, 0.12), rgba(255, 210, 122, 0.02));
+	background: linear-gradient(145deg, var(--opt-accent-soft), rgba(247, 147, 30, 0.02));
 }
 
 .ogc-opt__stat-value {
@@ -1021,8 +1141,40 @@
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.ogc-opt__overview-card.is-disabled {
-	opacity: 0.55;
+/*
+ * Inactive overview cards (no access, or quick-toggle off): subdued, not illegible.
+ * Avoid whole-card opacity (was 0.55 — failed contrast on dark panel).
+ */
+.ogc-opt__overview-card.is-disabled,
+.ogc-opt__overview-card:has(.ogc-opt__overview-toggle:not(:checked)) {
+	opacity: 1;
+	background: #141418;
+	border-color: #32323a;
+	box-shadow: none;
+}
+
+.ogc-opt__overview-card.is-disabled .ogc-opt__overview-card-title,
+.ogc-opt__overview-card:has(.ogc-opt__overview-toggle:not(:checked)) .ogc-opt__overview-card-title {
+	color: var(--opt-text-subdued);
+}
+
+.ogc-opt__overview-card.is-disabled .ogc-opt__overview-card-sub,
+.ogc-opt__overview-card.is-disabled .ogc-opt__overview-locked,
+.ogc-opt__overview-card.is-disabled .ogc-opt__switch-text,
+.ogc-opt__overview-card:has(.ogc-opt__overview-toggle:not(:checked)) .ogc-opt__overview-card-sub,
+.ogc-opt__overview-card:has(.ogc-opt__overview-toggle:not(:checked)) .ogc-opt__switch-text {
+	color: var(--opt-text-subdued-soft);
+}
+
+.ogc-opt__overview-card.is-disabled .ogc-opt__overview-card-icon .dashicons,
+.ogc-opt__overview-card:has(.ogc-opt__overview-toggle:not(:checked)) .ogc-opt__overview-card-icon .dashicons {
+	color: var(--opt-accent-muted);
+	opacity: 1;
+}
+
+.ogc-opt__overview-card.is-disabled .ogc-opt__overview-link,
+.ogc-opt__overview-card:has(.ogc-opt__overview-toggle:not(:checked)) .ogc-opt__overview-link {
+	color: var(--opt-accent-muted);
 }
 
 .ogc-opt__overview-card-icon .dashicons {
@@ -1036,6 +1188,7 @@
 	margin: 0;
 	font-size: 15px;
 	font-weight: 700;
+	color: var(--opt-text);
 }
 
 .ogc-opt__overview-card-sub {
@@ -1152,4 +1305,10 @@
 
 .ogc-opt__access-users .ogc-opt__input {
 	width: 100%;
+	max-width: none;
+	background: var(--opt-panel);
+}
+
+.ogc-opt__access-role input[type="checkbox"] {
+	flex-shrink: 0;
 }

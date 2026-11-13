@@ -2,6 +2,13 @@
 
 All notable changes to the OGC NewFinity theme are documented here.
 
+## [1.27.1] — 2026-11-13
+
+### Fixed
+
+- **Theme Options contrast** — inactive Overview cards no longer use whole-card `opacity: 0.55`; subdued text uses ~84% / ~72% opacity tokens so titles/icons/subtitles remain readable on the dark panel.
+- **Theme Options form controls** — shared CSS tokens for default / hover / focus borders across all tabs (text inputs, selects, textareas, checkboxes, User IDs, color fields); orange accent focus ring (`#F7931E` / `#FFB238`) with a non-color outline cue.
+
 ## [1.27.0] — 2026-11-13
 
 ### Added
